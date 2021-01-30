@@ -22,7 +22,7 @@ public final class Constants {
     //With NEOs
     public static final int PROCESSOR_MAIN = 8;
     public static final int TURRET = 9;
-    public static final int HOOK = 10;
+    public static final int HOOK = -1;
 
     //Talon SRX and FX IDs (must be unique, may range from 0+)
     public static final int LEFT_MASTER_F = 4;
@@ -40,8 +40,6 @@ public final class Constants {
     public static final int TEST_JOYSTICK_PORT = 2;
 
     //DigitalInput port IDs
-    public static final int TURRET_ENCODER_1 = 0;
-    public static final int TURRET_ENCODER_2 = 1;
     public static final int TURRET_LIMIT_SWITCH  = 2;
     public static final int PROCESSOR_INDEX_1 = 3;
     public static final int PROCESSOR_INDEX_2 = 4;
@@ -116,9 +114,7 @@ public final class Constants {
     public static class PneumaticsConstants {
 
         public static final int[] SHIFTER = {1, 4};
-        public static final int[] KICKSTAND_PNEU = {6, 7};
         public static final int[] INTAKE_PNEU = {0, 3};
-        public static final int[] PTO_PNEU = {2, 5};
 
         public static String GEAR = "Low";
         public static String INTAKE_STATUS = "Retracted";

@@ -99,6 +99,7 @@ public class Robot extends TimedRobot {
       autonomousCommand.cancel();
     }
 
+    //Commented out for testing other mechanisms, this is really noisy
     // autoShootCommand = robotContainer.getAutoShootCommand();
     // autoShootCommand.schedule();
     

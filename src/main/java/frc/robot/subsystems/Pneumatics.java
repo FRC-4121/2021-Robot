@@ -22,8 +22,6 @@ public class Pneumatics extends SubsystemBase {
 
   private DoubleSolenoid shifter = new DoubleSolenoid(SHIFTER[0], SHIFTER[1]);
   private DoubleSolenoid intakePneu = new DoubleSolenoid(INTAKE_PNEU[0], INTAKE_PNEU[1]);
-  private DoubleSolenoid PTOPneu = new DoubleSolenoid(PTO_PNEU[0], PTO_PNEU[1]);
-  private DoubleSolenoid kickstandPneu = new DoubleSolenoid(KICKSTAND_PNEU[0], KICKSTAND_PNEU[1]);
 
   public Pneumatics() {
 
@@ -38,8 +36,6 @@ public class Pneumatics extends SubsystemBase {
     // This method will be called once per scheduler run
     SmartDashboard.putString("Drive Gear", GEAR);
     SmartDashboard.putString("Intake Status", INTAKE_STATUS);
-    SmartDashboard.putString("PTO Status", PTO_STATUS);
-    SmartDashboard.putString("Kickstand Status", KICKSTAND_STATUS);
   }
 
   public void extendIntake() {
@@ -64,29 +60,5 @@ public class Pneumatics extends SubsystemBase {
 
     shifter.set(Value.kForward);
     GEAR = "High";
-  }
-
-  public void engagePTO() {
-
-    PTOPneu.set(Value.kReverse);
-    PTO_STATUS = "Engaged";
-  }
-
-  public void disengagePTO(){
-
-    PTOPneu.set(Value.kForward);
-    PTO_STATUS = "Disengaged";
-  }
-
-  public void deployKickstand(){
-
-    kickstandPneu.set(Value.kReverse);
-    KICKSTAND_STATUS = "Down";
-  }
-  
-  public void retractKickstand(){
-
-    kickstandPneu.set(Value.kForward);
-    KICKSTAND_STATUS = "Up";
   }
 }
