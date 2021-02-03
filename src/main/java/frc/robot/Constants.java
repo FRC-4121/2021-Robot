@@ -101,8 +101,8 @@ public final class Constants {
         public static final double kTurretSprocketDia = 1;
         public static final double kTurretDiskDia = 13.75;
 
-        public static final double kTurretMinAngle = 0;
-        public static final double kTurretMaxAngle = 136;
+        public static final double kTurretMinAngle = -30;
+        public static final double kTurretMaxAngle = 30;
 
         //
         public static final double kShooterSpeed = -1.0;
@@ -113,8 +113,8 @@ public final class Constants {
 
     public static class PneumaticsConstants {
 
-        public static final int[] SHIFTER = {1, 4};
-        public static final int[] INTAKE_PNEU = {0, 3};
+        public static final int[] SHIFTER = {1, 6};
+        public static final int[] INTAKE_PNEU = {0, 7};
 
         public static String GEAR = "Low";
         public static String INTAKE_STATUS = "Retracted";
