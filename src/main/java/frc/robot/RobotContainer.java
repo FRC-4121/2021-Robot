@@ -42,6 +42,7 @@ public class RobotContainer {
   private final Pneumatics pneumatics = new Pneumatics();
   private final NetworkTableQuerier ntables = new NetworkTableQuerier();
   private final CameraController camera = new CameraController();
+  private final Music music = new Music(shooter);
 
 
   //Commands
@@ -161,6 +162,10 @@ public class RobotContainer {
 
     return autoShoot;
 
+  }
+
+  public Music getMusic(){
+    return music;  
   }
 
 }

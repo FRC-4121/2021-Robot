@@ -10,7 +10,9 @@ package frc.robot.subsystems;
 import static frc.robot.Constants.*;
 import static frc.robot.Constants.ShooterConstants.*;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -19,8 +21,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class Shooter extends SubsystemBase {
   
   // Initialize motor controllers
-  private final WPI_TalonFX shooterMaster = new WPI_TalonFX(SHOOTER_MASTER);
-  private final WPI_TalonFX shooterSlave = new WPI_TalonFX(SHOOTER_SLAVE);
+  private final TalonFX shooterMaster = new WPI_TalonFX(SHOOTER_MASTER);
+  private final TalonFX shooterSlave = new WPI_TalonFX(SHOOTER_SLAVE);
   
   //for testing
   private double save_p = kP_Shoot;
@@ -113,8 +115,8 @@ public class Shooter extends SubsystemBase {
   public void shoot(double speed1){
 
     speed = speed1; 
-    shooterMaster.set(speed);
-    shooterSlave.set(-speed);
+    shooterMaster.set(ControlMode.PercentOutput, speed);
+    shooterSlave.set(ControlMode.PercentOutput, -speed);
     
   }
 
@@ -124,8 +126,8 @@ public class Shooter extends SubsystemBase {
    */
   public void stopShooter(){
 
-    shooterMaster.set(0);
-    shooterSlave.set(0);
+    shooterMaster.set(ControlMode.PercentOutput, 0);
+    shooterSlave.set(ControlMode.PercentOutput, 0);
   }
 
 
@@ -146,6 +148,13 @@ public class Shooter extends SubsystemBase {
   public double getShooterSpeed(){
 
     return speed;
+  }
+
+  public TalonFX getShooterMaster(){
+    return shooterMaster;
+  }
+  public TalonFX getShooterSlave(){
+    return shooterSlave;
   }
 
 }
