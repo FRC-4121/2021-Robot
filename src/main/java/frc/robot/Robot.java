@@ -35,8 +35,8 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     robotContainer = new RobotContainer();
-    music = robotContainer.getMusic();
-    music.play();
+    // music = robotContainer.getMusic();
+    // music.play();
   }
 
   /**
@@ -58,7 +58,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Zero Gyro", 0);
     SmartDashboard.putNumber("Zero Encoders", 0);
 
-    music.play();
+    // music.play();
 
   }
 
