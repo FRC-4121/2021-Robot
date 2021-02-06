@@ -16,6 +16,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
+import edu.wpi.first.wpilibj.LinearFilter;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -24,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class Drivetrain extends SubsystemBase {
 
   private ADXRS450_Gyro gyro;
+  private LinearFilter gyro_filter;
 
   private WPI_TalonFX leftMasterFalcon;
   private WPI_TalonFX leftSlaveFalcon;
@@ -37,19 +39,41 @@ public class Drivetrain extends SubsystemBase {
   private DifferentialDrive drivetrain;
 
   
+  /** 
+   * 
+   * Drivetrain constructor 
+   * 
+   * Initialize motors, encoders, and gyro
+   * 
+   */
   public Drivetrain() {
 
+    // Initialize drivetrain motors
     initFalconDrivetrain();
 
+    // Initialize Roborio gyro
     gyro = new ADXRS450_Gyro();
     SmartDashboard.putNumber("Zero Gyro", 0);
     gyro.calibrate();
     zeroGyro();
 
+    // Initialize moving average filter for gyro
+    gyro_filter = LinearFilter.movingAverage(FILTER_WINDOW_SIZE);
+
+    // Zero drivetrain encoders
     SmartDashboard.putNumber("Zero Encoders", 0);
     zeroEncoders();
   }
 
+
+  /**
+   * 
+   * Drivetrain periodic
+   * 
+   * Things that need to happen on a periodic basis as
+   * the drivetrain is being used.
+   * 
+   */
   @Override
   public void periodic() {
 
@@ -77,7 +101,13 @@ public class Drivetrain extends SubsystemBase {
 
   }
 
-  //Config functions
+
+  /**
+   * 
+   * Configure the drivetrain motors as a differential drive
+   * and configure encoders for left and right sides
+   * 
+   */
   private void initFalconDrivetrain(){
 
     //Init motors, speed controller groups, and drivetrain
@@ -122,7 +152,15 @@ public class Drivetrain extends SubsystemBase {
     
   }
 
-  //Main drive functions
+
+  /**
+   * 
+   * Main teleop drive method
+   * 
+   * @param leftJoyY: left joystick position
+   * @param rightJoyY: right joystick position
+   * 
+   */
   public void drive(double leftJoyY, double rightJoyY) {
 
     //Configure software-based voltage protection measure (will require testing to determine optimal values)
@@ -138,6 +176,8 @@ public class Drivetrain extends SubsystemBase {
 
     }
 
+    // Drive the motors
+    // Direction multiplier indicates drive direction
     if(DIRECTION_MULTIPLIER == 1){
 
       drivetrain.tankDrive(speedCap * DIRECTION_MULTIPLIER * leftJoyY, speedCap * DIRECTION_MULTIPLIER * rightJoyY);   
@@ -148,13 +188,17 @@ public class Drivetrain extends SubsystemBase {
       drivetrain.tankDrive(speedCap * DIRECTION_MULTIPLIER * rightJoyY, speedCap * DIRECTION_MULTIPLIER * leftJoyY); 
     
     }
+
   }
 
 
   /**
+   * 
    * Run drivetrain during autonomous
-   * @param leftSpeed
-   * @param rightSpeed
+   * 
+   * @param leftSpeed: speed for left side motors
+   * @param rightSpeed: speed for right side motors
+   * 
    */
   public void autoDrive(double leftSpeed, double rightSpeed){
 
@@ -163,16 +207,21 @@ public class Drivetrain extends SubsystemBase {
 
 
   /**
+   * 
    * Stop the drive train
+   * 
    */
   public void stopDrive(){
 
     drivetrain.tankDrive(0, 0);
+
   }
 
 
   /**
+   * 
    * Zero the encoders
+   * 
    */
   public void zeroEncoders(){
 
@@ -185,8 +234,11 @@ public class Drivetrain extends SubsystemBase {
 
 
   /**
+   * 
    * Get position of all left encoders
-   * @return
+   * 
+   * @return array of encoder positions
+   * 
    */
   public double[] getLeftEncoders(){
 
@@ -201,8 +253,11 @@ public class Drivetrain extends SubsystemBase {
 
 
   /**
+   * 
    * Get position of all right encoders
-   * @return
+   * 
+   * @return array of encoder positions 
+   * 
    */
   public double[] getRightEncoders(){
 
@@ -217,8 +272,11 @@ public class Drivetrain extends SubsystemBase {
 
 
   /**
+   * 
    * Get position of left master encoder
-   * @return
+   * 
+   * @return encoder position
+   * 
    */
   public double getMasterLeftEncoderPosition(){
 
@@ -228,8 +286,11 @@ public class Drivetrain extends SubsystemBase {
 
 
   /**
+   * 
    * Get position of right master encoder
-   * @return
+   * 
+   * @return encoder position
+   * 
    */
   public double getMasterRightEncoderPosition(){
 
@@ -239,19 +300,24 @@ public class Drivetrain extends SubsystemBase {
 
 
   /**
+   * 
    * Get current gyro angle
-   * @return
+   * 
+   * @return angle
+   * 
    */
   public double getGyroAngle(){
 
-    double correctedGyro = gyro.getAngle() % 360.0;
+    double correctedGyro = gyro_filter.calculate(gyro.getAngle() % 360.0);
     return correctedGyro;
 
   }
 
 
   /**
+   * 
    * Reset current gyro heading to zero
+   * 
    */
   public void zeroGyro(){
 
@@ -261,7 +327,9 @@ public class Drivetrain extends SubsystemBase {
   
 
   /**
+   * 
    * Invert the direction of driving
+   * 
    */
   public void invertDirection(){
 

@@ -44,6 +44,9 @@ public final class Constants {
     public static final int PROCESSOR_INDEX_1 = 3;
     public static final int PROCESSOR_INDEX_2 = 4;
 
+    //Filtering
+    public static final int FILTER_WINDOW_SIZE = 10;
+
 
     public static class DrivetrainConstants {
 
