@@ -12,8 +12,8 @@ import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Processor;
 import frc.robot.subsystems.NetworkTableQuerier;
-import frc.robot.Constants.*;
-import frc.robot.Constants.DrivetrainConstants.*;
+import static frc.robot.Constants.*;
+import static frc.robot.Constants.DrivetrainConstants.*;
 import frc.robot.extraClasses.PIDControl;
 
 
@@ -23,28 +23,33 @@ public class AutoDriveToBall extends CommandBase {
    * Declare variables
    */
   private final Drivetrain drivetrain;
-  private final Intake intake;
+  private final NetworkTableQuerier ntables;
   private final Processor processor;
   private Timer timer;
+  private double startTime;
+  private double speedCorrection;
+  private double angleCorrection;
+  private double speedMultiplier;
   private PIDControl pidAngle;
   private PIDControl pidSpeed;
-
-
+  private double stopTime;
+  
   /** 
    * Constructs a new AutoDriveToBall command
    */
-  public AutoDriveToBall(Drivetrain drive, Intake rollers, Processor tunnel) {
+  public AutoDriveToBall(Drivetrain drive, NetworkTableQuerier tables, Processor tunnel, double time) {
     
     //Declare required subsystems
     drivetrain = drive;
-    intake = rollers;
     processor = tunnel;
-    addRequirements(drivetrain, intake, processor);
+    ntables = tables;
+    addRequirements(drivetrain, processor);
 
     //Create new timer and controllers
     timer = new Timer();
     pidAngle = new PIDControl(kP_Turn, kI_Turn, kD_Turn);
     pidSpeed = new PIDControl(kP_Straight, kI_Straight, kD_Straight);
+    stopTime = time;
 
 
   }
@@ -54,14 +59,40 @@ public class AutoDriveToBall extends CommandBase {
    * Initialize command
    */
   @Override
-  public void initialize() {}
+  public void initialize() {
+
+    //Start timer and save init time.
+    timer.start();
+    startTime = timer.get();
+    
+    
+
+  }
 
 
   /**
    * Execute the functions of the command
    */
   @Override
-  public void execute() {}
+  public void execute() {
+    // checks if the robot is far from the ball goes faster igf its far away
+    if(ntables.getVisionDouble("BallScreenPercent") < 10) {
+      
+      speedMultiplier = 1; 
+    }
+    else
+    {
+      speedMultiplier = .75; 
+    }
+    
+    double ballOffset = ntables.getVisionDouble("BallOffset");
+    angleCorrection = pidAngle.run(ballOffset, 0);
+    SmartDashboard.putNumber("AutoBallAngleCorr.", angleCorrection);
+
+    drivetrain.autoDrive(speedMultiplier * kAutoDriveSpeed + angleCorrection, speedMultiplier * kAutoDriveSpeed - angleCorrection);
+
+
+  }
 
 
   /**
@@ -76,6 +107,21 @@ public class AutoDriveToBall extends CommandBase {
    */
   @Override
   public boolean isFinished() {
+
+    boolean thereYet = false;
+    
+    if(ntables.getVisionDouble("BallScreenPercent") > 0) { //the zero needs to be replaced with a reasonable screen percent later
+    thereYet = true;
+
+    } 
+    else if (stopTime<=timer.get()-startTime){
+      thereYet = true;
+
+    }
+
+
+
+    
     return false;
   }
 }
