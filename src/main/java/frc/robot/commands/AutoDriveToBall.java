@@ -75,19 +75,19 @@ public class AutoDriveToBall extends CommandBase {
    */
   @Override
   public void execute() {
-    // checks if the robot is far from the ball goes faster igf its far away
-    if(ntables.getVisionDouble("BallScreenPercent") < 10) {
+    // checks if the robot is far from the ball goes faster if its far away
+    if(ntables.getVisionDouble("BallScreenPercent0") < 3) {
       
-      speedMultiplier = 1; 
+      speedMultiplier = 0.8; 
     }
     else
     {
-      speedMultiplier = .75; 
+      speedMultiplier = 0.6; 
     }
     
-    double ballOffset = ntables.getVisionDouble("BallOffset");
+    double ballOffset = ntables.getVisionDouble("BallOffset0");
     angleCorrection = pidAngle.run(ballOffset, 0);
-    SmartDashboard.putNumber("AutoBallAngleCorr.", angleCorrection);
+    SmartDashboard.putNumber("AutoBallAngleCorr", angleCorrection);
 
     drivetrain.autoDrive(speedMultiplier * kAutoDriveSpeed + angleCorrection, speedMultiplier * kAutoDriveSpeed - angleCorrection);
 
@@ -99,7 +99,9 @@ public class AutoDriveToBall extends CommandBase {
    * Perform cleanup tasks when command ends
    */
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    processor.runProcessor(false);
+  }
 
 
   /**
@@ -110,7 +112,7 @@ public class AutoDriveToBall extends CommandBase {
 
     boolean thereYet = false;
     
-    if(ntables.getVisionDouble("BallScreenPercent") > 0) { //the zero needs to be replaced with a reasonable screen percent later
+    if(ntables.getVisionDouble("BallScreenPercent") > 7) {
     thereYet = true;
 
     } 
@@ -118,10 +120,12 @@ public class AutoDriveToBall extends CommandBase {
       thereYet = true;
 
     }
+    SmartDashboard.putBoolean("There Yet", thereYet);
 
 
 
     
     return false;
   }
+
 }

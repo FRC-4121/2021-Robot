@@ -64,6 +64,8 @@ public class RobotContainer {
   private final RunTurret clockwise = new RunTurret(turret, -kTurretSpeedManual);
   private final RunTurret counterclockwise = new RunTurret(turret, kTurretSpeedManual);
   private final RunShooter shoot = new RunShooter(shooter, processor, testingJoystick);
+  private final RaiseHood raiseHood = new RaiseHood(turret);
+  private final LowerHood lowerHood = new LowerHood(turret);
 
   //Auto
   private final AimTurret aimTurret = new AimTurret(turret, ntables);
@@ -87,6 +89,8 @@ public class RobotContainer {
   private final JoystickButton counterclockTurretButton = new JoystickButton(testingJoystick, 10);
   private final JoystickButton shootButton = new JoystickButton(testingJoystick, 11);
   private final JoystickButton testAutoTurret = new JoystickButton(testingJoystick, 12);
+  private final JoystickButton hoodUp = new JoystickButton(testingJoystick, 7);
+  private final JoystickButton hoodDown = new JoystickButton(testingJoystick, 8);
 
 
   /**
@@ -142,6 +146,10 @@ public class RobotContainer {
     counterclockTurretButton.whenReleased(new InstantCommand(turret::stopTurret, turret));
     shootButton.whileHeld(new InstantCommand(processor::unlockProcessor, processor));
     shootButton.whenReleased(new InstantCommand(processor::stopProcessor, processor));
+    hoodUp.whileHeld(raiseHood);
+    hoodUp.whenReleased(new InstantCommand(turret::stopHood, turret));
+    hoodDown.whileHeld(lowerHood);
+    hoodDown.whenReleased(new InstantCommand(turret::stopHood, turret));
     // testAutoTurret.whenPressed(aimTurret);
   }
 

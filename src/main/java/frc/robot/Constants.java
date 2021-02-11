@@ -22,6 +22,7 @@ public final class Constants {
     //With NEOs
     public static final int PROCESSOR_MAIN = 8;
     public static final int TURRET = 9;
+    public static final int HOOD = 3;
     public static final int HOOK = -1;
 
     //Talon SRX and FX IDs (must be unique, may range from 0+)
@@ -107,7 +108,10 @@ public final class Constants {
         public static final double kTurretMinAngle = -30;
         public static final double kTurretMaxAngle = 30;
 
-        //
+        public static final int kHoodEncoder = 0;
+        public static final double kHoodSpeed = -1.0;
+
+        //Speeds
         public static final double kShooterSpeed = -1.0;
         public static final double kTurretSpeedManual = 0.03;//positive is counterclockwise
         public static final double kTurretSpeedAuto = 0.2;

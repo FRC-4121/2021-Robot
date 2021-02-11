@@ -7,6 +7,9 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.hal.simulation.AnalogInDataJNI;
+import edu.wpi.first.wpilibj.AnalogEncoder;
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -23,6 +26,9 @@ public class Turret extends SubsystemBase {
   //Declare turret motor and encoder
   private final CANSparkMax turret = new CANSparkMax(TURRET, MotorType.kBrushless);
   private final CANEncoder turretEncoder = turret.getEncoder();
+
+  private final CANSparkMax hood = new CANSparkMax(HOOD, MotorType.kBrushed);
+  private final AnalogInput hoodEncoder = new AnalogInput(kHoodEncoder);
 
   //Declare class variables
   private boolean resetEncoder = false;
@@ -49,9 +55,8 @@ public class Turret extends SubsystemBase {
     // This method will be called once per scheduler run
     turretAngle = turretEncoder.getPosition() * 140 / 3.04;
     SmartDashboard.putNumber("Turret Angle", turretAngle);
+    SmartDashboard.putNumber("Hood Angle", getHoodAngle());
   }
-
-
   /**
    * Rotate the turret
    * @param speed
@@ -71,6 +76,12 @@ public class Turret extends SubsystemBase {
 
   }
 
+  public void rotateHood(double speed){
+    hood.set(speed);
+  }
+  public void stopHood(){
+    hood.set(0);
+  }
 
   /**
    * Get the current angle of the turret
@@ -81,4 +92,7 @@ public class Turret extends SubsystemBase {
     return turretAngle;
   }
 
+  public double getHoodAngle(){
+    return (hoodEncoder.getVoltage()/5.0)*360.0;
+  }
 }
