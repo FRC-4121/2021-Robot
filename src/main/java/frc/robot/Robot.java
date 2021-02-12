@@ -57,6 +57,7 @@ public class Robot extends TimedRobot {
     
     SmartDashboard.putNumber("Zero Gyro", 0);
     SmartDashboard.putNumber("Zero Encoders", 0);
+    // SmartDashboard.putNumber("Testing NTables", robotContainer.ntables.getVisionDouble("BallDistance0"));
 
     // music.play();
 

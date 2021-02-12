@@ -23,7 +23,7 @@ public class AutoDriveToBall extends CommandBase {
    * Declare variables
    */
   private final Drivetrain drivetrain;
-  private final NetworkTableQuerier ntables;
+  // private final NetworkTableQuerier ntables;
   private final Processor processor;
   private Timer timer;
   private double startTime;
@@ -42,7 +42,7 @@ public class AutoDriveToBall extends CommandBase {
     //Declare required subsystems
     drivetrain = drive;
     processor = tunnel;
-    ntables = tables;
+    // ntables = tables;
     addRequirements(drivetrain, processor);
 
     //Create new timer and controllers
@@ -76,22 +76,24 @@ public class AutoDriveToBall extends CommandBase {
   @Override
   public void execute() {
     // checks if the robot is far from the ball goes faster if its far away
-    if(ntables.getVisionDouble("BallScreenPercent0") < 3) {
+    // if(ntables.getVisionDouble("BallScreenPercent0") < 3) {
       
-      speedMultiplier = 0.8; 
-    }
-    else
-    {
-      speedMultiplier = 0.6; 
-    }
+    //   speedMultiplier = 0.8; 
+    // }
+    // else
+    // {
+    //   speedMultiplier = 0.6; 
+    // }
     
-    double ballOffset = ntables.getVisionDouble("BallOffset0");
-    angleCorrection = pidAngle.run(ballOffset, 0);
-    SmartDashboard.putNumber("AutoBallAngleCorr", angleCorrection);
+    // double ballOffset = ntables.getVisionDouble("BallOffset0");
+    // angleCorrection = pidAngle.run(ballOffset, 0);
+    // SmartDashboard.putNumber("AutoBallAngleCorr", angleCorrection);
+    angleCorrection = 0;
+    speedMultiplier = 1;
+    drivetrain.autoDrive(-(speedMultiplier * kAutoDriveSpeed + angleCorrection), -(speedMultiplier * kAutoDriveSpeed - angleCorrection));
+    // drivetrain.autoDrive(-0.8, -0.8);
 
-    drivetrain.autoDrive(speedMultiplier * kAutoDriveSpeed + angleCorrection, speedMultiplier * kAutoDriveSpeed - angleCorrection);
-
-
+    //processor.runProcessor(false);
   }
 
 
@@ -100,7 +102,7 @@ public class AutoDriveToBall extends CommandBase {
    */
   @Override
   public void end(boolean interrupted) {
-    processor.runProcessor(false);
+    // processor.runProcessor(false);
   }
 
 
@@ -112,20 +114,19 @@ public class AutoDriveToBall extends CommandBase {
 
     boolean thereYet = false;
     
-    if(ntables.getVisionDouble("BallScreenPercent") > 7) {
-    thereYet = true;
+   /* if(!processor.getProcessorEntry()) {
+      thereYet = true;
 
     } 
-    else if (stopTime<=timer.get()-startTime){
+    else*/ if (stopTime<=timer.get()-startTime){
       thereYet = true;
 
     }
     SmartDashboard.putBoolean("There Yet", thereYet);
 
-
-
     
-    return false;
+    return thereYet;
+  
   }
 
 }

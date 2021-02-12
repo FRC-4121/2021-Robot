@@ -17,9 +17,9 @@ public class NetworkTableQuerier implements Runnable {
     private static NetworkTableEntry robotStop;
     private static NetworkTableEntry zeroGyro;
     private static NetworkTableEntry piGyroAngle;
-    private static NetworkTableEntry ballDistance;
-    private static NetworkTableEntry ballAngle;
-    private static NetworkTableEntry ballScreenPercent;
+    private static NetworkTableEntry ballDistance0;
+    private static NetworkTableEntry ballAngle0;
+    private static NetworkTableEntry ballScreenPercent0;
     private static NetworkTableEntry foundBall;
     private static NetworkTableEntry foundTape;
     private static NetworkTableEntry tapeDistance;
@@ -107,9 +107,9 @@ public class NetworkTableQuerier implements Runnable {
 
         piGyroAngle = navxTable.getEntry("GyroAngle");
 
-        ballDistance = visionTable.getEntry("BallDistance");
-        ballAngle = visionTable.getEntry("BallAngle");
-        ballScreenPercent = visionTable.getEntry("BallScreenPercent");
+        ballDistance0 = visionTable.getEntry("BallDistance0");
+        ballAngle0 = visionTable.getEntry("BallAngle0");
+        ballScreenPercent0 = visionTable.getEntry("BallScreenPercent0");
         foundBall = visionTable.getEntry("FoundBall");
 
         foundTape = visionTable.getEntry("FoundTape");

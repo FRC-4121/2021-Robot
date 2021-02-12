@@ -42,7 +42,7 @@ public class RobotContainer {
   private final Turret turret = new Turret();
   private final Processor processor = new Processor();
   private final Pneumatics pneumatics = new Pneumatics();
-  private final NetworkTableQuerier ntables = new NetworkTableQuerier();
+  public final NetworkTableQuerier ntables = new NetworkTableQuerier();
   private final CameraController camera = new CameraController();
   // private final Music music = new Music(shooter);
 
@@ -160,6 +160,7 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
+    // return new AutoDriveToBall(drivetrain, ntables, processor, 10);
     return new AutoTestParallel1(drivetrain, pneumatics, turret, processor, shooter, ntables);
   }
 

@@ -42,7 +42,7 @@ public final class Constants {
 
     //DigitalInput port IDs
     public static final int TURRET_LIMIT_SWITCH  = 2;
-    public static final int PROCESSOR_INDEX_1 = 3;
+    public static final int PROCESSOR_INDEX_1 = 0;
     public static final int PROCESSOR_INDEX_2 = 4;
 
     //Filtering
@@ -58,8 +58,8 @@ public final class Constants {
         public static final double kWheelDiameter = 6.0;
         public static final double kLowGearSpeedCap = 1.0;//In case full speed draws excessive power, these are an emergency measure
         public static final double kHighGearSpeedCap = 1.0;
-        public static final double kAutoDriveSpeed = 0.6;//.8;
-        public static final double kAutoTurnSpeed = 0.5;
+        public static final double kAutoDriveSpeed = 0.8;//.8;
+        public static final double kAutoTurnSpeed = 0.3;
         public static final double kLowGearRatio = 30.0;
         public static final double kHighGearRatio = 70.0;
         public static final double kTurnAngleTolerance = 0.001;
@@ -68,7 +68,7 @@ public final class Constants {
         public static final double kP_Straight = 0.03;
         public static final double kI_Straight = 0.0;
         public static final double kD_Straight = 0.0;
-        public static final double kP_Turn = 0.020;
+        public static final double kP_Turn = .004;
         public static final double kI_Turn = 0.0;
         public static final double kD_Turn = 0.0;
 

@@ -22,9 +22,9 @@ public class AutoTestParallel1 extends ParallelCommandGroup {
   /**
    * Creates a new AutoTestParallel1.
    */
-  public AutoTestParallel1(Drivetrain drive, Pneumatics shift, Turret turret, Processor processor, Shooter shooter, NetworkTableQuerier ntables) {
+  public AutoTestParallel1(Drivetrain drivetrain, Pneumatics pneumatics, Turret turret, Processor processor, Shooter shooter, NetworkTableQuerier ntables) {
     // Add your commands in the super() call, e.g.
     // super(new FooCommand(), new BarCommand());
-    super(/*new ControlShooterSpeed(shooter, ntables), */new AutoTestGroup2(drive, shift, turret, processor, ntables));
+    super(new AutoDriveToBallThatWorks(drivetrain, pneumatics, ntables, 20));//, new RunProcessor(processor, false));
   }
 }

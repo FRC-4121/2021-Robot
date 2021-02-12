@@ -14,14 +14,17 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.extraClasses.PIDControl;
 
 public class Processor extends SubsystemBase {
   
   private WPI_TalonSRX intake = new WPI_TalonSRX(INTAKE);
   private CANSparkMax processorMain = new CANSparkMax(PROCESSOR_MAIN, MotorType.kBrushless);
   private WPI_TalonSRX processorLock = new WPI_TalonSRX(PROCESSOR_END);
+  private DigitalInput processorEntry = new DigitalInput(PROCESSOR_INDEX_1);
   
   public Processor() {
 
@@ -33,6 +36,8 @@ public class Processor extends SubsystemBase {
 
     SmartDashboard.putNumber("Processor Current", processorMain.getOutputCurrent());
 
+    //Index via photoelectric sensor
+    SmartDashboard.putBoolean("Processor Entry Clear", getProcessorEntry());
     //boolean logic tree for default setup
   }
 
@@ -72,4 +77,8 @@ public class Processor extends SubsystemBase {
   public void deflectBalls(){}
 
   public void vomitBalls(){}
+
+  public boolean getProcessorEntry(){
+    return processorEntry.get();
+  }
 }
