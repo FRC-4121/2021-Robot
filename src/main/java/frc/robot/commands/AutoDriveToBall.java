@@ -1,132 +1,164 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
+/*----------------------------------------------------------------------------*/
+/* Copyright (c) 2019 FIRST. All Rights Reserved.                             */
+/* Open Source Software - may be modified and shared by FRC teams. The code   */
+/* must be accompanied by the FIRST BSD license file in the root directory of */
+/* the project.                                                               */
+/*----------------------------------------------------------------------------*/
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
-import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.Processor;
-import frc.robot.subsystems.NetworkTableQuerier;
 import static frc.robot.Constants.*;
 import static frc.robot.Constants.DrivetrainConstants.*;
+import static frc.robot.Constants.PneumaticsConstants.*;
 import frc.robot.extraClasses.PIDControl;
-
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.subsystems.Pneumatics;
+import frc.robot.subsystems.Processor;
+import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.NetworkTableQuerier;
 
 public class AutoDriveToBall extends CommandBase {
-
-  /**
-   * Declare variables
-   */
-  private final Drivetrain drivetrain;
-  // private final NetworkTableQuerier ntables;
-  private final Processor processor;
-  private Timer timer;
-  private double startTime;
-  private double speedCorrection;
-  private double angleCorrection;
-  private double speedMultiplier;
-  private PIDControl pidAngle;
-  private PIDControl pidSpeed;
-  private double stopTime;
   
-  /** 
-   * Constructs a new AutoDriveToBall command
-   */
-  public AutoDriveToBall(Drivetrain drive, NetworkTableQuerier tables, Processor tunnel, double time) {
-    
-    //Declare required subsystems
-    drivetrain = drive;
-    processor = tunnel;
-    // ntables = tables;
-    addRequirements(drivetrain, processor);
+  private final Drivetrain drivetrain;
+  private final Pneumatics shifter;
+  private final NetworkTableQuerier ntables;
+  // private final Processor processor;
 
-    //Create new timer and controllers
-    timer = new Timer();
-    pidAngle = new PIDControl(kP_Turn, kI_Turn, kD_Turn);
-    pidSpeed = new PIDControl(kP_Straight, kI_Straight, kD_Straight);
+  private double targetDistance;
+  private double targetAngle;
+  private double direction;
+  private double stopTime;
+
+  private double angleCorrection, angleError, speedCorrection;
+  private double startTime;
+  private double distanceTraveled;
+
+  private double targetGyro;
+  private double actualGyro;
+  private boolean holdGyro;
+
+  private double leftEncoderStart;
+  private double rightEncoderStart;
+
+  private boolean ballOnBoard;
+
+  private Timer timer = new Timer();
+  private PIDControl pidAngle; 
+
+
+  public AutoDriveToBall(Drivetrain drive, Pneumatics shift, NetworkTableQuerier table, double time) {
+    // processor = process;
+    drivetrain = drive;
+    shifter = shift;
+    ntables = table;
+    addRequirements(drivetrain, shifter);
+
     stopTime = time;
 
-
+    pidAngle = new PIDControl(kP_Turn, kI_Turn, kD_Turn);
   }
 
-
-  /**
-   * Initialize command
-   */
+  // Called when the command is initially scheduled.
   @Override
   public void initialize() {
 
-    //Start timer and save init time.
     timer.start();
     startTime = timer.get();
-    
-    
 
+    angleCorrection = 0;
+    angleError = 0;
+    speedCorrection = 1;
+
+    holdGyro = false;
+    targetGyro = drivetrain.getGyroAngle();
+    actualGyro = drivetrain.getGyroAngle();
+
+    ballOnBoard = true;
+
+    shifter.shiftUp();
+    // shifter.retractIntake();
   }
 
-
-  /**
-   * Execute the functions of the command
-   */
+  // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    // checks if the robot is far from the ball goes faster if its far away
-    // if(ntables.getVisionDouble("BallScreenPercent0") < 3) {
-      
-    //   speedMultiplier = 0.8; 
-    // }
-    // else
-    // {
-    //   speedMultiplier = 0.6; 
-    // }
+
+    // Get vision values
+    double ballOffset = ntables.getVisionDouble("BallOffset0");
+    double ballDistance = ntables.getVisionDouble("BallDistance0");
+    boolean foundBall = ntables.getVisionBoolean("FoundBall");
     
-    // double ballOffset = ntables.getVisionDouble("BallOffset0");
-    // angleCorrection = pidAngle.run(ballOffset, 0);
-    // SmartDashboard.putNumber("AutoBallAngleCorr", angleCorrection);
-    angleCorrection = 0;
-    speedMultiplier = 1;
-    drivetrain.autoDrive(-(speedMultiplier * kAutoDriveSpeed + angleCorrection), -(speedMultiplier * kAutoDriveSpeed - angleCorrection));
-    // drivetrain.autoDrive(-0.8, -0.8);
 
-    //processor.runProcessor(false);
-  }
+    // Check distance and set hold flag if close enough
+    if ((ballDistance < 30) || (foundBall == false)){
+      holdGyro = true;
+    }
+    SmartDashboard.putBoolean("HoldGyro", holdGyro);
 
+    // Read current gyro angle
+    actualGyro = drivetrain.getGyroAngle();
 
-  /**
-   * Perform cleanup tasks when command ends
-   */
-  @Override
-  public void end(boolean interrupted) {
+    // Update target gyro angle unless we are holding
+    if (holdGyro == false){
+      targetGyro = actualGyro;
+    }
+    
+    SmartDashboard.putNumber("ActualGyro", actualGyro);
+    SmartDashboard.putNumber("TargetGyro", targetGyro);
+
+    // Calculate correction based on ball offset if far away
+    // or based on gyro angle if close enough
+    if (holdGyro == false){
+      angleCorrection = pidAngle.run(ballOffset, 0);
+    } else {
+      angleCorrection = pidAngle.run(actualGyro, targetGyro);
+    }
+    
+    // Calculate speed correction based on distance
+    if ((ballDistance > 30) && foundBall == true){
+      speedCorrection = 0.8;
+    }else{
+      speedCorrection = 0.5;
+    }
+    SmartDashboard.putNumber("SpeedCorrect", speedCorrection);
+
+    // Run drive train
+    direction = -1;
+    drivetrain.autoDrive(speedCorrection * direction * kAutoDriveSpeed + angleCorrection, speedCorrection * direction*kAutoDriveSpeed - angleCorrection);
+    SmartDashboard.putNumber("Angle Correction", angleCorrection);
     // processor.runProcessor(false);
   }
 
-
-  /**
-   * Check if the command should end
-   */
+  // Called once the command ends or is interrupted.
   @Override
-  public boolean isFinished() {
-
-    boolean thereYet = false;
-    
-   /* if(!processor.getProcessorEntry()) {
-      thereYet = true;
-
-    } 
-    else*/ if (stopTime<=timer.get()-startTime){
-      thereYet = true;
-
-    }
-    SmartDashboard.putBoolean("There Yet", thereYet);
-
-    
-    return thereYet;
-  
+  public void end(boolean interrupted) {
+    drivetrain.stopDrive();
   }
 
+  // Returns true when the command should end.
+  @Override
+  public boolean isFinished() {
+    
+    boolean thereYet = false;
+
+    double time = timer.get();
+
+    ballOnBoard = drivetrain.getProcessorEntry();
+ 
+    SmartDashboard.putNumber("Auto Time", time);
+    SmartDashboard.putNumber("Auto Start Time", startTime);
+    SmartDashboard.putBoolean("BallOnBoard", ballOnBoard);
+
+    if(ballOnBoard == false) {
+      thereYet = true;
+    }
+    else if (stopTime <= time - startTime){
+      thereYet = true;
+    }
+    SmartDashboard.putBoolean("Auto TY", thereYet);
+    return thereYet;
+
+  }
 }

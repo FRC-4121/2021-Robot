@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.extraClasses.*;
 
 /**
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -41,6 +42,7 @@ public class RobotContainer {
   private final Shooter shooter = new Shooter();
   private final Turret turret = new Turret();
   private final Processor processor = new Processor();
+  private final Processor2 process2 = new Processor2();
   private final Pneumatics pneumatics = new Pneumatics();
   public final NetworkTableQuerier ntables = new NetworkTableQuerier();
   private final CameraController camera = new CameraController();
@@ -92,6 +94,8 @@ public class RobotContainer {
   private final JoystickButton hoodUp = new JoystickButton(testingJoystick, 7);
   private final JoystickButton hoodDown = new JoystickButton(testingJoystick, 8);
 
+  // Ball Location Data
+  private BallData ballLocations = new BallData();
 
   /**
    * The container for the robot.  Contains subsystems, OI devices, and commands.
@@ -160,8 +164,10 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
-    // return new AutoDriveToBall(drivetrain, ntables, processor, 10);
-    return new AutoTestParallel1(drivetrain, pneumatics, turret, processor, shooter, ntables);
+    // return new AutoDriveToBall(drivetrain, pneumatics, ntables, 30);
+    return new AutoTestParallel1(drivetrain, pneumatics, turret, process2, shooter, ntables);
+    // return new AutoRunProcessor(processor, false, 10);
+    //return new AutoTestGroup1(drivetrain, pneumatics, processor, ntables);
   }
 
 
@@ -179,4 +185,21 @@ public class RobotContainer {
   //   return music;  
   // }
 
+  public void SetBallLocation(double ball, double offset){
+
+    if (ball == 2){
+      ballLocations.SetBallOffset2(offset);
+    
+    } else {
+      ballLocations.SetBallOffset3(offset);
+    }
+  }
+
+  public double GetBallLocation(double ball){
+    if (ball == 2){
+      return ballLocations.GetBallOffset2();
+    } else {
+      return ballLocations.GetBallOffset3();
+    }
+  }
 }
