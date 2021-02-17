@@ -13,6 +13,7 @@ import static frc.robot.Constants.ClimberConstants.*;
 import static frc.robot.Constants.ShooterConstants.*;
 import frc.robot.subsystems.*;
 import frc.robot.commands.*;
+import frc.robot.extraClasses.*;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.SPI;
@@ -94,8 +95,8 @@ public class RobotContainer {
   private final JoystickButton hoodUp = new JoystickButton(testingJoystick, 7);
   private final JoystickButton hoodDown = new JoystickButton(testingJoystick, 8);
 
-  // Ball Location Data
-  private BallData ballLocations = new BallData();
+  // Extra Classes
+  public final BallData ballData = new BallData();
 
   /**
    * The container for the robot.  Contains subsystems, OI devices, and commands.
