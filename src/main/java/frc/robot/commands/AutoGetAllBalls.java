@@ -118,12 +118,14 @@ public class AutoGetAllBalls extends CommandBase {
 
       // Get angle to the next ball
       nextBallAngle = balldata.getBallToBallAngle(ballCount);
+      nextBallAngle = 30;
+      SmartDashboard.putNumber("NextBallAngle", nextBallAngle);
 
       // Calculate angle correction
-      angleCorrection = pidAngle.run(currentGyroAngle, targetGyroAngle);
+      angleCorrection = pidAngle.run(currentGyroAngle, nextBallAngle);
 
       // Fix speed correction and run drivetrain
-      speedCorrection = 0.5;
+      speedCorrection = 1;
       drivetrain.autoDrive(direction * speedCorrection *  kAutoDriveSpeed + angleCorrection, direction * speedCorrection * kAutoDriveSpeed - angleCorrection);
 
     } 
@@ -185,6 +187,7 @@ public class AutoGetAllBalls extends CommandBase {
   public boolean isFinished() {
 
     SmartDashboard.putNumber("Ball Count", ballCount);
+    SmartDashboard.putBoolean("ExecuteTurn", executeTurn);
     // Initialize stopping flag
     boolean thereYet = false;
   
@@ -285,7 +288,7 @@ public class AutoGetAllBalls extends CommandBase {
 
     // Calculate ball to ball angles
     balldata.calcInterBallAngles();
-
+    
   }
 
 }
