@@ -9,7 +9,10 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.NetworkTableQuerier;
 import frc.robot.subsystems.Pneumatics;
+import frc.robot.subsystems.Processor;
+import frc.robot.subsystems.Processor2;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
@@ -18,9 +21,9 @@ public class AutoTestGroup1 extends SequentialCommandGroup {
   /**
    * Creates a new AutoTestGroup1.
    */
-  public AutoTestGroup1(Drivetrain drive, Pneumatics shift) {
+  public AutoTestGroup1(Drivetrain drive, Pneumatics shift, Processor2 process, NetworkTableQuerier ntables) {
     // Add your commands in the super() call, e.g.
     // super(new FooCommand(), new BarCommand());
-    super(new AutoDrive(drive, shift, 115, -30, 1, 5), new AutoDrive(drive, shift, 100, 0, 1, 5));
+    super(new AutoDriveToBall(drive, shift, ntables, 5), new AutoRunProcessor(process, false, 5));
   }
 }

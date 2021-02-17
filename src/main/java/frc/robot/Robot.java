@@ -80,6 +80,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     autonomousCommand = robotContainer.getAutonomousCommand();
+    //robotContainer.SetBallLocation(2, offset);
 
     // schedule the autonomous command (example)
     if (autonomousCommand != null) {

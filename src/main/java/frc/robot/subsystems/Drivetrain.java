@@ -14,6 +14,7 @@ import static frc.robot.Constants.PneumaticsConstants.*;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import edu.wpi.first.wpilibj.DigitalInput;
 
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.LinearFilter;
@@ -37,6 +38,8 @@ public class Drivetrain extends SubsystemBase {
   private SpeedControllerGroup rightMotorGroup;
 
   private DifferentialDrive drivetrain;
+
+  private DigitalInput processorEntry = new DigitalInput(PROCESSOR_INDEX_1);
 
   
   /** 
@@ -337,4 +340,7 @@ public class Drivetrain extends SubsystemBase {
 
   }
 
+  public boolean getProcessorEntry(){
+    return processorEntry.get();
+  }
 }

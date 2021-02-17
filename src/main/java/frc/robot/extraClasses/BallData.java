@@ -4,7 +4,6 @@
 
 package frc.robot.extraClasses;
 
-
 /** BallData Class
  * 
  * Holds values related to the initial ball positions
@@ -156,6 +155,6 @@ public class BallData {
             }
 
         }
-    }
+
 
 }
