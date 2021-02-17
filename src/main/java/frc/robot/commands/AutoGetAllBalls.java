@@ -10,6 +10,7 @@ import frc.robot.extraClasses.PIDControl;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.Pneumatics;
+import frc.robot.subsystems.Processor2;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.NetworkTableQuerier;
 import frc.robot.extraClasses.BallData;
@@ -25,6 +26,7 @@ public class AutoGetAllBalls extends CommandBase {
   // Declare class variables
   private final Drivetrain drivetrain;
   private final Pneumatics shifter;
+  private final Processor2 processor;
   private final NetworkTableQuerier ntables;
   private final BallData balldata;
 
@@ -52,18 +54,19 @@ public class AutoGetAllBalls extends CommandBase {
 
 
   /** Default constructor */
-  public AutoGetAllBalls(Drivetrain drive, Pneumatics shift, NetworkTableQuerier table, BallData data, double deadband, double time) {
+  public AutoGetAllBalls(Drivetrain drive, Pneumatics shift, Processor2 process, NetworkTableQuerier table, BallData data, double deadband, double time) {
 
     // Set class variables
     drivetrain = drive;
     shifter = shift;
+    processor = process;
     ntables = table;
     balldata = data;
     angleDeadband = deadband;
     stopTime = time;
 
     // Add subsystem requirements
-    addRequirements(drivetrain, shifter);
+    addRequirements(drivetrain, shifter, processor);
     
     // Create the PID controller
     pidAngle = new PIDControl(kP_Turn, kI_Turn, kD_Turn);
@@ -133,7 +136,7 @@ public class AutoGetAllBalls extends CommandBase {
       // Check if we are close enough and centered enough to hold the angle
       if (holdAngle == false) {
 
-        if (ballDistance < 20 && Math.abs(ballOffset) < 5) {
+        if (ballDistance < 35 && Math.abs(ballOffset) < 5) {
 
           holdAngle = true;
           targetGyroAngle = currentGyroAngle;
@@ -154,6 +157,7 @@ public class AutoGetAllBalls extends CommandBase {
 
       }
       SmartDashboard.putNumber("Angle Correction", angleCorrection);
+      SmartDashboard.putBoolean("Hold Angle", holdAngle);
 
       // Determine speed correction based on distance
       if (ballDistance > 20) {
@@ -168,7 +172,9 @@ public class AutoGetAllBalls extends CommandBase {
 
       // Run the drivetrain
       drivetrain.autoDrive(direction * speedCorrection *  kAutoDriveSpeed + angleCorrection, direction * speedCorrection * kAutoDriveSpeed - angleCorrection);
-  
+      
+      //Run the processor
+      processor.autoRunProcessor(false);
     }
 
   }
@@ -178,8 +184,11 @@ public class AutoGetAllBalls extends CommandBase {
   @Override
   public boolean isFinished() {
 
+    SmartDashboard.putNumber("Ball Count", ballCount);
     // Initialize stopping flag
     boolean thereYet = false;
+  
+    SmartDashboard.putBoolean("ThereYet", thereYet);
 
     // Get current time
     double time = timer.get();
@@ -198,6 +207,7 @@ public class AutoGetAllBalls extends CommandBase {
         // Get angles
         double currentAngle = drivetrain.getGyroAngle();
         double targetAngle = balldata.getBallToBallAngle(ballCount - 1);
+        SmartDashboard.putNumber("TargetAngle", targetAngle);
 
         // Check for same angle within deadband
         if (Math.abs(targetAngle - currentAngle) <= angleDeadband) {
@@ -226,9 +236,7 @@ public class AutoGetAllBalls extends CommandBase {
             holdAngle = false;
 
           }
-
         }
-
       }
 
     }
@@ -244,7 +252,7 @@ public class AutoGetAllBalls extends CommandBase {
   public void end(boolean interrupted) {
 
     drivetrain.stopDrive();
-
+    processor.stopProcessor();
   }
 
 

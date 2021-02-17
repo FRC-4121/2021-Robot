@@ -101,6 +101,7 @@ public class Drivetrain extends SubsystemBase {
       zeroEncoders();
     }
 
+    SmartDashboard.putBoolean("Processor Entry", getProcessorEntry());
 
   }
 

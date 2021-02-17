@@ -166,9 +166,10 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
     // return new AutoDriveToBall(drivetrain, pneumatics, ntables, 30);
-    return new AutoTestParallel1(drivetrain, pneumatics, turret, process2, shooter, ntables);
+    // return new AutoTestParallel1(drivetrain, pneumatics, turret, process2, shooter, ntables);
     // return new AutoRunProcessor(processor, false, 10);
     //return new AutoTestGroup1(drivetrain, pneumatics, processor, ntables);
+    return new AutoGetAllBalls(drivetrain, pneumatics, process2, ntables, ballData, 2, 30);
   }
 
 
@@ -186,21 +187,21 @@ public class RobotContainer {
   //   return music;  
   // }
 
-  public void SetBallLocation(double ball, double offset){
+  // public void SetBallLocation(double ball, double offset){
 
-    if (ball == 2){
-      ballLocations.SetBallOffset2(offset);
+  //   if (ball == 2){
+  //     ballData.SetBallOffset2(offset);
     
-    } else {
-      ballLocations.SetBallOffset3(offset);
-    }
-  }
+  //   } else {
+  //     ballLocations.SetBallOffset3(offset);
+  //   }
+  // }
 
-  public double GetBallLocation(double ball){
-    if (ball == 2){
-      return ballLocations.GetBallOffset2();
-    } else {
-      return ballLocations.GetBallOffset3();
-    }
-  }
+  // public double GetBallLocation(double ball){
+  //   if (ball == 2){
+  //     return ballLocations.GetBallOffset2();
+  //   } else {
+  //     return ballLocations.GetBallOffset3();
+  //   }
+  // }
 }
