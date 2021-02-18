@@ -25,6 +25,20 @@ public class Processor2 extends SubsystemBase {
     // This method will be called once per scheduler run
   }
 
+  public void runProcessor(boolean invertDirection){
+
+    if(!invertDirection)
+    {
+      processorMain.set(kProcessorSpeed);
+      intake.set(kIntakeSpeed);
+    }
+    else 
+    {
+      processorMain.set(-kProcessorSpeed);
+      intake.set(kOuttakeSpeed);
+    }
+  }
+
   public void autoRunProcessor(boolean invertDirection){
 
     if(!invertDirection)

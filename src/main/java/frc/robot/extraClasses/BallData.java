@@ -122,37 +122,47 @@ public class BallData {
             if (ballAngles[i] == 0.0) {
 
                 side1 = ballOffsets[i+1];
-                Double term1 = ballOffsets[i+1] / Math.tan(Math.toRadians(Math.abs(ballAngles[i+1])));
-                side2 = term1 - ballDistances[0];
+                // Double term1 = ballOffsets[i+1] / Math.tan(Math.toRadians(Math.abs(ballAngles[i+1])));
+                side2 = Math.abs(ballDistances[i+1] - ballDistances[i]);
 
             }
             else if (ballAngles[i+1] == 0.0) {
 
                 side1 = ballOffsets[i];
-                Double term2 = ballOffsets[i] / Math.tan(Math.toRadians(Math.abs(ballAngles[i])));
-                side2 = ballDistances[i+1] - term2;
+                // Double term2 = ballOffsets[i] / Math.tan(Math.toRadians(Math.abs(ballAngles[i])));
+                side2 = Math.abs(ballDistances[i+1] - ballDistances[i]);
 
             }
             else {
 
-                side1 = ballOffsets[i] + ballOffsets[i+1];
-                Double term1 = ballOffsets[i+1] / Math.tan(Math.toRadians(Math.abs(ballAngles[i+1])));
-                Double term2 = ballOffsets[i] / Math.tan(Math.toRadians(Math.abs(ballAngles[i])));
-                side2 = term1 - term2;
+                side1 = Math.abs(ballOffsets[i]) + Math.abs(ballOffsets[i+1]);
+                // Double term1 = ballOffsets[i+1] / Math.tan(Math.toRadians(Math.abs(ballAngles[i+1])));
+                // Double term2 = ballOffsets[i] / Math.tan(Math.toRadians(Math.abs(ballAngles[i])));
+                // side2 = term1 - term2;
+                side2 = Math.abs(ballDistances[i+1] - ballDistances[i]);
 
             }
 
-            // Calculate angle based on sides
-            if (ballOffsets[i] < ballOffsets[i+1]) {
+            double angle = Math.toDegrees(Math.atan(side1 / side2));
 
-                ballToBallAngles[i] = -Math.toDegrees(Math.atan(side1 / side2));
-
+            //Correction for when we need a negative angle.
+            if (ballOffsets[i] < ballOffsets[i+1]){
+                angle *= -1;
             }
-            else {
+            
+            //Compensate for robot overshoot on sharp angles
+            // if (angle < -45){
+            //     angle = angle - 15;
+            // } else if (angle > 45) {
+            //     angle = angle + 15;
+            // }
 
-                ballToBallAngles[i] = Math.toDegrees(Math.atan(side1 / side2));
-
-            }
+            ballToBallAngles[i] = angle;
+            // if (i == 0){
+            //     ballToBallAngles[i] = 30;
+            // } else {
+            //     ballToBallAngles[i] = -90;
+            // }
 
         }
 

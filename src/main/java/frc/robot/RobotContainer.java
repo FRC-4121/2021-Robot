@@ -60,8 +60,8 @@ public class RobotContainer {
   private final OperateArm operateIntakeArm = new OperateArm(pneumatics);
 
   //Processor
-  private final RunProcessor runProcessor = new RunProcessor(processor, false);
-  private final RunProcessor invertProcessor = new RunProcessor(processor, true);
+  private final RunProcessor runProcessor = new RunProcessor(process2, false);
+  private final RunProcessor invertProcessor = new RunProcessor(process2, true);
 
   //Shooter
   private final RunTurret clockwise = new RunTurret(turret, -kTurretSpeedManual);

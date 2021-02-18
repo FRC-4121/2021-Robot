@@ -22,6 +22,6 @@ public class AutoRaceParallel2 extends ParallelRaceGroup {
   public AutoRaceParallel2(Drivetrain drive, Pneumatics shift, Processor processor) {
     // Add your commands in the super() call, e.g.
     // super(new FooCommand(), new BarCommand());
-    super(new RunProcessor(processor, false));
+    // super(new RunProcessor(process, false));
   }
 }

@@ -24,7 +24,7 @@ public class Processor extends SubsystemBase {
   private WPI_TalonSRX intake = new WPI_TalonSRX(INTAKE);
   private CANSparkMax processorMain = new CANSparkMax(PROCESSOR_MAIN, MotorType.kBrushless);
   private WPI_TalonSRX processorLock = new WPI_TalonSRX(PROCESSOR_END);
-  
+   
   
   public Processor() {
 

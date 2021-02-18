@@ -112,13 +112,16 @@ public class AutoGetAllBalls extends CommandBase {
 
     // Get guro angle
     currentGyroAngle = drivetrain.getGyroAngle();
+    
+    SmartDashboard.putNumber("BallAngle1", balldata.getBallToBallAngle(0));
+    SmartDashboard.putNumber("BallAngle2", balldata.getBallToBallAngle(1));
 
     // Check if executing turn or driving to ball
     if (executeTurn) {
 
       // Get angle to the next ball
-      nextBallAngle = balldata.getBallToBallAngle(ballCount);
-      nextBallAngle = 30;
+      nextBallAngle = balldata.getBallToBallAngle(ballCount - 1);
+      // nextBallAngle = 30;
       SmartDashboard.putNumber("NextBallAngle", nextBallAngle);
 
       // Calculate angle correction
