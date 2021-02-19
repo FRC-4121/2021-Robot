@@ -137,7 +137,7 @@ public class AutoGetAllBalls extends CommandBase {
       angleCorrection = pidAngle.run(currentGyroAngle, nextBallAngle);
 
       // Fix speed correction and run drivetrain
-      speedCorrection = 0.5;
+      speedCorrection = 0.75;
       drivetrain.autoDrive(direction * speedCorrection *  kAutoDriveSpeed + angleCorrection, direction * speedCorrection * kAutoDriveSpeed - angleCorrection);
 
     }
@@ -156,7 +156,7 @@ public class AutoGetAllBalls extends CommandBase {
       double totalRotationsRight = Math.abs((drivetrain.getMasterRightEncoderPosition() - rightEncoderStart));
       double totalRotationsLeft = Math.abs((drivetrain.getMasterLeftEncoderPosition() - leftEncoderStart));
       distanceTraveled = (kWheelDiameter * Math.PI * (totalRotationsLeft + totalRotationsRight) / 2.0) / AUTO_ENCODER_REVOLUTION_FACTOR;
-   
+      SmartDashboard.putNumber("Distance Traveled", distanceTraveled);
     } else {
 
       // Get current values from vision and gyro
@@ -196,7 +196,7 @@ public class AutoGetAllBalls extends CommandBase {
 
       } else {
 
-        speedCorrection = 0.5;
+        speedCorrection = 0.75;
 
       }
 
@@ -216,6 +216,7 @@ public class AutoGetAllBalls extends CommandBase {
 
     SmartDashboard.putNumber("Ball Count", ballCount);
     SmartDashboard.putBoolean("ExecuteTurn", executeTurn);
+    SmartDashboard.putBoolean("EndRun", endRun);
     // Initialize stopping flag
     boolean thereYet = false;
   
@@ -267,6 +268,7 @@ public class AutoGetAllBalls extends CommandBase {
 
             // Move to ending the run
             endRun = true;
+            executeTurn = false;
             
             //Reset the encoders for the distance-driving part of the program
             drivetrain.zeroEncoders();
