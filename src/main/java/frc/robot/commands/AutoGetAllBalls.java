@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.Pneumatics;
 import frc.robot.subsystems.Processor2;
 import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.NetworkTableQuerier;
+import frc.robot.extraClasses.NetworkTableQuerier;
 import frc.robot.extraClasses.BallData;
 
 
@@ -32,6 +32,7 @@ public class AutoGetAllBalls extends CommandBase {
 
   private int ballCount;
 
+  private boolean endRun;
   private boolean executeTurn;
   private boolean holdAngle;
 
@@ -47,6 +48,11 @@ public class AutoGetAllBalls extends CommandBase {
   private double currentGyroAngle;
   private double targetGyroAngle;
   private double angleDeadband;
+
+  private double distanceTraveled;
+  private double targetDistance;
+  private double leftEncoderStart;
+  private double rightEncoderStart;
 
   private Timer timer;
 
@@ -89,6 +95,8 @@ public class AutoGetAllBalls extends CommandBase {
     speedCorrection = 1;
     ballCount = 0;
     targetGyroAngle = 0;
+    distanceTraveled = 0;
+    targetDistance = 96;//in inches; test value, possibly can be shortened slightly
 
     // Shift into high gear
     shifter.shiftUp();
@@ -99,6 +107,7 @@ public class AutoGetAllBalls extends CommandBase {
     // Initialize flags
     executeTurn = false;
     holdAngle = false;
+    endRun = false;
 
     // Zero gyro angle
     drivetrain.zeroGyro();
@@ -128,11 +137,27 @@ public class AutoGetAllBalls extends CommandBase {
       angleCorrection = pidAngle.run(currentGyroAngle, nextBallAngle);
 
       // Fix speed correction and run drivetrain
-      speedCorrection = 1;
+      speedCorrection = 0.5;
       drivetrain.autoDrive(direction * speedCorrection *  kAutoDriveSpeed + angleCorrection, direction * speedCorrection * kAutoDriveSpeed - angleCorrection);
 
-    } 
-    else {
+    }
+    //If we are finishing the run (because we have three balls)
+    else if (endRun){
+
+      //Orient to 0 degrees
+      double targetAngle = 0;
+      angleCorrection = pidAngle.run(currentGyroAngle, targetAngle);
+      speedCorrection = 1.0;
+
+      //Drive
+      drivetrain.autoDrive(direction * speedCorrection *  kAutoDriveSpeed + angleCorrection, direction * speedCorrection * kAutoDriveSpeed - angleCorrection);
+      
+      //Count encoder revs until such distance that we definitely get past the line
+      double totalRotationsRight = Math.abs((drivetrain.getMasterRightEncoderPosition() - rightEncoderStart));
+      double totalRotationsLeft = Math.abs((drivetrain.getMasterLeftEncoderPosition() - leftEncoderStart));
+      distanceTraveled = (kWheelDiameter * Math.PI * (totalRotationsLeft + totalRotationsRight) / 2.0) / AUTO_ENCODER_REVOLUTION_FACTOR;
+   
+    } else {
 
       // Get current values from vision and gyro
       ballDistance = ntables.getVisionDouble("BallDistance0");
@@ -165,7 +190,7 @@ public class AutoGetAllBalls extends CommandBase {
       SmartDashboard.putBoolean("Hold Angle", holdAngle);
 
       // Determine speed correction based on distance
-      if (ballDistance > 20) {
+      if (ballDistance > 40) {
 
         speedCorrection = 1;
 
@@ -222,6 +247,14 @@ public class AutoGetAllBalls extends CommandBase {
 
         }
 
+      //If we are finishing the run
+      } else if (endRun) {
+
+        //Check if distance is far enough yet, then stop
+        if (distanceTraveled > targetDistance){
+          thereYet = true;
+        }
+
       } else {
 
         if(drivetrain.getProcessorEntry() == false) {
@@ -232,8 +265,13 @@ public class AutoGetAllBalls extends CommandBase {
           // Check if we have picked up last ball
           if (ballCount == 3) {
 
-            // Set stopping flag
-            thereYet = true;
+            // Move to ending the run
+            endRun = true;
+            
+            //Reset the encoders for the distance-driving part of the program
+            drivetrain.zeroEncoders();
+            leftEncoderStart = drivetrain.getMasterLeftEncoderPosition();
+            rightEncoderStart = drivetrain.getMasterRightEncoderPosition();
 
           } else {
 

@@ -17,7 +17,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Pneumatics;
 import frc.robot.subsystems.Processor;
 import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.NetworkTableQuerier;
+import frc.robot.extraClasses.NetworkTableQuerier;
 
 public class AutoDriveToBall extends CommandBase {
   

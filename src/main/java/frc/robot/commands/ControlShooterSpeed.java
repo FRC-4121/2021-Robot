@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.extraClasses.Ballistics;
 import frc.robot.extraClasses.PIDControl;
-import frc.robot.subsystems.NetworkTableQuerier;
+import frc.robot.extraClasses.NetworkTableQuerier;
 import frc.robot.subsystems.Shooter;
 
 import static frc.robot.Constants.ShooterConstants.*;
