@@ -96,7 +96,7 @@ public class AutoGetAllBalls extends CommandBase {
     ballCount = 0;
     targetGyroAngle = 0;
     distanceTraveled = 0;
-    targetDistance = 96;//in inches; test value, possibly can be shortened slightly
+    targetDistance = 150;//in inches; test value, possibly needs slight adjustment
 
     // Shift into high gear
     shifter.shiftUp();
