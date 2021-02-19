@@ -33,8 +33,6 @@ public class RunProcessor extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    timer.start();
-    startTime = timer.get();
 
   }
 
@@ -44,15 +42,12 @@ public class RunProcessor extends CommandBase {
 
     processor.runProcessor(invert);
     //processor.lockProcessor();
-    time = timer.get();
-    SmartDashboard.putNumber("Processor Time", time);
-    SmartDashboard.putNumber("Processor Start Time", startTime);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    processor.stopProcessor();
+    // processor.stopProcessor();
   }
 
   // Returns true when the command should end.
@@ -61,11 +56,6 @@ public class RunProcessor extends CommandBase {
     
     boolean thereYet = false;
     
-    if (5 <= time - startTime){
-      thereYet = true;
-    }
-    SmartDashboard.putBoolean("Processor TY", thereYet);
-
     return thereYet;
   }
 }
