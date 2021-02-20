@@ -165,11 +165,8 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
-    // return new AutoDriveToBall(drivetrain, pneumatics, ntables, 30);
-    // return new AutoTestParallel1(drivetrain, pneumatics, turret, process2, shooter, ntables);
-    // return new AutoRunProcessor(processor, false, 10);
-    //return new AutoTestGroup1(drivetrain, pneumatics, processor, ntables);
-    return new AutoGetAllBalls(drivetrain, pneumatics, process2, ntables, ballData, 2, 30);
+    // return new AutoDrive(drivetrain, pneumatics, 50, 0, 1, 10);
+    return new AutoGetAllBalls(drivetrain, pneumatics, process2, ntables, ballData, 2, 100);
   }
 
 

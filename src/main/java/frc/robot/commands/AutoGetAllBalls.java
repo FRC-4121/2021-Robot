@@ -97,6 +97,8 @@ public class AutoGetAllBalls extends CommandBase {
     targetGyroAngle = 0;
     distanceTraveled = 0;
     targetDistance = 150;//in inches; test value, possibly needs slight adjustment
+    leftEncoderStart = 0;
+    rightEncoderStart = 0;
 
     // Shift into high gear
     shifter.shiftUp();
@@ -124,7 +126,7 @@ public class AutoGetAllBalls extends CommandBase {
     
     SmartDashboard.putNumber("BallAngle1", balldata.getBallToBallAngle(0));
     SmartDashboard.putNumber("BallAngle2", balldata.getBallToBallAngle(1));
-
+    SmartDashboard.putNumber("Distance Traveled", distanceTraveled);
     // Check if executing turn or driving to ball
     if (executeTurn) {
 
@@ -137,7 +139,12 @@ public class AutoGetAllBalls extends CommandBase {
       angleCorrection = pidAngle.run(currentGyroAngle, nextBallAngle);
 
       // Fix speed correction and run drivetrain
-      speedCorrection = 0.75;
+      if (Math.abs(nextBallAngle) > 45){
+        speedCorrection = .75;
+      } else {
+        speedCorrection = .8;
+      }
+
       drivetrain.autoDrive(direction * speedCorrection *  kAutoDriveSpeed + angleCorrection, direction * speedCorrection * kAutoDriveSpeed - angleCorrection);
 
     }
@@ -157,6 +164,7 @@ public class AutoGetAllBalls extends CommandBase {
       double totalRotationsLeft = Math.abs((drivetrain.getMasterLeftEncoderPosition() - leftEncoderStart));
       distanceTraveled = (kWheelDiameter * Math.PI * (totalRotationsLeft + totalRotationsRight) / 2.0) / AUTO_ENCODER_REVOLUTION_FACTOR;
       SmartDashboard.putNumber("Distance Traveled", distanceTraveled);
+    
     } else {
 
       // Get current values from vision and gyro
@@ -166,7 +174,7 @@ public class AutoGetAllBalls extends CommandBase {
       // Check if we are close enough and centered enough to hold the angle
       if (holdAngle == false) {
 
-        if (ballDistance < 35 && Math.abs(ballOffset) < 5) {
+        if (ballDistance < 35 && Math.abs(ballOffset) < 4) {
 
           holdAngle = true;
           targetGyroAngle = currentGyroAngle;
@@ -196,13 +204,13 @@ public class AutoGetAllBalls extends CommandBase {
 
       } else {
 
-        speedCorrection = 0.75;
+        speedCorrection = 1;
 
       }
 
       // Run the drivetrain
       drivetrain.autoDrive(direction * speedCorrection *  kAutoDriveSpeed + angleCorrection, direction * speedCorrection * kAutoDriveSpeed - angleCorrection);
-      
+
       //Run the processor
       processor.autoRunProcessor(false);
     }
@@ -252,9 +260,9 @@ public class AutoGetAllBalls extends CommandBase {
       } else if (endRun) {
 
         //Check if distance is far enough yet, then stop
-        if (distanceTraveled > targetDistance){
-          thereYet = true;
-        }
+        // if (distanceTraveled > targetDistance){
+        //   thereYet = true;
+        // }
 
       } else {
 
@@ -274,6 +282,9 @@ public class AutoGetAllBalls extends CommandBase {
             drivetrain.zeroEncoders();
             leftEncoderStart = drivetrain.getMasterLeftEncoderPosition();
             rightEncoderStart = drivetrain.getMasterRightEncoderPosition();
+            SmartDashboard.putNumber("LeftEncStart", leftEncoderStart);
+            SmartDashboard.putNumber("RightEncStart", rightEncoderStart);
+            
 
           } else {
 
