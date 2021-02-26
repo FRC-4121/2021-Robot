@@ -26,10 +26,10 @@ public final class Constants {
     public static final int HOOK = -1;
 
     //Talon SRX and FX IDs (must be unique, may range from 0+)
-    public static final int LEFT_MASTER_F = 4;
-    public static final int LEFT_SLAVE_F = 2;
-    public static final int RIGHT_MASTER_F = 3;
-    public static final int RIGHT_SLAVE_F = 5;
+    public static final int LEFT_MASTER_F = 3;
+    public static final int LEFT_SLAVE_F = 5;
+    public static final int RIGHT_MASTER_F = 2;
+    public static final int RIGHT_SLAVE_F = 4;
     public static final int INTAKE = 7;
     public static final int PROCESSOR_END = 6;
     public static final int SHOOTER_MASTER = 0;
@@ -56,9 +56,9 @@ public final class Constants {
         public static final int kTimeoutMsDrive = 20;
         public static final double kTalonFXPPR = 2048;
         public static final double kWheelDiameter = 6.0;
-        public static final double kLowGearSpeedCap = 1.0;//In case full speed draws excessive power, these are an emergency measure
-        public static final double kHighGearSpeedCap = 1.0;
-        public static final double kAutoDriveSpeed = 0.70;
+        public static final double kLowGearSpeedCap = 0.8;//In case full speed draws excessive power, these are an emergency measure
+        public static final double kHighGearSpeedCap = 0.8;
+        public static final double kAutoDriveSpeed = 0.5;
         public static final double kAutoTurnSpeed = 0.5;
         public static final double kLowGearRatio = 30.0;
         public static final double kHighGearRatio = 70.0;
@@ -68,9 +68,9 @@ public final class Constants {
         public static final double kP_Straight = 0.03;
         public static final double kI_Straight = 0.0;
         public static final double kD_Straight = 0.0;
-        public static final double kP_Turn = .004;
+        public static final double kP_Turn = .003;
         public static final double kI_Turn = 0.0;
-        public static final double kD_Turn = 0.0;
+        public static final double kD_Turn = 0.0001;
 
         public static int DIRECTION_MULTIPLIER = 1;//Controls whether forward on joysticks is forward or backward on robot
     }

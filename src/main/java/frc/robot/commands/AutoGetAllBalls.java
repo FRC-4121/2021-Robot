@@ -35,6 +35,7 @@ public class AutoGetAllBalls extends CommandBase {
   private boolean endRun;
   private boolean executeTurn;
   private boolean holdAngle;
+  private boolean slowSpeed;
 
   private double ballDistance;
   private double ballAngle;
@@ -105,11 +106,13 @@ public class AutoGetAllBalls extends CommandBase {
 
     // Get the initial ball positions
     getInitialBallPositions();
+    // ntables.putVisionDouble("SaveVideo", 1);
 
     // Initialize flags
     executeTurn = false;
     holdAngle = false;
     endRun = false;
+    slowSpeed = false;
 
     // Zero gyro angle
     drivetrain.zeroGyro();
@@ -140,9 +143,9 @@ public class AutoGetAllBalls extends CommandBase {
 
       // Fix speed correction and run drivetrain
       if (Math.abs(nextBallAngle) > 45){
-        speedCorrection = .75;
+        speedCorrection = .7;
       } else {
-        speedCorrection = .8;
+        speedCorrection = .9;
       }
 
       drivetrain.autoDrive(direction * speedCorrection *  kAutoDriveSpeed + angleCorrection, direction * speedCorrection * kAutoDriveSpeed - angleCorrection);
@@ -152,8 +155,13 @@ public class AutoGetAllBalls extends CommandBase {
     else if (endRun){
 
       //Orient to 0 degrees
-      double targetAngle = 0;
-      angleCorrection = pidAngle.run(currentGyroAngle, targetAngle);
+      double markerCount = ntables.getVisionDouble("MarkersFound");
+      double markerOffset = ntables.getVisionDouble("MarkerOffset0");
+      if (markerCount < 1){
+        angleCorrection = pidAngle.run(currentGyroAngle, 0);
+      } else {
+        angleCorrection = pidAngle.run(markerOffset, 0);
+      }
       speedCorrection = 1.0;
 
       //Drive
@@ -174,7 +182,7 @@ public class AutoGetAllBalls extends CommandBase {
       // Check if we are close enough and centered enough to hold the angle
       if (holdAngle == false) {
 
-        if (ballDistance < 35 && Math.abs(ballOffset) < 4) {
+        if (ballDistance < 45 && Math.abs(ballOffset) < 3) {
 
           holdAngle = true;
           targetGyroAngle = currentGyroAngle;
@@ -198,15 +206,24 @@ public class AutoGetAllBalls extends CommandBase {
       SmartDashboard.putBoolean("Hold Angle", holdAngle);
 
       // Determine speed correction based on distance
-      if (ballDistance > 40) {
+      if (!slowSpeed)
+      {
+        if (ballDistance > 50){// && ballCount < 2 && Math.abs(nextBallAngle) < 60 ) {
 
-        speedCorrection = 1;
+          speedCorrection = 1;
 
-      } else {
+        } else {
 
-        speedCorrection = 1;
+          speedCorrection =.5;
+          slowSpeed = true;
 
+        }
       }
+      else
+      {
+        speedCorrection = .8;  
+      }
+    
 
       // Run the drivetrain
       drivetrain.autoDrive(direction * speedCorrection *  kAutoDriveSpeed + angleCorrection, direction * speedCorrection * kAutoDriveSpeed - angleCorrection);
@@ -253,12 +270,14 @@ public class AutoGetAllBalls extends CommandBase {
         if (Math.abs(targetAngle - currentAngle) <= angleDeadband) {
 
           executeTurn = false;
+          slowSpeed = false;
 
         }
 
       //If we are finishing the run
       } else if (endRun) {
 
+        speedCorrection = 1.8;
         //Check if distance is far enough yet, then stop
         // if (distanceTraveled > targetDistance){
         //   thereYet = true;
@@ -277,6 +296,7 @@ public class AutoGetAllBalls extends CommandBase {
             // Move to ending the run
             endRun = true;
             executeTurn = false;
+
             
             //Reset the encoders for the distance-driving part of the program
             drivetrain.zeroEncoders();
@@ -310,6 +330,7 @@ public class AutoGetAllBalls extends CommandBase {
 
     drivetrain.stopDrive();
     processor.stopProcessor();
+    ntables.putVisionDouble("SaveVideo", 0);
   }
 
 

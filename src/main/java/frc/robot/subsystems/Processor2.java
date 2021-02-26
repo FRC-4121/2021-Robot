@@ -17,6 +17,7 @@ public class Processor2 extends SubsystemBase {
   /** Creates a new Processor2. */
   private WPI_TalonSRX intake = new WPI_TalonSRX(INTAKE);
   private CANSparkMax processorMain = new CANSparkMax(PROCESSOR_MAIN, MotorType.kBrushless);
+  private WPI_TalonSRX lock = new WPI_TalonSRX(PROCESSOR_END);
  
   public Processor2() {}
 
@@ -45,6 +46,7 @@ public class Processor2 extends SubsystemBase {
     {
       intake.set(kIntakeSpeed);
       processorMain.set(kProcessorSpeed);
+      lock.set(kLockSpeed);
       // lockProcessor();
       
     }
@@ -58,6 +60,7 @@ public class Processor2 extends SubsystemBase {
 
     intake.set(0);
     processorMain.set(0);
+    lock.set(0);
   }
 
 }

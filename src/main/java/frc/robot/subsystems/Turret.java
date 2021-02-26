@@ -27,7 +27,7 @@ public class Turret extends SubsystemBase {
   private final CANSparkMax turret = new CANSparkMax(TURRET, MotorType.kBrushless);
   private final CANEncoder turretEncoder = turret.getEncoder();
 
-  private final CANSparkMax hood = new CANSparkMax(HOOD, MotorType.kBrushed);
+  private final CANSparkMax hood = new CANSparkMax(HOOD, MotorType.kBrushless);
   private final AnalogInput hoodEncoder = new AnalogInput(kHoodEncoder);
 
   //Declare class variables

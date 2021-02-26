@@ -42,8 +42,8 @@ public class RobotContainer {
   private final Drivetrain drivetrain = new Drivetrain();
   private final Shooter shooter = new Shooter();
   private final Turret turret = new Turret();
-  private final Processor processor = new Processor();
   private final Processor2 process2 = new Processor2();
+  private final Processor processor = new Processor();
   private final Pneumatics pneumatics = new Pneumatics();
   public final NetworkTableQuerier ntables = new NetworkTableQuerier();
   private final CameraController camera = new CameraController();
