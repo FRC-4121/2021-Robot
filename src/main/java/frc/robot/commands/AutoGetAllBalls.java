@@ -167,9 +167,9 @@ public class AutoGetAllBalls extends CommandBase {
 
       // Determine correct speed correction based on ball angle
       if (Math.abs(nextBallAngle) > 45){
-        speedCorrection = .7;
+        speedCorrection = 1;
       } else {
-        speedCorrection = .9;
+        speedCorrection = 1;
       }
 
     }
@@ -192,10 +192,12 @@ public class AutoGetAllBalls extends CommandBase {
       ballDistance = ntables.getVisionDouble("BallDistance0");
       ballOffset = ntables.getVisionDouble("BallOffset0");
 
+
+
       // Check if we are close enough and centered enough to hold the angle
       if (holdAngle == false) {
 
-        if (ballDistance < 45 && Math.abs(ballOffset) < 3) {
+        if (ballDistance < 60 && Math.abs(ballOffset) < 4) {
 
           holdAngle = true;
           targetGyroAngle = currentGyroAngle;
@@ -219,20 +221,20 @@ public class AutoGetAllBalls extends CommandBase {
       // Determine speed correction based on distance
       if (!slowSpeed)
       {
-        if (ballDistance > 50){// && ballCount < 2 && Math.abs(nextBallAngle) < 60 ) {
+        if (ballDistance > 65){// && ballCount < 2 && Math.abs(nextBallAngle) < 60 ) {
 
           speedCorrection = 1;
 
         } else {
 
-          speedCorrection =.5;
+          speedCorrection =.9;
           slowSpeed = true;
 
         }
       }
       else
       {
-        speedCorrection = .8;  
+        speedCorrection = .75;  
       }
         
     }
