@@ -23,7 +23,6 @@ public final class Constants {
     public static final int PROCESSOR_MAIN = 8;
     public static final int TURRET = 9;
     public static final int HOOD = 3;
-    public static final int HOOK = -1;
 
     //Talon SRX and FX IDs (must be unique, may range from 0+)
     public static final int LEFT_MASTER_F = 3;
@@ -37,16 +36,14 @@ public final class Constants {
 
     //Drive control port IDs
     public static final int XBOX_PORT = 0;
-    public static final int LAUNCHPAD_PORT = 1;
-    public static final int TEST_JOYSTICK_PORT = 2;
+    public static final int LEFT_JOYSTICK = 1;
+    public static final int RIGHT_JOYSTICK = 2;
 
-    //DigitalInput port IDs
+    //DigitalInput port IDs *move these to their respective subclasses please*
     public static final int TURRET_LIMIT_SWITCH  = 2;
     public static final int PROCESSOR_INDEX_1 = 0;
     public static final int PROCESSOR_INDEX_2 = 4;
 
-    //Filtering
-    public static final int FILTER_WINDOW_SIZE = 50;
 
 
     public static class DrivetrainConstants {
@@ -71,6 +68,9 @@ public final class Constants {
         public static final double kP_Turn = .003;
         public static final double kI_Turn = 0.0;
         public static final double kD_Turn = 0.0001;
+
+        //Filtering (for gyro)
+        public static final int FILTER_WINDOW_SIZE = 50;
 
         public static int DIRECTION_MULTIPLIER = 1;//Controls whether forward on joysticks is forward or backward on robot
     }
@@ -137,16 +137,6 @@ public final class Constants {
         public static final double kProcessorSpeed = -0.3;
         public static final double kUnlockSpeed = 0.9;
         public static final double kLockSpeed = -.20;
-    }
-
-    public static class ClimberConstants {
-
-        public static final int kClimbEncoderPPR = 2048;
-        public static final double kMaxHookHeight = 84;//inches
-        public static final double kShaftSize = 0.5; //diameter, inches
-        public static final double kClimberGearReduction = 1;
-        public static final double kHookSpeed = 1.0;
-        public static final double kHeightTolerance = 2;//inches
     }
 
 }

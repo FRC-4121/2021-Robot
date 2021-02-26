@@ -7,6 +7,7 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -16,11 +17,16 @@ public class DriveWithJoysticks extends CommandBase {
   
   private Drivetrain drivetrain;
   private XboxController xboxJoysticks;
+  private Joystick lJoy, rJoy;
+  private boolean useXboxControl;
   
-  public DriveWithJoysticks(Drivetrain drive, XboxController xbox) {
+  public DriveWithJoysticks(Drivetrain drive, XboxController xbox, Joystick leftJoy, Joystick rightJoy, boolean useXbox) {
 
     drivetrain = drive;
     xboxJoysticks = xbox;
+    lJoy = leftJoy;
+    rJoy = rightJoy;
+    useXboxControl = useXbox;
 
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(drivetrain);
@@ -35,8 +41,15 @@ public class DriveWithJoysticks extends CommandBase {
   @Override
   public void execute() {
 
-    //Drive using xbox joystick values
-    drivetrain.drive(xboxJoysticks.getY(Hand.kLeft), xboxJoysticks.getY(Hand.kRight));
+    if(useXboxControl){
+      //Drive using xbox joystick values
+      drivetrain.drive(xboxJoysticks.getY(Hand.kLeft), xboxJoysticks.getY(Hand.kRight));
+    }
+    else
+    {
+      //Drive using joystick values (may need to be inverted)
+      drivetrain.drive(lJoy.getY(), rJoy.getY());
+    }
   }
 
   // Called once the command ends or is interrupted.

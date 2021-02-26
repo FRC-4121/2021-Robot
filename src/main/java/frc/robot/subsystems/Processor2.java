@@ -10,7 +10,6 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import static frc.robot.Constants.*;
 import static frc.robot.Constants.ProcessorConstants.*;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Processor2 extends SubsystemBase {
@@ -38,6 +37,7 @@ public class Processor2 extends SubsystemBase {
       processorMain.set(-kProcessorSpeed);
       intake.set(kOuttakeSpeed);
     }
+    lock.set(kLockSpeed);
   }
 
   public void autoRunProcessor(boolean invertDirection){
@@ -56,6 +56,17 @@ public class Processor2 extends SubsystemBase {
       processorMain.set(-kProcessorSpeed);
     }
   }
+
+  public void unlockProcessor(){
+
+    lock.set(kUnlockSpeed);
+  }
+
+  public void lockProcessor(){
+
+    lock.set(kLockSpeed);
+  }
+
   public void stopProcessor(){
 
     intake.set(0);

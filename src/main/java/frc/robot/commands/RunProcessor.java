@@ -7,19 +7,13 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.Processor;
 import frc.robot.subsystems.Processor2;
 
 public class RunProcessor extends CommandBase {
   
   private final Processor2 processor;
   private boolean invert;
-  private Timer timer = new Timer();
-  double startTime;
-  double time;
   
   public RunProcessor(Processor2 process, boolean invertDirect) {
 
@@ -41,21 +35,18 @@ public class RunProcessor extends CommandBase {
   public void execute() {
 
     processor.runProcessor(invert);
-    //processor.lockProcessor();
+    processor.lockProcessor();
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    // processor.stopProcessor();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
     
-    boolean thereYet = false;
-    
-    return thereYet;
+    return false;
   }
 }

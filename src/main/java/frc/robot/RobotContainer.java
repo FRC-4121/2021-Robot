@@ -9,20 +9,15 @@ package frc.robot;
 
 import static frc.robot.Constants.*;
 import static frc.robot.Constants.ProcessorConstants.*;
-import static frc.robot.Constants.ClimberConstants.*;
 import static frc.robot.Constants.ShooterConstants.*;
 import frc.robot.subsystems.*;
 import frc.robot.commands.*;
 import frc.robot.extraClasses.*;
-import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.extraClasses.*;
 
 /**
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -34,25 +29,25 @@ public class RobotContainer {
   
   //Driver controllers
   private final XboxController xbox = new XboxController(XBOX_PORT);
-  private final Joystick launchpad = new Joystick(LAUNCHPAD_PORT);
-  private final Joystick testingJoystick = new Joystick(TEST_JOYSTICK_PORT);  
+  private final Joystick leftJoy = new Joystick(LEFT_JOYSTICK);
+  private final Joystick testingJoystick = new Joystick(RIGHT_JOYSTICK);  
 
-  
+
   //Subsystems
   private final Drivetrain drivetrain = new Drivetrain();
   private final Shooter shooter = new Shooter();
   private final Turret turret = new Turret();
   private final Processor2 process2 = new Processor2();
-  private final Processor processor = new Processor();
-  private final Pneumatics pneumatics = new Pneumatics();
-  public final NetworkTableQuerier ntables = new NetworkTableQuerier();
+  private final Pneumatics pneumatics = new Pneumatics();  
   private final CameraController camera = new CameraController();
-  // private final Music music = new Music(shooter);
+
+  //Extra classes
+  public final NetworkTableQuerier ntables = new NetworkTableQuerier();
 
 
   //Commands
   //Driving
-  private final DriveWithJoysticks driveCommand = new DriveWithJoysticks(drivetrain, xbox);
+  private final DriveWithJoysticks driveCommand = new DriveWithJoysticks(drivetrain, xbox, leftJoy, testingJoystick, true);
   private final InvertDirection invertCommand = new InvertDirection(drivetrain, camera);
 
   //Pneumatics
@@ -66,7 +61,7 @@ public class RobotContainer {
   //Shooter
   private final RunTurret clockwise = new RunTurret(turret, -kTurretSpeedManual);
   private final RunTurret counterclockwise = new RunTurret(turret, kTurretSpeedManual);
-  private final RunShooter shoot = new RunShooter(shooter, processor, testingJoystick);
+  private final RunShooter shoot = new RunShooter(shooter, testingJoystick);
   private final RaiseHood raiseHood = new RaiseHood(turret);
   private final LowerHood lowerHood = new LowerHood(turret);
 
@@ -141,16 +136,16 @@ public class RobotContainer {
     //Processor
     runProcButton.whileHeld(runProcessor);
     invertProcessorButton.whileHeld(invertProcessor);
-    runProcButton.whenReleased(new InstantCommand(processor::stopProcessor, processor));
-    invertProcessorButton.whenReleased(new InstantCommand(processor::stopProcessor, processor));
+    runProcButton.whenReleased(new InstantCommand(process2::stopProcessor, process2));
+    invertProcessorButton.whenReleased(new InstantCommand(process2::stopProcessor, process2));
     
     //Shooter
     clockwiseTurretButton.whileHeld(clockwise);
     counterclockTurretButton.whileHeld(counterclockwise);
     clockwiseTurretButton.whenReleased(new InstantCommand(turret::stopTurret, turret));
     counterclockTurretButton.whenReleased(new InstantCommand(turret::stopTurret, turret));
-    shootButton.whileHeld(new InstantCommand(processor::unlockProcessor, processor));
-    shootButton.whenReleased(new InstantCommand(processor::stopProcessor, processor));
+    shootButton.whileHeld(new InstantCommand(process2::unlockProcessor, process2));
+    shootButton.whenReleased(new InstantCommand(process2::stopProcessor, process2));
     hoodUp.whileHeld(raiseHood);
     hoodUp.whenReleased(new InstantCommand(turret::stopHood, turret));
     hoodDown.whileHeld(lowerHood);
@@ -179,26 +174,4 @@ public class RobotContainer {
     return autoShoot;
 
   } 
-
-  // public Music getMusic(){
-  //   return music;  
-  // }
-
-  // public void SetBallLocation(double ball, double offset){
-
-  //   if (ball == 2){
-  //     ballData.SetBallOffset2(offset);
-    
-  //   } else {
-  //     ballLocations.SetBallOffset3(offset);
-  //   }
-  // }
-
-  // public double GetBallLocation(double ball){
-  //   if (ball == 2){
-  //     return ballLocations.GetBallOffset2();
-  //   } else {
-  //     return ballLocations.GetBallOffset3();
-  //   }
-  // }
 }

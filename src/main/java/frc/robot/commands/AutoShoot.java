@@ -9,13 +9,13 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.Processor;
+import frc.robot.subsystems.Processor2;
 
 public class AutoShoot extends CommandBase {
   /**
    * Creates a new AutoShoot.
    */
-  Processor processor;
+  Processor2 processor;
   
   
   private Timer timer = new Timer();
@@ -28,7 +28,7 @@ public class AutoShoot extends CommandBase {
   double shotsToTake;
   boolean takeShot = false;
 
-  public AutoShoot(Processor process, double time, double shots) {
+  public AutoShoot(Processor2 process, double time, double shots) {
     processor = process;
     
     timeBetweenShot = time;
