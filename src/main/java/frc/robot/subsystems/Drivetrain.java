@@ -9,7 +9,6 @@ package frc.robot.subsystems;
 
 import static frc.robot.Constants.*;
 import static frc.robot.Constants.DrivetrainConstants.*;
-import static frc.robot.Constants.PneumaticsConstants.*;
 
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
@@ -84,6 +83,13 @@ public class Drivetrain extends SubsystemBase {
     SmartDashboard.putNumber("Gyro", getGyroAngle());
     SmartDashboard.putNumber("Left Master Encoder", getMasterLeftEncoderPosition());
     SmartDashboard.putNumber("Right Master Encoder", getMasterRightEncoderPosition());
+    
+    //Graphable boolean :)
+    if (getProcessorEntry()){
+      SmartDashboard.putNumber("Processor Entry", 1);
+    } else {
+      SmartDashboard.putNumber("Processor Entry", 0);
+    }
 
     // Zero the gyro on driver command
     double zeroGyro = SmartDashboard.getNumber("Zero Gyro", 0);
@@ -101,7 +107,6 @@ public class Drivetrain extends SubsystemBase {
       zeroEncoders();
     }
 
-    SmartDashboard.putBoolean("Processor Entry", getProcessorEntry());
 
   }
 
@@ -168,17 +173,7 @@ public class Drivetrain extends SubsystemBase {
   public void drive(double leftJoyY, double rightJoyY) {
 
     //Configure software-based voltage protection measure (will require testing to determine optimal values)
-    double speedCap = 1.0;
-    if(GEAR.equals("High")){// 
-      
-      speedCap = kHighGearSpeedCap;
-
-    }
-    else{
-      
-      speedCap = kLowGearSpeedCap;
-
-    }
+    double speedCap = kHighGearSpeedCap;
 
     // Drive the motors
     // Direction multiplier indicates drive direction
@@ -210,23 +205,14 @@ public class Drivetrain extends SubsystemBase {
   }
 
 
-  /**
-   * 
-   * Stop the drive train
-   * 
-   */
+  /** Stop the drive train */
   public void stopDrive(){
 
     drivetrain.tankDrive(0, 0);
-
   }
 
 
-  /**
-   * 
-   * Zero the encoders
-   * 
-   */
+  /** Zero the encoders */
   public void zeroEncoders(){
 
     leftMasterFalcon.setSelectedSensorPosition(0);
@@ -255,7 +241,6 @@ public class Drivetrain extends SubsystemBase {
 
   }
 
-
   /**
    * 
    * Get position of all right encoders
@@ -273,7 +258,6 @@ public class Drivetrain extends SubsystemBase {
     return encoders;
 
   }
-
 
   /**
    * 
@@ -330,11 +314,7 @@ public class Drivetrain extends SubsystemBase {
   }
   
 
-  /**
-   * 
-   * Invert the direction of driving
-   * 
-   */
+  /** Invert the direction of driving */
   public void invertDirection(){
 
     DIRECTION_MULTIPLIER *= -1;

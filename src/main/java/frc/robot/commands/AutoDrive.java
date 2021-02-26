@@ -7,9 +7,7 @@
 
 package frc.robot.commands;
 
-import static frc.robot.Constants.*;
 import static frc.robot.Constants.DrivetrainConstants.*;
-import static frc.robot.Constants.PneumaticsConstants.*;
 import frc.robot.extraClasses.PIDControl;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -27,7 +25,7 @@ public class AutoDrive extends CommandBase {
   private double direction;
   private double stopTime;
 
-  private double angleCorrection, angleError, speedCorrection;
+  private double angleCorrection, speedCorrection;
   private double startTime;
   private double distanceTraveled;
 
@@ -37,8 +35,7 @@ public class AutoDrive extends CommandBase {
 
   private Timer timer = new Timer();
   private PIDControl pidAngle;
-  private PIDControl pidSpeed;
-  private PIDControl pidSpeedHigh; 
+  private PIDControl pidSpeed; 
 
 
   public AutoDrive(Drivetrain drive, Pneumatics shift, double dis, double ang, double dir, double time) {
@@ -69,7 +66,6 @@ public class AutoDrive extends CommandBase {
     rightEncoderStart = drivetrain.getMasterRightEncoderPosition();
 
     angleCorrection = 0;
-    angleError = 0;
     speedCorrection = 1;
 
     shifter.shiftUp();

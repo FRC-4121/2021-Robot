@@ -38,7 +38,6 @@ public class AutoGetAllBalls extends CommandBase {
   private boolean slowSpeed;
 
   private double ballDistance;
-  private double ballAngle;
   private double ballOffset;
   private double nextBallAngle;
   private double direction;
@@ -101,17 +100,17 @@ public class AutoGetAllBalls extends CommandBase {
     leftEncoderStart = 0;
     rightEncoderStart = 0;
 
-    // Shift into high gear
-    shifter.shiftUp();
-
-    // Get the initial ball positions
+    // Get the initial ball positions and send to SmartDash
     getInitialBallPositions();
-    // ntables.putVisionDouble("SaveVideo", 1);
+    SmartDashboard.putNumber("BallAngle1", balldata.getBallToBallAngle(0));
+    SmartDashboard.putNumber("BallAngle2", balldata.getBallToBallAngle(1));
 
-    // Initialize flags
+    // Initialize command state control flags
     executeTurn = false;
-    holdAngle = false;
     endRun = false;
+
+    // Initialize driving control flags
+    holdAngle = false;
     slowSpeed = false;
 
     // Zero gyro angle
@@ -120,41 +119,64 @@ public class AutoGetAllBalls extends CommandBase {
   }
 
 
-  /** Main code to be executed every robot cycle */
+  /* Main code to be executed every robot cycle. 
+   * The sequence:
+   * Phase 1: Drive to the nearest ball, at the appropriate angle
+   * -Start at full speed
+   * -PID Control to zero the ball offset
+   * -Once ball offset is within a certain tolerance, switch PID Control to maintain heading
+   * -Drive at full speed
+   * -Once ball is within certain distance, slow down and drive at slow speed
+   * -Once ball is collected, increment counter and move to next step
+   * 
+   * Phase 2: Turn to next ball angle
+   * -Grab next angle from BallData
+   * -Drive at turn speed
+   * -While driving, PID Control to that angle
+   * -Once turn is complete revert to full speed and chase ball
+   * 
+   * Phase 3: Collect other balls
+   * -Repeat phase 1 and 2 until counter == 3
+   * 
+   * Phase 4: End run (marker version)
+   * -Check if we see markers
+   * -While driving at full speed, turn to 0 if no markers, check again
+   * -If markers, turn to nearest marker and drive at full speed until user disables
+   * 
+   * Phase 4: End run (distance version)
+   * -Once three balls collected, zero encoders
+   * -Orient to 0 and drive at full speed until distance requirement met
+   * 
+  */
   @Override
   public void execute() {
 
-    // Get guro angle
+    // Get gyro angle
     currentGyroAngle = drivetrain.getGyroAngle();
-    
-    SmartDashboard.putNumber("BallAngle1", balldata.getBallToBallAngle(0));
-    SmartDashboard.putNumber("BallAngle2", balldata.getBallToBallAngle(1));
-    SmartDashboard.putNumber("Distance Traveled", distanceTraveled);
-    // Check if executing turn or driving to ball
+
+    // Check if executing turn, ending run, or driving to ball
+    // These various states will determine the angle and speed corrections for the robot
     if (executeTurn) {
 
       // Get angle to the next ball
       nextBallAngle = balldata.getBallToBallAngle(ballCount - 1);
-      // nextBallAngle = 30;
-      SmartDashboard.putNumber("NextBallAngle", nextBallAngle);
+      SmartDashboard.putNumber("TargetAngle", nextBallAngle);
 
       // Calculate angle correction
       angleCorrection = pidAngle.run(currentGyroAngle, nextBallAngle);
 
-      // Fix speed correction and run drivetrain
+      // Determine correct speed correction based on ball angle
       if (Math.abs(nextBallAngle) > 45){
         speedCorrection = .7;
       } else {
         speedCorrection = .9;
       }
 
-      drivetrain.autoDrive(direction * speedCorrection *  kAutoDriveSpeed + angleCorrection, direction * speedCorrection * kAutoDriveSpeed - angleCorrection);
-
     }
     //If we are finishing the run (because we have three balls)
     else if (endRun){
 
-      //Orient to 0 degrees
+      //Orient to 0 degrees or nearest marker
       double markerCount = ntables.getVisionDouble("MarkersFound");
       double markerOffset = ntables.getVisionDouble("MarkerOffset0");
       if (markerCount < 1){
@@ -162,18 +184,9 @@ public class AutoGetAllBalls extends CommandBase {
       } else {
         angleCorrection = pidAngle.run(markerOffset, 0);
       }
-      speedCorrection = 1.0;
+      speedCorrection = 2.0;//override the '.5' speed from Constants and blast at maximum speed!
 
-      //Drive
-      drivetrain.autoDrive(direction * speedCorrection *  kAutoDriveSpeed + angleCorrection, direction * speedCorrection * kAutoDriveSpeed - angleCorrection);
-      
-      //Count encoder revs until such distance that we definitely get past the line
-      double totalRotationsRight = Math.abs((drivetrain.getMasterRightEncoderPosition() - rightEncoderStart));
-      double totalRotationsLeft = Math.abs((drivetrain.getMasterLeftEncoderPosition() - leftEncoderStart));
-      distanceTraveled = (kWheelDiameter * Math.PI * (totalRotationsLeft + totalRotationsRight) / 2.0) / AUTO_ENCODER_REVOLUTION_FACTOR;
-      SmartDashboard.putNumber("Distance Traveled", distanceTraveled);
-    
-    } else {
+    } else {//This is normal ball tracking
 
       // Get current values from vision and gyro
       ballDistance = ntables.getVisionDouble("BallDistance0");
@@ -202,9 +215,7 @@ public class AutoGetAllBalls extends CommandBase {
         angleCorrection = pidAngle.run(currentGyroAngle, targetGyroAngle);
 
       }
-      SmartDashboard.putNumber("Angle Correction", angleCorrection);
-      SmartDashboard.putBoolean("Hold Angle", holdAngle);
-
+      
       // Determine speed correction based on distance
       if (!slowSpeed)
       {
@@ -223,15 +234,26 @@ public class AutoGetAllBalls extends CommandBase {
       {
         speedCorrection = .8;  
       }
-    
-
-      // Run the drivetrain
-      drivetrain.autoDrive(direction * speedCorrection *  kAutoDriveSpeed + angleCorrection, direction * speedCorrection * kAutoDriveSpeed - angleCorrection);
-
-      //Run the processor
-      processor.autoRunProcessor(false);
+        
     }
 
+    //Send all flags and updating info to SmartDash regardless of command state
+    SmartDashboard.putBoolean("ExecuteTurn", executeTurn);
+    SmartDashboard.putBoolean("HoldAngle", endRun);
+    SmartDashboard.putBoolean("EndRun", endRun);
+    SmartDashboard.putNumber("Ball Count", ballCount);
+    SmartDashboard.putNumber("Angle Correction", angleCorrection);
+    SmartDashboard.putNumber("Speed Correction", speedCorrection);
+    SmartDashboard.putNumber("Distance Traveled", distanceTraveled);
+    
+    //Run the processor continually
+    processor.autoRunProcessor(false);
+
+    //Drive based on speed and angle corrections determined within the sequence
+    //driving now moved down here, logic tree should just determine the corrections :)
+    drivetrain.autoDrive(direction * speedCorrection *  kAutoDriveSpeed + angleCorrection, direction * speedCorrection * kAutoDriveSpeed - angleCorrection);
+
+    
   }
 
 
@@ -239,12 +261,8 @@ public class AutoGetAllBalls extends CommandBase {
   @Override
   public boolean isFinished() {
 
-    SmartDashboard.putNumber("Ball Count", ballCount);
-    SmartDashboard.putBoolean("ExecuteTurn", executeTurn);
-    SmartDashboard.putBoolean("EndRun", endRun);
-    // Initialize stopping flag
-    boolean thereYet = false;
-  
+    // Initialize stopping flag and send to SmartDash
+    boolean thereYet = false;  
     SmartDashboard.putBoolean("ThereYet", thereYet);
 
     // Get current time
@@ -277,7 +295,11 @@ public class AutoGetAllBalls extends CommandBase {
       //If we are finishing the run
       } else if (endRun) {
 
-        speedCorrection = 1.8;
+        //Count encoder revs until such distance that we definitely get past the line
+        double totalRotationsRight = Math.abs((drivetrain.getMasterRightEncoderPosition() - rightEncoderStart));
+        double totalRotationsLeft = Math.abs((drivetrain.getMasterLeftEncoderPosition() - leftEncoderStart));
+        distanceTraveled = (kWheelDiameter * Math.PI * (totalRotationsLeft + totalRotationsRight) / 2.0) / AUTO_ENCODER_REVOLUTION_FACTOR;
+      
         //Check if distance is far enough yet, then stop
         // if (distanceTraveled > targetDistance){
         //   thereYet = true;
@@ -320,7 +342,6 @@ public class AutoGetAllBalls extends CommandBase {
 
     // Return stopping flag
     return thereYet;
-
   }
 
 
@@ -328,9 +349,9 @@ public class AutoGetAllBalls extends CommandBase {
   @Override
   public void end(boolean interrupted) {
 
+    //Stop moving things
     drivetrain.stopDrive();
     processor.stopProcessor();
-    ntables.putVisionDouble("SaveVideo", 0);
   }
 
 

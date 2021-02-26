@@ -7,7 +7,6 @@
 
 package frc.robot.subsystems;
 
-import static frc.robot.Constants.*;
 import static frc.robot.Constants.PneumaticsConstants.*;
 
 import edu.wpi.first.wpilibj.Compressor;

@@ -8,7 +8,6 @@
 package frc.robot;
 
 import static frc.robot.Constants.*;
-import static frc.robot.Constants.ProcessorConstants.*;
 import static frc.robot.Constants.ShooterConstants.*;
 import frc.robot.subsystems.*;
 import frc.robot.commands.*;
@@ -159,8 +158,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // An ExampleCommand will run in autonomous
-    // return new AutoDrive(drivetrain, pneumatics, 50, 0, 1, 10);
+    
     return new AutoGetAllBalls(drivetrain, pneumatics, process2, ntables, ballData, 2, 100);
   }
 
