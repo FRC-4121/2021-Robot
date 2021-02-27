@@ -67,7 +67,7 @@ public final class Constants {
         public static final double kD_Straight = 0.0;
         public static final double kP_Turn = .003;
         public static final double kI_Turn = 0.0;
-        public static final double kD_Turn = 0.0001;
+        public static final double kD_Turn = 0.0004;
 
         //Filtering (for gyro)
         public static final int FILTER_WINDOW_SIZE = 50;
