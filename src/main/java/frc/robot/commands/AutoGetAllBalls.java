@@ -36,6 +36,7 @@ public class AutoGetAllBalls extends CommandBase {
   private boolean executeTurn;
   private boolean holdAngle;
   private boolean slowSpeed;
+  private boolean markerFound;
 
   private double ballDistance;
   private double ballOffset;
@@ -50,9 +51,12 @@ public class AutoGetAllBalls extends CommandBase {
   private double angleDeadband;
 
   private double distanceTraveled;
+  private double totalDistance;
   private double targetDistance;
   private double leftEncoderStart;
   private double rightEncoderStart;
+  private double leftEncoderStart2;
+  private double rightEncoderStart2;
 
   private Timer timer;
 
@@ -96,9 +100,12 @@ public class AutoGetAllBalls extends CommandBase {
     ballCount = 0;
     targetGyroAngle = 0;
     distanceTraveled = 0;
+    totalDistance = 0;
     targetDistance = 150;//in inches; test value, possibly needs slight adjustment
     leftEncoderStart = 0;
     rightEncoderStart = 0;
+    leftEncoderStart2 = 0;
+    rightEncoderStart2 = 0;
 
     // Get the initial ball positions and send to SmartDash
     getInitialBallPositions();
@@ -112,9 +119,16 @@ public class AutoGetAllBalls extends CommandBase {
     // Initialize driving control flags
     holdAngle = false;
     slowSpeed = false;
+    markerFound = false;
 
     // Zero gyro angle
     drivetrain.zeroGyro();
+
+    drivetrain.zeroEncoders();
+    leftEncoderStart = drivetrain.getMasterLeftEncoderPosition();
+    rightEncoderStart = drivetrain.getMasterRightEncoderPosition();
+    SmartDashboard.putNumber("LeftEncStart", leftEncoderStart);
+    SmartDashboard.putNumber("RightEncStart", rightEncoderStart);
 
   }
 
@@ -167,9 +181,9 @@ public class AutoGetAllBalls extends CommandBase {
 
       // Determine correct speed correction based on ball angle
       if (Math.abs(nextBallAngle) > 45){
-        speedCorrection = 1;
+        speedCorrection = 0.7;
       } else {
-        speedCorrection = 1;
+        speedCorrection = 0.7;
       }
 
     }
@@ -181,10 +195,12 @@ public class AutoGetAllBalls extends CommandBase {
       double markerOffset = ntables.getVisionDouble("MarkerOffset0");
       if (markerCount < 1){
         angleCorrection = pidAngle.run(currentGyroAngle, 0);
+        speedCorrection = .8;
       } else {
         angleCorrection = pidAngle.run(markerOffset, 0);
+        speedCorrection = 1.0;
+        markerFound = true;
       }
-      speedCorrection = 2.0;//override the '.5' speed from Constants and blast at maximum speed!
 
     } else {//This is normal ball tracking
 
@@ -221,7 +237,7 @@ public class AutoGetAllBalls extends CommandBase {
       // Determine speed correction based on distance
       if (!slowSpeed)
       {
-        if (ballDistance > 65){// && ballCount < 2 && Math.abs(nextBallAngle) < 60 ) {
+        if (ballDistance > 60){// && ballCount < 2 && Math.abs(nextBallAngle) < 60 ) {
 
           speedCorrection = 1;
 
@@ -234,7 +250,7 @@ public class AutoGetAllBalls extends CommandBase {
       }
       else
       {
-        speedCorrection = .75;  
+        speedCorrection = .9;  
       }
         
     }
@@ -246,7 +262,9 @@ public class AutoGetAllBalls extends CommandBase {
     SmartDashboard.putNumber("Ball Count", ballCount);
     SmartDashboard.putNumber("Angle Correction", angleCorrection);
     SmartDashboard.putNumber("Speed Correction", speedCorrection);
+    SmartDashboard.putNumber("Total Distance", totalDistance);
     SmartDashboard.putNumber("Distance Traveled", distanceTraveled);
+    SmartDashboard.putBoolean("MarkerEnd", markerFound);
     
     //Run the processor continually
     processor.autoRunProcessor(false);
@@ -255,7 +273,11 @@ public class AutoGetAllBalls extends CommandBase {
     //driving now moved down here, logic tree should just determine the corrections :)
     drivetrain.autoDrive(direction * speedCorrection *  kAutoDriveSpeed + angleCorrection, direction * speedCorrection * kAutoDriveSpeed - angleCorrection);
 
-    
+    //Count encoder revs until such distance that we definitely get past the line
+    double totalRotationsRight = Math.abs((drivetrain.getMasterRightEncoderPosition() - rightEncoderStart));
+    double totalRotationsLeft = Math.abs((drivetrain.getMasterLeftEncoderPosition() - leftEncoderStart));
+    totalDistance = (kWheelDiameter * Math.PI * (totalRotationsLeft + totalRotationsRight) / 2.0) / AUTO_ENCODER_REVOLUTION_FACTOR;
+  
   }
 
 
@@ -298,14 +320,17 @@ public class AutoGetAllBalls extends CommandBase {
       } else if (endRun) {
 
         //Count encoder revs until such distance that we definitely get past the line
-        double totalRotationsRight = Math.abs((drivetrain.getMasterRightEncoderPosition() - rightEncoderStart));
-        double totalRotationsLeft = Math.abs((drivetrain.getMasterLeftEncoderPosition() - leftEncoderStart));
+        double totalRotationsRight = Math.abs((drivetrain.getMasterRightEncoderPosition() - rightEncoderStart2));
+        double totalRotationsLeft = Math.abs((drivetrain.getMasterLeftEncoderPosition() - leftEncoderStart2));
         distanceTraveled = (kWheelDiameter * Math.PI * (totalRotationsLeft + totalRotationsRight) / 2.0) / AUTO_ENCODER_REVOLUTION_FACTOR;
       
-        //Check if distance is far enough yet, then stop
-        // if (distanceTraveled > targetDistance){
-        //   thereYet = true;
-        // }
+        // //Check if distance is far enough yet, then stop
+        double markerDistance = ntables.getVisionDouble("MarkerDistance0");
+        if (markerFound == true && markerDistance <= 31){
+          markerFound = false;
+          SmartDashboard.putBoolean("MarkerEnd", markerFound);
+          thereYet = true;
+        }
 
       } else {
 
@@ -323,12 +348,18 @@ public class AutoGetAllBalls extends CommandBase {
 
             
             //Reset the encoders for the distance-driving part of the program
-            drivetrain.zeroEncoders();
-            leftEncoderStart = drivetrain.getMasterLeftEncoderPosition();
-            rightEncoderStart = drivetrain.getMasterRightEncoderPosition();
-            SmartDashboard.putNumber("LeftEncStart", leftEncoderStart);
-            SmartDashboard.putNumber("RightEncStart", rightEncoderStart);
+            // drivetrain.zeroEncoders();
+            leftEncoderStart2 = drivetrain.getMasterLeftEncoderPosition();
+            rightEncoderStart2 = drivetrain.getMasterRightEncoderPosition();
+            SmartDashboard.putNumber("LeftEncStart2", leftEncoderStart2);
+            SmartDashboard.putNumber("RightEncStart2", rightEncoderStart2);
             
+            // //Orient to 0 degrees or nearest marker
+            // double markerCount = ntables.getVisionDouble("MarkersFound");
+            // double markerDistance = ntables.getVisionDouble("MarkerOffset0");
+            // if (markerCount >= 1){
+            //   targetDistance = markerDistance;
+            // }
 
           } else {
 

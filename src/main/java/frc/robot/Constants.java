@@ -60,7 +60,7 @@ public final class Constants {
         public static final double kLowGearRatio = 30.0;
         public static final double kHighGearRatio = 70.0;
         public static final double kTurnAngleTolerance = 0.001;
-        public static final double AUTO_ENCODER_REVOLUTION_FACTOR = 42000.0;
+        public static final double AUTO_ENCODER_REVOLUTION_FACTOR = 14750.0;
 
         public static final double kP_Straight = 0.03;
         public static final double kI_Straight = 0.0;
