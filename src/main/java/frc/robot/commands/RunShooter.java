@@ -11,25 +11,20 @@ import static frc.robot.Constants.ShooterConstants.*;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.Processor;
-import frc.robot.subsystems.Processor2;
 import frc.robot.subsystems.Shooter;
 
 public class RunShooter extends CommandBase {
   
   private Shooter shooter;
-  private Processor processor;
   private Joystick joystick;
   
-  public RunShooter(Shooter shoot, Processor process, Joystick joy) {
+  public RunShooter(Shooter shoot, Joystick joy) {
 
     shooter = shoot;
-    processor = process;
     joystick = joy;
     
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(shooter);
-    addRequirements(processor);
   }
 
   // Called when the command is initially scheduled.

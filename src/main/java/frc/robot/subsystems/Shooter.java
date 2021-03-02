@@ -24,11 +24,11 @@ public class Shooter extends SubsystemBase {
   private final TalonFX shooterMaster = new WPI_TalonFX(SHOOTER_MASTER);
   private final TalonFX shooterSlave = new WPI_TalonFX(SHOOTER_SLAVE);
   
-  //for testing
-  private double save_p = kP_Shoot;
-  private double save_i = kI_Shoot;
-  private double save_d = kD_Shoot;
-  private double save_f = kF_Shoot;
+  // //for testing
+  // private double save_p = kP_Shoot;
+  // private double save_i = kI_Shoot;
+  // private double save_d = kD_Shoot;
+  // private double save_f = kF_Shoot;
   private double speed = 0;
  
 

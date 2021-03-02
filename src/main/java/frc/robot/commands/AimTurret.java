@@ -9,10 +9,9 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
-import static frc.robot.Constants.*;
 import static frc.robot.Constants.ShooterConstants.*;
 import frc.robot.subsystems.Turret;
-import frc.robot.subsystems.NetworkTableQuerier;
+import frc.robot.extraClasses.NetworkTableQuerier;
 import frc.robot.extraClasses.PIDControl;
 
 

@@ -1,4 +1,4 @@
-package frc.robot.subsystems;
+package frc.robot.extraClasses;
 
 import java.lang.Thread;
 
@@ -40,6 +40,8 @@ public class NetworkTableQuerier implements Runnable {
     private static NetworkTableEntry tapeDistance;
     private static NetworkTableEntry tapeOffset;
     private static NetworkTableEntry targetLock;
+    private static NetworkTableEntry saveVideo; 
+    private static NetworkTableEntry markersFound;
 
     // Declare class variables
     private boolean runNetworkTables;
@@ -93,6 +95,10 @@ public class NetworkTableQuerier implements Runnable {
         
     }
 
+    public NetworkTable getVisionTable(){
+        return visionTable;
+    }
+
     /**
      * Initialize network tables
      */
@@ -141,12 +147,14 @@ public class NetworkTableQuerier implements Runnable {
         markerDistance1 = visionTable.getEntry("MarkerDistance1");
         markerAngle1 = visionTable.getEntry("MarkerAngle1");
         markerOffset1 = visionTable.getEntry("MarkerOffset1");
+        markersFound = visionTable.getEntry("MarkersFound");
         foundBall = visionTable.getEntry("FoundBall");
 
         foundTape = visionTable.getEntry("FoundTape");
         targetLock = visionTable.getEntry("TargetLock");
         tapeDistance = visionTable.getEntry("TapeDistance");
         tapeOffset = visionTable.getEntry("TapeOffset");
+        saveVideo = visionTable.getEntry("SaveVideo");
     }
 
     /*
@@ -163,6 +171,9 @@ public class NetworkTableQuerier implements Runnable {
     public synchronized double getVisionDouble(String entry){
 
         return visionTable.getEntry(entry).getDouble(0);
+    }
+    public synchronized void putVisionDouble(String entry, double value){
+        visionTable.getEntry(entry).setDouble(value);
     }
 
     /*

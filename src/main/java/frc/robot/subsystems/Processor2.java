@@ -10,13 +10,13 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import static frc.robot.Constants.*;
 import static frc.robot.Constants.ProcessorConstants.*;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Processor2 extends SubsystemBase {
   /** Creates a new Processor2. */
   private WPI_TalonSRX intake = new WPI_TalonSRX(INTAKE);
   private CANSparkMax processorMain = new CANSparkMax(PROCESSOR_MAIN, MotorType.kBrushless);
+  private WPI_TalonSRX lock = new WPI_TalonSRX(PROCESSOR_END);
  
   public Processor2() {}
 
@@ -37,6 +37,7 @@ public class Processor2 extends SubsystemBase {
       processorMain.set(-kProcessorSpeed);
       intake.set(kOuttakeSpeed);
     }
+    lock.set(kLockSpeed);
   }
 
   public void autoRunProcessor(boolean invertDirection){
@@ -45,6 +46,7 @@ public class Processor2 extends SubsystemBase {
     {
       intake.set(kIntakeSpeed);
       processorMain.set(kProcessorSpeed);
+      lock.set(kLockSpeed);
       // lockProcessor();
       
     }
@@ -54,10 +56,22 @@ public class Processor2 extends SubsystemBase {
       processorMain.set(-kProcessorSpeed);
     }
   }
+
+  public void unlockProcessor(){
+
+    lock.set(kUnlockSpeed);
+  }
+
+  public void lockProcessor(){
+
+    lock.set(kLockSpeed);
+  }
+
   public void stopProcessor(){
 
     intake.set(0);
     processorMain.set(0);
+    lock.set(0);
   }
 
 }
