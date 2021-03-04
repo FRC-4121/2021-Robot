@@ -213,7 +213,7 @@ public class AutoGetAllBalls extends CommandBase {
       // Check if we are close enough and centered enough to hold the angle
       if (holdAngle == false) {
 
-        if (ballDistance < 60 && Math.abs(ballOffset) < 4) {
+        if (ballDistance < 55 && Math.abs(ballOffset) < 4) {
 
           holdAngle = true;
           targetGyroAngle = currentGyroAngle;

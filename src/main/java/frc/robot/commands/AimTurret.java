@@ -31,7 +31,8 @@ public class AimTurret extends CommandBase {
   private double turretCorrection;
 
   //Declare PID controller
-  PIDControl myPID;
+  PIDControl lockPID;
+  PIDControl turretPID;
 
 
   /**
@@ -61,7 +62,9 @@ public class AimTurret extends CommandBase {
     turretCorrection = 0;
 
     // Initialize PID
-    myPID = new PIDControl(kP_Turret, kI_Turret, kD_Turret);
+    lockPID = new PIDControl(kP_TurretLock, kI_TurretLock, kD_TurretLock);
+    turretPID = new PIDControl(kP_Turret, kI_Turret, kD_Turret);
+
 
   }
 
@@ -100,34 +103,9 @@ public class AimTurret extends CommandBase {
         if (!targetLock){
 
           //If the turret is in a safe operating range for the physical constraints of the robot
-          speed = -kTurretSpeedAuto * myPID.run(targetOffset, 0.0);
+          speed = -kTurretSpeedAuto * lockPID.run(targetOffset, 0.0);
 
-          if(speed > 0){
-            if(turretAngle <= kTurretMinAngle){
-              myTurret.rotateTurret(speed);
-            }
-            else if(turretAngle < kTurretMaxAngle)
-            {
-              myTurret.rotateTurret(speed);
-            }
-            else
-            {
-              myTurret.stopTurret();
-            }
-          }
-          else if (speed < 0)
-          {
-            if(turretAngle >= kTurretMaxAngle){
-              myTurret.rotateTurret(speed);
-            }
-            else if(turretAngle > kTurretMinAngle){
-              myTurret.rotateTurret(speed);
-            }
-            else
-            {
-              myTurret.stopTurret();
-            }
-          }
+          myTurret.rotateTurret(speed);
         
         }
         else
@@ -142,6 +120,9 @@ public class AimTurret extends CommandBase {
       else
       {
         //If the camera does not see a target, we need to figure out how to write the code for this
+        speed = kTurretSpeedAuto * turretPID.run(turretAngle, 0.0);
+
+        myTurret.rotateTurret(speed);
       }
 
     }
@@ -165,15 +146,16 @@ public class AimTurret extends CommandBase {
   @Override
   public boolean isFinished() {
 
-    if (targetLock)
-    {
-      return true;
-    }
-    else {
+    // if (targetLock)
+    // {
+    //   return true;
+    // }
+    // else {
 
-      return stopAutoTurret;
+    //   return stopAutoTurret;
 
-    }
+    // }
+    return false;
     
   }
 }

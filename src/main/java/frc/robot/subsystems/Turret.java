@@ -62,8 +62,33 @@ public class Turret extends SubsystemBase {
    * @param speed
    */
   public void rotateTurret(double speed){
-
-    turret.set(speed);
+    double turretAngle = getTurretAngle();
+    if(speed > 0){
+      if(turretAngle <= kTurretMinAngle){
+        turret.set(speed);
+      }
+      else if(turretAngle < kTurretMaxAngle)
+      {
+        turret.set(speed);
+      }
+      else
+      {
+        stopTurret();
+      }
+    }
+    else if (speed < 0)
+    {
+      if(turretAngle >= kTurretMaxAngle){
+        turret.set(speed);
+      }
+      else if(turretAngle > kTurretMinAngle){
+        turret.set(speed);
+      }
+      else
+      {
+        stopTurret();
+      }
+    }
   }
 
 

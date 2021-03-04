@@ -74,7 +74,7 @@ public class AutoDriveToBall extends CommandBase {
 
     ballOnBoard = true;
 
-    shifter.shiftUp();
+    // shifter.shiftUp();
     // shifter.retractIntake();
   }
 
@@ -87,12 +87,6 @@ public class AutoDriveToBall extends CommandBase {
     double ballDistance = ntables.getVisionDouble("BallDistance0");
     boolean foundBall = ntables.getVisionBoolean("FoundBall");
     
-
-    // Check distance and set hold flag if close enough
-    if ((ballDistance < 30) || (foundBall == false)){
-      holdGyro = true;
-    }
-    SmartDashboard.putBoolean("HoldGyro", holdGyro);
 
     // Read current gyro angle
     actualGyro = drivetrain.getGyroAngle();
@@ -115,9 +109,9 @@ public class AutoDriveToBall extends CommandBase {
     
     // Calculate speed correction based on distance
     if ((ballDistance > 30) && foundBall == true){
-      speedCorrection = 0.8;
+      speedCorrection = 1;
     }else{
-      speedCorrection = 0.5;
+      speedCorrection = 1;
     }
     SmartDashboard.putNumber("SpeedCorrect", speedCorrection);
 

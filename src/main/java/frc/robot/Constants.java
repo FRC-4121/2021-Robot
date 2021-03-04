@@ -82,12 +82,12 @@ public final class Constants {
         public static final double kI_Shoot = 0;
         public static final double kD_Shoot = 0;
         public static final double kF_Shoot = -1; 
-        public static final double kP_Turret = 0.03;
-        public static final double kI_Turret = 0.0005;
-        public static final double kD_Turret = 0.002;
-        public static final double kP_TurretLock = 0.0087;
+        public static final double kP_Turret = 0.01;
+        public static final double kI_Turret = 0.0000;
+        public static final double kD_Turret = 0.000;
+        public static final double kP_TurretLock = 0.01;
         public static final double kI_TurretLock = 0;
-        public static final double kD_TurretLock = 0.0002;
+        public static final double kD_TurretLock = 0.0;
 
         public static final double kTurretAngleTolerance = 2.0;
 
@@ -107,6 +107,7 @@ public final class Constants {
 
         public static final double kTurretMinAngle = -30;
         public static final double kTurretMaxAngle = 30;
+        //0 is centered
 
         public static final int kHoodEncoder = 0;
         public static final double kHoodSpeed = -1.0;
@@ -114,8 +115,8 @@ public final class Constants {
         //Speeds
         public static final double kShooterSpeed = -1.0;
         public static final double kTurretSpeedManual = 0.03;//positive is counterclockwise
-        public static final double kTurretSpeedAuto = 0.2;
-        public static final double kTurretSpeedLock = 0.08;
+        public static final double kTurretSpeedAuto = 0.08;
+        // public static final double kTurretSpeedLock = 0.03;
     }
 
     public static class PneumaticsConstants {

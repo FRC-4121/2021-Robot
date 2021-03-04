@@ -36,33 +36,35 @@ public class RunTurret extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double turretAngle = myTurret.getTurretAngle();
-    if(speed > 0){
-      if(turretAngle <= kTurretMinAngle){
-        myTurret.rotateTurret(speed);
-      }
-      else if(turretAngle < kTurretMaxAngle)
-      {
-        myTurret.rotateTurret(speed);
-      }
-      else
-      {
-        myTurret.stopTurret();
-      }
-    }
-    else if (speed < 0)
-    {
-      if(turretAngle >= kTurretMaxAngle){
-        myTurret.rotateTurret(speed);
-      }
-      else if(turretAngle > kTurretMinAngle){
-        myTurret.rotateTurret(speed);
-      }
-      else
-      {
-        myTurret.stopTurret();
-      }
-    }
+    myTurret.rotateTurret(speed);
+    
+    // double turretAngle = myTurret.getTurretAngle();
+    // if(speed > 0){
+    //   if(turretAngle <= kTurretMinAngle){
+    //     myTurret.rotateTurret(speed);
+    //   }
+    //   else if(turretAngle < kTurretMaxAngle)
+    //   {
+    //     myTurret.rotateTurret(speed);
+    //   }
+    //   else
+    //   {
+    //     myTurret.stopTurret();
+    //   }
+    // }
+    // else if (speed < 0)
+    // {
+    //   if(turretAngle >= kTurretMaxAngle){
+    //     myTurret.rotateTurret(speed);
+    //   }
+    //   else if(turretAngle > kTurretMinAngle){
+    //     myTurret.rotateTurret(speed);
+    //   }
+    //   else
+    //   {
+    //     myTurret.stopTurret();
+    //   }
+    // }
   }
 
   // Called once the command ends or is interrupted.

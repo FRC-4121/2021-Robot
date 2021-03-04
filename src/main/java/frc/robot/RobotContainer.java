@@ -113,7 +113,7 @@ public class RobotContainer {
 
     shooter.setDefaultCommand(shoot);//shoot: joystick control, autoShoot: automatic speed control
 
-    //turret.setDefaultCommand(aimTurret);
+    turret.setDefaultCommand(aimTurret);
 
   }
 
@@ -158,8 +158,8 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    
-    return new AutoGetAllBalls(drivetrain, pneumatics, process2, ntables, ballData, 2, 100);
+    return new AutoDriveToBall(drivetrain, pneumatics, ntables, 20);
+    // return new AutoGetAllBalls(drivetrain, pneumatics, process2, ntables, ballData, 2, 100);
   }
 
 
