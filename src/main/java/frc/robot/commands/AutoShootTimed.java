@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.Processor2;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Shooter;
-import frc.robot.subsystems.NetworkTableQuerier;
+import frc.robot.extraClasses.NetworkTableQuerier;
 import frc.robot.extraClasses.PIDControl;
 import frc.robot.extraClasses.Ballistics;
 import static frc.robot.Constants.DrivetrainConstants.*;
