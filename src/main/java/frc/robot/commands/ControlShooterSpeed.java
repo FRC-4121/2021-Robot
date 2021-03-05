@@ -68,6 +68,7 @@ public class ControlShooterSpeed extends CommandBase {
       {
         
         distance = ntQuerier.getTapeDistance();
+        // distance = 153;
         ballisticsData = ballistics.queryBallisticsTable(distance);
         shotPossible = ballisticsData[0];
 

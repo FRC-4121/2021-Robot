@@ -85,9 +85,9 @@ public final class Constants {
         public static final double kP_Turret = 0.01;
         public static final double kI_Turret = 0.0000;
         public static final double kD_Turret = 0.000;
-        public static final double kP_TurretLock = 0.01;
-        public static final double kI_TurretLock = 0;
-        public static final double kD_TurretLock = 0.0;
+        public static final double kP_TurretLock = 0.00125;
+        public static final double kI_TurretLock = 0.0006;
+        public static final double kD_TurretLock = 0.00013;
 
         public static final double kTurretAngleTolerance = 2.0;
 
@@ -115,7 +115,7 @@ public final class Constants {
         //Speeds
         public static final double kShooterSpeed = -1.0;
         public static final double kTurretSpeedManual = 0.03;//positive is counterclockwise
-        public static final double kTurretSpeedAuto = 0.08;
+        public static final double kTurretSpeedAuto = 0.55;
         // public static final double kTurretSpeedLock = 0.03;
     }
 

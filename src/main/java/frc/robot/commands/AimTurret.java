@@ -7,6 +7,7 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 import static frc.robot.Constants.ShooterConstants.*;
@@ -103,7 +104,8 @@ public class AimTurret extends CommandBase {
         if (!targetLock){
 
           //If the turret is in a safe operating range for the physical constraints of the robot
-          speed = -kTurretSpeedAuto * lockPID.run(targetOffset, 0.0);
+          speed = -kTurretSpeedAuto * lockPID.run(targetOffset, -5.0);
+          SmartDashboard.putNumber("TurretSpeed", speed);
 
           myTurret.rotateTurret(speed);
         
@@ -120,8 +122,8 @@ public class AimTurret extends CommandBase {
       else
       {
         //If the camera does not see a target, we need to figure out how to write the code for this
-        speed = kTurretSpeedAuto * turretPID.run(turretAngle, 0.0);
-
+        speed = -kTurretSpeedAuto * turretPID.run(turretAngle, 0.0);
+        SmartDashboard.putNumber("TurretSpeed", speed);
         myTurret.rotateTurret(speed);
       }
 
