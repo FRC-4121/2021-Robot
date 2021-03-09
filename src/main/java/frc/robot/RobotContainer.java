@@ -46,7 +46,7 @@ public class RobotContainer {
 
   //Commands
   //Driving
-  private final DriveWithJoysticks driveCommand = new DriveWithJoysticks(drivetrain, xbox, leftJoy, testingJoystick, true);
+  private final DriveWithJoysticks driveCommand = new DriveWithJoysticks(drivetrain, xbox, leftJoy, testingJoystick, false);
   private final InvertDirection invertCommand = new InvertDirection(drivetrain, camera);
 
   //Pneumatics

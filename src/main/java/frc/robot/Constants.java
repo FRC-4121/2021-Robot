@@ -25,14 +25,23 @@ public final class Constants {
     public static final int HOOD = 3;
 
     //Talon SRX and FX IDs (must be unique, may range from 0+)
-    public static final int LEFT_MASTER_F = 3;
+    // public static final int LEFT_MASTER_F = 3;
+    // public static final int LEFT_SLAVE_F = 5;
+    // public static final int RIGHT_MASTER_F = 2;
+    // public static final int RIGHT_SLAVE_F = 4;
+    // public static final int INTAKE = 7;
+    // public static final int PROCESSOR_END = 6;
+    // public static final int SHOOTER_MASTER = 0;
+    // public static final int SHOOTER_SLAVE = 1;
+
+    public static final int LEFT_MASTER_F = 6;
     public static final int LEFT_SLAVE_F = 5;
     public static final int RIGHT_MASTER_F = 2;
-    public static final int RIGHT_SLAVE_F = 4;
+    public static final int RIGHT_SLAVE_F = 1;
     public static final int INTAKE = 7;
     public static final int PROCESSOR_END = 6;
     public static final int SHOOTER_MASTER = 0;
-    public static final int SHOOTER_SLAVE = 1;
+    public static final int SHOOTER_SLAVE = 8;
 
     //Drive control port IDs
     public static final int XBOX_PORT = 0;
