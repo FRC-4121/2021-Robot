@@ -267,7 +267,7 @@ public class AutoGetAllBalls extends CommandBase {
     SmartDashboard.putBoolean("MarkerEnd", markerFound);
     
     //Run the processor continually
-    processor.autoRunProcessor(false);
+    processor.autoRunProcessor(false, true);
 
     //Drive based on speed and angle corrections determined within the sequence
     //driving now moved down here, logic tree should just determine the corrections :)

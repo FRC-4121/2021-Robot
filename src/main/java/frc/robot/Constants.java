@@ -66,9 +66,11 @@ public final class Constants {
         public static final double kHighGearSpeedCap = 0.8;
         public static final double kAutoDriveSpeed = 0.5;
         public static final double kAutoTurnSpeed = 0.5;
-        public static final double kLowGearRatio = 30.0;
-        public static final double kHighGearRatio = 70.0;
+        // public static final double kLowGearRatio = 30.0;
+        // public static final double kHighGearRatio = 70.0;
+        public static final double kGearRatio = 7; 
         public static final double kTurnAngleTolerance = 0.001;
+        public static final double kDriveDistanceTolerance = 1.0;
         public static final double AUTO_ENCODER_REVOLUTION_FACTOR = 14750.0;
 
         public static final double kP_Straight = 0.03;
@@ -101,6 +103,7 @@ public final class Constants {
         public static final double kTurretAngleTolerance = 2.0;
 
         public static final double kSpeedCorrectionFactor = 1.02;
+        public static final double kRPMTolerance = 63.8;
 
         public static final int kPIDLoopIdxShoot = 0;
         public static final int kTimeoutMsShoot = 20;

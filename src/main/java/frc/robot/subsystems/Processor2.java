@@ -40,11 +40,11 @@ public class Processor2 extends SubsystemBase {
     lock.set(kLockSpeed);
   }
 
-  public void autoRunProcessor(boolean invertDirection){
+  public void autoRunProcessor(boolean invertDirection, boolean useBar){
 
     if(!invertDirection)
     {
-      intake.set(kIntakeSpeed);
+      if (useBar) intake.set(kIntakeSpeed);
       processorMain.set(kProcessorSpeed);
       lock.set(kLockSpeed);
       // lockProcessor();
@@ -52,7 +52,7 @@ public class Processor2 extends SubsystemBase {
     }
     else 
     {
-      intake.set(kOuttakeSpeed);
+      if (useBar) intake.set(kIntakeSpeed);
       processorMain.set(-kProcessorSpeed);
     }
   }
