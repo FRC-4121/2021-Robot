@@ -38,8 +38,8 @@ public class Ballistics {
     
     //Can be configured for a 'continuous' angle or a two-angle system
     public int minAngle = 45;//in degrees
-    public int maxAngle = 45;//in degrees
-    public int angleIncrement = 1;//make sure this is a factor of the difference between min and max angle, unless you are only using one angle, then make it 1
+    public int maxAngle = 55;//in degrees
+    public int angleIncrement = 10;//make sure this is a factor of the difference between min and max angle, unless you are only using one angle, then make it 1
     
     public int minSpeed = 70;//percent
     public int maxSpeed = 100;//percent
@@ -203,45 +203,45 @@ public class Ballistics {
     }
 
 
-    // public static void main(String[] args){
+    public static void main(String[] args){
 
-    //     Ballistics ballistics = new Ballistics(98.25, 22.5, 5, 6380, 6, .227);
+        Ballistics ballistics = new Ballistics(98.25, 22.5, 5, 6380, 6, .227);
 
-    //     System.out.println("-----------------------------------------");
-    //     System.out.print("4121 Ballistics Program\n");
+        System.out.println("-----------------------------------------");
+        System.out.print("4121 Ballistics Program\n");
                     
-    //     Scanner scIn = new Scanner(System.in);
+        Scanner scIn = new Scanner(System.in);
 
-    //     System.out.print("Start Calculations? (Y/N) ");
+        System.out.print("Start Calculations? (Y/N) ");
 
-    //     while(scIn.next().toUpperCase().equals("Y")){
+        while(scIn.next().toUpperCase().equals("Y")){
 
-    //         System.out.print("Please enter a distance in feet: ");
-    //         double distance = scIn.nextDouble();
+            System.out.print("Please enter a distance in inches: ");
+            double distance = scIn.nextDouble();
 
-    //         System.out.println("Attempting shot at distance of " + distance + " feet.");
+            System.out.println("Attempting shot at distance of " + distance + " inches.");
 
-    //         double[] tableQuery = ballistics.queryBallisticsTable(distance);
-    //         System.out.println("Calculating...");
+            double[] tableQuery = ballistics.queryBallisticsTable(distance);
+            System.out.println("Calculating...");
             
-    //         if(tableQuery[0] == 1){
+            if(tableQuery[0] == 1){
 
-    //             System.out.println("Shot possible at distance of " + distance + " feet.");
-    //             System.out.println("Parameters: ");
-    //             System.out.println("    Angle: " + tableQuery[1] + " degrees.");
-    //             System.out.println("    Speed: " + tableQuery[2] + " percent.");
-    //             System.out.println("    Distance used: " + tableQuery[3] + " feet.");
+                System.out.println("Shot possible at distance of " + distance + " inches.");
+                System.out.println("Parameters: ");
+                System.out.println("    Angle: " + tableQuery[1] + " degrees.");
+                System.out.println("    Speed: " + tableQuery[2] + " percent.");
+                System.out.println("    Distance used: " + tableQuery[3] + " inches.");
             
-    //         } else {
+            } else {
 
-    //             System.out.println("Shot not possible at distance of " + distance + " feet.");
-    //         }
+                System.out.println("Shot not possible at distance of " + distance + " inches.");
+            }
 
-    //         System.out.print("\nContinue Calculations? (Y/N) ");
+            System.out.print("\nContinue Calculations? (Y/N) ");
 
-    //     }
+        }
 
-    //     scIn.close();
-    // }
+        scIn.close();
+    }
 
 }

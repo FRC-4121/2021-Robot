@@ -154,7 +154,7 @@ public class AutoShootTimed extends CommandBase {
     targetDistance = myNTables.getTapeDistance();
 
 
-    // Aim turret
+    // Aim turret and configure hood position
     double turretSpeed = 0;
     double turretAngle = myTurret.getTurretAngle();
     if (foundTarget) {
@@ -173,6 +173,15 @@ public class AutoShootTimed extends CommandBase {
         //If target is locked, stop the motor
         myTurret.stopTurret();
 
+      }
+      
+      //This probably shouldn't be implemented here because we don't need it, but 
+      //it will be useful for the other version of this challenge
+      if (targetDistance < 85) {
+        //set high angle (55)
+      
+      } else {
+        //set low angle (45)
       }
 
     } else {
@@ -421,6 +430,8 @@ public class AutoShootTimed extends CommandBase {
     myDrivetrain.stopDrive();
     myProcessor.stopProcessor();
     myShooter.stopShooter();
+    myTurret.stopHood();
+    myTurret.stopTurret();
     
   }
 
