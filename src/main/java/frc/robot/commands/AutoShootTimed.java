@@ -16,7 +16,6 @@ import frc.robot.extraClasses.PIDControl;
 import frc.robot.extraClasses.Ballistics;
 import static frc.robot.Constants.DrivetrainConstants.*;
 import static frc.robot.Constants.ShooterConstants.*;
-import static frc.robot.Constants.ShooterConstants.*;
 
 
 /**
