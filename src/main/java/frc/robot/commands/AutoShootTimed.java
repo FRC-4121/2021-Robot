@@ -288,7 +288,7 @@ public class AutoShootTimed extends CommandBase {
 
         // Run the drive
         driveDirection = 1;
-        myDrivetrain.autoDrive(driveDirection * driveSpeedCorrection *  kAutoDriveSpeed + angleCorrection, driveDirection * driveSpeedCorrection * kAutoDriveSpeed - angleCorrection);
+        myDrivetrain.autoDrive(driveDirection * driveSpeedCorrection *  kAutoDriveSpeed - angleCorrection, driveDirection * driveSpeedCorrection * kAutoDriveSpeed + angleCorrection);
 
         break;
 
