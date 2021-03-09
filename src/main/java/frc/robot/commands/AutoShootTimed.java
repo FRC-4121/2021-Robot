@@ -13,6 +13,7 @@ import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Turret;
 import frc.robot.extraClasses.NetworkTableQuerier;
 import frc.robot.extraClasses.PIDControl;
+import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.extraClasses.Ballistics;
 import static frc.robot.Constants.DrivetrainConstants.*;
 import static frc.robot.Constants.ShooterConstants.*;
@@ -41,6 +42,7 @@ public class AutoShootTimed extends CommandBase {
   private int ballCount;
 
   private double driveDistance;
+  private double targetDriveDistance;
   private double driveDirection;
   private double driveSpeedCorrection;
   private double leftEncoderStart;
@@ -111,7 +113,8 @@ public class AutoShootTimed extends CommandBase {
 
     // Initialize variables
     driveDirection = -1;
-    driveDistance = 0.0;
+    driveDistance = 0;
+    targetDriveDistance = 60;
     driveSpeedCorrection = 1;
     totalRotationsRight = 0;
     totalRotationsLeft = 0;
@@ -120,7 +123,7 @@ public class AutoShootTimed extends CommandBase {
     shooterSpeed = .75;
     shooterSpeedCorrection = 0;
     targetShooterSpeed = 1.0;
-    targetDistance = 60;
+    targetDistance = 0;
 
     // Initialize flags
     runSpeedControl = true;
@@ -193,6 +196,7 @@ public class AutoShootTimed extends CommandBase {
 
     }
 
+    targetShooterSpeedCorrected = 0;
 
     // Control shooter speed
     if(runSpeedControl) {
@@ -243,13 +247,17 @@ public class AutoShootTimed extends CommandBase {
       // Shooting
       case 1:
 
+        //Run processor normally regardless of position conditions
+        myProcessor.lockProcessor();
+        myProcessor.autoRunProcessor(false, false);
+
         if (targetLock) {
 
-          if (myShooter.getShooterSpeed() > kSpeedThreshold) {
-
-          } else {
-
-          }
+          //Ensure wheel is moving fast enough to accurately make shot
+          if (Math.abs(myShooter.getShooterRPM() - targetShooterSpeedCorrected * kShooterMaxRPM) < kRPMTolerance) {
+            myProcessor.unlockProcessor();
+            ballCount--;
+          } 
 
         }
 
@@ -265,7 +273,7 @@ public class AutoShootTimed extends CommandBase {
         // Calculate speed correction based on distance to target
         totalRotationsRight = Math.abs((myDrivetrain.getMasterRightEncoderPosition() - rightEncoderStart));
         totalRotationsLeft = Math.abs((myDrivetrain.getMasterLeftEncoderPosition() - leftEncoderStart));
-        driveDistance = (kWheelDiameter * Math.PI * (totalRotationsLeft + totalRotationsRight) / 2.0) / AUTO_ENCODER_REVOLUTION_FACTOR;
+        driveDistance = (kWheelDiameter * Math.PI * (totalRotationsLeft + totalRotationsRight) / 2.0) / (DrivetrainConstants.kTalonFXPPR * kGearRatio);
         driveSpeedCorrection = pidDriveDistance.run(driveDistance, targetDistance);
 
         // Run the drive
@@ -278,7 +286,7 @@ public class AutoShootTimed extends CommandBase {
       case 3:
 
         //Run the processor continually
-        myProcessor.autoRunProcessor(false);
+        myProcessor.autoRunProcessor(false, false);
 
         break;
       
@@ -292,7 +300,7 @@ public class AutoShootTimed extends CommandBase {
         // Calculate speed correction based on distance to target
         totalRotationsRight = Math.abs((myDrivetrain.getMasterRightEncoderPosition() - rightEncoderStart));
         totalRotationsLeft = Math.abs((myDrivetrain.getMasterLeftEncoderPosition() - leftEncoderStart));
-        driveDistance = (kWheelDiameter * Math.PI * (totalRotationsLeft + totalRotationsRight) / 2.0) / AUTO_ENCODER_REVOLUTION_FACTOR;
+        driveDistance = (kWheelDiameter * Math.PI * (totalRotationsLeft + totalRotationsRight) / 2.0) / (DrivetrainConstants.kTalonFXPPR * kGearRatio);
         driveSpeedCorrection = pidDriveDistance.run(driveDistance, targetDistance);
 
         // Run the drive
@@ -357,10 +365,10 @@ public class AutoShootTimed extends CommandBase {
           // Calculate distance traveled
           totalRotationsRight = Math.abs((myDrivetrain.getMasterRightEncoderPosition() - rightEncoderStart));
           totalRotationsLeft = Math.abs((myDrivetrain.getMasterLeftEncoderPosition() - leftEncoderStart));
-          driveDistance = (kWheelDiameter * Math.PI * (totalRotationsLeft + totalRotationsRight) / 2.0) / AUTO_ENCODER_REVOLUTION_FACTOR;
+          driveDistance = (kWheelDiameter * Math.PI * (totalRotationsLeft + totalRotationsRight) / 2.0) / (DrivetrainConstants.kTalonFXPPR * kGearRatio);
 
           // Check distance against target
-          if (Math.abs(driveDistance - targetDistance) < kDriveDistanceTolerance) {
+          if (Math.abs(driveDistance - targetDriveDistance) < kDriveDistanceTolerance) {
             
             // Set next mode
             robotMode = 3;
@@ -400,10 +408,10 @@ public class AutoShootTimed extends CommandBase {
           // Calculate distance traveled
           totalRotationsRight = Math.abs((myDrivetrain.getMasterRightEncoderPosition() - rightEncoderStart));
           totalRotationsLeft = Math.abs((myDrivetrain.getMasterLeftEncoderPosition() - leftEncoderStart));
-          driveDistance = (kWheelDiameter * Math.PI * (totalRotationsLeft + totalRotationsRight) / 2.0) / AUTO_ENCODER_REVOLUTION_FACTOR;
+          driveDistance = (kWheelDiameter * Math.PI * (totalRotationsLeft + totalRotationsRight) / 2.0) / (DrivetrainConstants.kTalonFXPPR * kGearRatio);
 
           // Check distance against target
-          if (Math.abs(driveDistance - targetDistance) < kDriveDistanceTolerance) {
+          if (Math.abs(driveDistance - targetDriveDistance) < kDriveDistanceTolerance) {
             
             // Set next mode
             robotMode = 1;
