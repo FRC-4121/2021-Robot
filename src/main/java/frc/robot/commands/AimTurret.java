@@ -104,7 +104,7 @@ public class AimTurret extends CommandBase {
         if (!targetLock){
 
           //If the turret is in a safe operating range for the physical constraints of the robot
-          speed = -kTurretSpeedAuto * lockPID.run(targetOffset, -5.0);
+          speed = -kTurretSpeedAuto * lockPID.run(targetOffset, 0);
           SmartDashboard.putNumber("TurretSpeed", speed);
 
           myTurret.rotateTurret(speed);

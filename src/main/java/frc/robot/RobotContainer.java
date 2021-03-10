@@ -46,7 +46,7 @@ public class RobotContainer {
 
   //Commands
   //Driving
-  private final DriveWithJoysticks driveCommand = new DriveWithJoysticks(drivetrain, xbox, leftJoy, testingJoystick, false);
+  private final DriveWithJoysticks driveCommand = new DriveWithJoysticks(drivetrain, xbox, leftJoy, testingJoystick, true);
   private final InvertDirection invertCommand = new InvertDirection(drivetrain, camera);
 
   //Pneumatics
@@ -111,9 +111,9 @@ public class RobotContainer {
     //Drivetrain -> drive with xbox joysticks
     drivetrain.setDefaultCommand(driveCommand);
 
-    shooter.setDefaultCommand(autoShoot);//shoot: joystick control, autoShoot: automatic speed control
+    shooter.setDefaultCommand(shoot);//shoot: joystick control, autoShoot: automatic speed control
 
-    turret.setDefaultCommand(aimTurret);
+    // turret.setDefaultCommand(aimTurret);
 
   }
 
@@ -158,8 +158,9 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return new AutoDriveToBall(drivetrain, pneumatics, ntables, 20);
+    // return new AutoDriveToBall(drivetrain, pneumatics, ntables, 20);
     // return new AutoGetAllBalls(drivetrain, pneumatics, process2, ntables, ballData, 2, 100);
+    return new AutoShootTimed(drivetrain, shooter, process2, turret, ntables, 60);
   }
 
 

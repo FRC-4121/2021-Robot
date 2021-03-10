@@ -34,14 +34,14 @@ public final class Constants {
     // public static final int SHOOTER_MASTER = 0;
     // public static final int SHOOTER_SLAVE = 1;
 
-    public static final int LEFT_MASTER_F = 6;
+    public static final int LEFT_MASTER_F = 3;
     public static final int LEFT_SLAVE_F = 5;
     public static final int RIGHT_MASTER_F = 2;
-    public static final int RIGHT_SLAVE_F = 1;
+    public static final int RIGHT_SLAVE_F = 4;
     public static final int INTAKE = 7;
     public static final int PROCESSOR_END = 6;
     public static final int SHOOTER_MASTER = 0;
-    public static final int SHOOTER_SLAVE = 8;
+    public static final int SHOOTER_SLAVE = 1;
 
     //Drive control port IDs
     public static final int XBOX_PORT = 0;
@@ -63,7 +63,7 @@ public final class Constants {
         public static final double kTalonFXPPR = 2048;
         public static final double kWheelDiameter = 6.0;
         public static final double kLowGearSpeedCap = 0.8;//In case full speed draws excessive power, these are an emergency measure
-        public static final double kHighGearSpeedCap = 0.8;
+        public static final double kHighGearSpeedCap = 1.0;
         public static final double kAutoDriveSpeed = 0.5;
         public static final double kAutoTurnSpeed = 0.5;
         // public static final double kLowGearRatio = 30.0;
@@ -96,7 +96,7 @@ public final class Constants {
         public static final double kP_Turret = 0.01;
         public static final double kI_Turret = 0.0000;
         public static final double kD_Turret = 0.000;
-        public static final double kP_TurretLock = 0.00125;
+        public static final double kP_TurretLock = 0.00135;
         public static final double kI_TurretLock = 0.0006;
         public static final double kD_TurretLock = 0.00013;
 
@@ -114,7 +114,7 @@ public final class Constants {
 
         //Turret dimensions/other config
         public static final double kTurretGearReduction = 1;
-        public static final double kTurretSprocketDia = 1;
+        public static final double kTurretSprocketRatio = 16.0/120;
         public static final double kTurretDiskDia = 13.75;
 
         public static final double kTurretMinAngle = -30;
@@ -126,8 +126,8 @@ public final class Constants {
 
         //Speeds
         public static final double kShooterSpeed = -1.0;
-        public static final double kTurretSpeedManual = 0.03;//positive is counterclockwise
-        public static final double kTurretSpeedAuto = 0.55;
+        public static final double kTurretSpeedManual = 0.1;//positive is counterclockwise
+        public static final double kTurretSpeedAuto = 0.75;
         // public static final double kTurretSpeedLock = 0.03;
     }
 

@@ -16,6 +16,9 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import static frc.robot.Constants.*;
 import static frc.robot.Constants.ShooterConstants.*;
 
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
@@ -24,8 +27,9 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 public class Turret extends SubsystemBase {
 
   //Declare turret motor and encoder
-  private final CANSparkMax turret = new CANSparkMax(TURRET, MotorType.kBrushless);
-  private final CANEncoder turretEncoder = turret.getEncoder();
+  // private final CANSparkMax turret = new CANSparkMax(TURRET, MotorType.kBrushless);
+  // private final CANEncoder turretEncoder = turret.getEncoder();
+  private final WPI_TalonFX turret = new WPI_TalonFX(TURRET);
 
   private final CANSparkMax hood = new CANSparkMax(HOOD, MotorType.kBrushless);
   private final AnalogInput hoodEncoder = new AnalogInput(kHoodEncoder);
@@ -42,7 +46,9 @@ public class Turret extends SubsystemBase {
 
     //Configured to calculate the angle around the turret from the limit switch
     //theta (radians) = arclength / radius
-    turretEncoder.setPosition(0);
+    turret.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, kPIDLoopIdxShoot, kTimeoutMsShoot);
+    turret.setSelectedSensorPosition(0);
+    // turretEncoder.setPosition(0);
     //turretEncoder.setPositionConversionFactor(-kTurretSprocketDia * 360 / (kTurretEncoderPPR * kTurretGearReduction * kTurretDiskDia/2));
   }
 
@@ -53,7 +59,7 @@ public class Turret extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    turretAngle = turretEncoder.getPosition() * 140 / 3.04;
+    turretAngle = turret.getSelectedSensorPosition() * 360 * kTurretSprocketRatio / (kTalonFXPPR);
     SmartDashboard.putNumber("Turret Angle", turretAngle);
     SmartDashboard.putNumber("Hood Angle", getHoodAngle());
   }

@@ -79,7 +79,7 @@ public class AutoShootTimed extends CommandBase {
 
 
   /** Default constructor */
-  public AutoShootTimed(Drivetrain drive, Shooter shoot, Processor2 process, Turret shootturret, NetworkTableQuerier table, double distance, double deadband, double time) {
+  public AutoShootTimed(Drivetrain drive, Shooter shoot, Processor2 process, Turret shootturret, NetworkTableQuerier table, double time) {
 
     // Set class variables
     myDrivetrain = drive;
@@ -87,8 +87,8 @@ public class AutoShootTimed extends CommandBase {
     myProcessor = process;
     myTurret = shootturret;
     myNTables = table;
-    driveDistance = distance;
-    angleDeadband = deadband;
+    // driveDistance = distance;
+    // angleDeadband = deadband;
     stopTime = time;
 
     // Add subsystem requirements
