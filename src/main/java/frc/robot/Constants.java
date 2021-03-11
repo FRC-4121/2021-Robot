@@ -40,8 +40,8 @@ public final class Constants {
     public static final int RIGHT_SLAVE_F = 4;
     public static final int INTAKE = 7;
     public static final int PROCESSOR_END = 6;
-    public static final int SHOOTER_MASTER = 0;
-    public static final int SHOOTER_SLAVE = 1;
+    public static final int SHOOTER_MASTER = 1;
+    public static final int SHOOTER_SLAVE = 0;
 
     //Drive control port IDs
     public static final int XBOX_PORT = 0;
