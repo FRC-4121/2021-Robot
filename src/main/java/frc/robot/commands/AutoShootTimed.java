@@ -254,7 +254,10 @@ public class AutoShootTimed extends CommandBase {
         if (targetLock) {
 
           //Ensure wheel is moving fast enough to accurately make shot
-          if (Math.abs(myShooter.getShooterRPM() - targetShooterSpeedCorrected * kShooterMaxRPM) < kRPMTolerance) {
+          double l_targetSpeed = targetShooterSpeedCorrected * kShooterMaxRPM;
+          SmartDashboard.putNumber("l_targetSpeed", l_targetSpeed);
+          SmartDashboard.putNumber("tolerance", kRPMTolerance);
+          if (Math.abs(Math.abs(myShooter.getShooterRPM()) - targetShooterSpeedCorrected * kShooterMaxRPM) < kRPMTolerance) {
             myProcessor.unlockProcessor();
             ballCount--;
           } 

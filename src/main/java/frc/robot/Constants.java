@@ -96,18 +96,18 @@ public final class Constants {
         public static final double kP_Turret = 0.01;
         public static final double kI_Turret = 0.0000;
         public static final double kD_Turret = 0.000;
-        public static final double kP_TurretLock = 0.00135;
+        public static final double kP_TurretLock = 0.0013;
         public static final double kI_TurretLock = 0.0006;
-        public static final double kD_TurretLock = 0.00013;
+        public static final double kD_TurretLock = 0.00015;
 
         public static final double kTurretAngleTolerance = 2.0;
 
         public static final double kSpeedCorrectionFactor = 1.02;
-        public static final double kRPMTolerance = 63.8;
+        public static final double kRPMTolerance = 100;
 
         public static final int kPIDLoopIdxShoot = 0;
         public static final int kTimeoutMsShoot = 20;
-        public static final int kShooterMaxRPM = 6380;
+        public static final int kShooterMaxRPM = 5555;
 
         public static final double kTalonFXPPR = 2048;
         public static final double kTurretEncoderPPR = 10.5;

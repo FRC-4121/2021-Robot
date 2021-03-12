@@ -36,7 +36,7 @@ public class RunShooter extends CommandBase {
   @Override
   public void execute() {
 
-    shooter.shoot(joystick.getY());
+    shooter.shoot(-joystick.getY());
 
     //if(shooter.getShooterRPM() > (shooter.getShooterSpeed() * kShooterMaxRPM)) processor.unlockProcessor();
   }
