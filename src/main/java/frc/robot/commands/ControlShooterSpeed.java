@@ -39,7 +39,7 @@ public class ControlShooterSpeed extends CommandBase {
 
     shooter = shoot;
     ntQuerier = querier;
-    ballistics = new Ballistics(98.25, 22.5, 5, 6380, 6, .227);
+    ballistics = new Ballistics(98.25, 22.5, 5, 6050, 6, .25);
 
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(shoot);

@@ -102,12 +102,12 @@ public final class Constants {
 
         public static final double kTurretAngleTolerance = 2.0;
 
-        public static final double kSpeedCorrectionFactor = 1.02;
+        public static final double kSpeedCorrectionFactor = 1.0;
         public static final double kRPMTolerance = 100;
 
         public static final int kPIDLoopIdxShoot = 0;
         public static final int kTimeoutMsShoot = 20;
-        public static final int kShooterMaxRPM = 5555;
+        public static final int kShooterMaxRPM = 6050;
 
         public static final double kTalonFXPPR = 2048;
         public static final double kTurretEncoderPPR = 10.5;

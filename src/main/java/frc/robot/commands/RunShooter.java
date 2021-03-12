@@ -10,6 +10,7 @@ package frc.robot.commands;
 import static frc.robot.Constants.ShooterConstants.*;
 
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Shooter;
 
@@ -30,13 +31,15 @@ public class RunShooter extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    SmartDashboard.putNumber("InputShootSpeed", 0);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-
-    shooter.shoot(-joystick.getY());
+    double speed = SmartDashboard.getNumber("InputShootSpeed", 0);
+    shooter.shoot(speed);
+    // shooter.shoot(-joystick.getY());
 
     //if(shooter.getShooterRPM() > (shooter.getShooterSpeed() * kShooterMaxRPM)) processor.unlockProcessor();
   }

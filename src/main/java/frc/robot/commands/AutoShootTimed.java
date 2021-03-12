@@ -61,7 +61,11 @@ public class AutoShootTimed extends CommandBase {
   private double targetShooterSpeedCorrected;
   private double shooterSpeed;
   private double shooterSpeedCorrection;
-  private double shotPossible;//Ballistics value; 0 is false, 1 is true
+  private double shotPossible;//Ballistics value; 0 is false, 1 is 
+  private double shotWaitTime;
+  private double shotTime;
+  private double loopCount = 0;
+  private boolean shooting = false;
 
   private boolean foundTarget;
   private boolean targetLock;
@@ -69,7 +73,8 @@ public class AutoShootTimed extends CommandBase {
 
   private double[] ballisticsData;
 
-  private Timer timer;
+  private Timer runTimer;
+  private Timer shotTimer;
 
   private PIDControl pidDriveAngle;
   private PIDControl pidDriveDistance;
@@ -102,7 +107,7 @@ public class AutoShootTimed extends CommandBase {
     pidTurret = new PIDControl(kP_Turret, kI_Turret, kD_Turret);
 
     // Create the ballistics table
-    myBallistics = new Ballistics(98.25, 22.5, 5, 6380, 6, .227);
+    myBallistics = new Ballistics(98.25, 22.5, 5, 6050, 6, .25);
 
   }
 
@@ -124,6 +129,7 @@ public class AutoShootTimed extends CommandBase {
     shooterSpeedCorrection = 0;
     targetShooterSpeed = 1.0;
     targetDistance = 0;
+    shotWaitTime = 1;
 
     // Initialize flags
     runSpeedControl = true;
@@ -131,10 +137,14 @@ public class AutoShootTimed extends CommandBase {
     // Initialize shooting mode
     robotMode = 1;
 
-    // Start the timer and get the command start time
-    timer = new Timer();
-    timer.start();
-    startTime = timer.get();
+    // Start the timers and get the command start time
+    runTimer = new Timer();
+    runTimer.start();
+    startTime = runTimer.get();
+
+    shotTimer = new Timer();
+    shotTimer.start();
+    shotTime = shotTimer.get();
     
     // Zero gyro angle
     myDrivetrain.zeroGyro();
@@ -224,19 +234,19 @@ public class AutoShootTimed extends CommandBase {
         targetShooterSpeedCorrected = targetShooterSpeed * kSpeedCorrectionFactor;
         SmartDashboard.putNumber("Ballistics Speed", targetShooterSpeed);
 
-        myShooter.shoot(-targetShooterSpeedCorrected);
+        myShooter.shoot(targetShooterSpeedCorrected);
         //I have battery concerns about this implementation.  If we notice that battery draw during a match is problematic for speed control, we
         //will need to revert to a pid for RPM in some way.  This would be sufficiently complicated that it is a low priority, however.
 
       } else {
 
-        myShooter.shoot(-shooterSpeed);
+        myShooter.shoot(shooterSpeed);
 
       }
 
     } else {
 
-      myShooter.shoot(-shooterSpeed);  
+      myShooter.shoot(shooterSpeed);  
 
     } 
 
@@ -257,9 +267,20 @@ public class AutoShootTimed extends CommandBase {
           double l_targetSpeed = targetShooterSpeedCorrected * kShooterMaxRPM;
           SmartDashboard.putNumber("l_targetSpeed", l_targetSpeed);
           SmartDashboard.putNumber("tolerance", kRPMTolerance);
-          if (Math.abs(Math.abs(myShooter.getShooterRPM()) - targetShooterSpeedCorrected * kShooterMaxRPM) < kRPMTolerance) {
-            myProcessor.unlockProcessor();
-            ballCount--;
+          
+          double time = shotTimer.get();
+          if(time - shotTime >= shotWaitTime){
+            if (Math.abs(Math.abs(myShooter.getShooterRPM()) - targetShooterSpeedCorrected * kShooterMaxRPM) < kRPMTolerance || shooting) {
+              myProcessor.unlockProcessor();
+              shooting = true;
+              loopCount++;
+              if (loopCount == 5) {
+                ballCount--;
+                shotTime = time;
+                loopCount = 0;
+                shooting = false;
+              }
+            }  
           } 
 
         }
@@ -280,7 +301,7 @@ public class AutoShootTimed extends CommandBase {
         driveSpeedCorrection = pidDriveDistance.run(driveDistance, targetDistance);
 
         // Run the drive
-        driveDirection = -1;
+        driveDirection = 1;
         myDrivetrain.autoDrive(driveDirection * driveSpeedCorrection *  kAutoDriveSpeed + angleCorrection, driveDirection * driveSpeedCorrection * kAutoDriveSpeed - angleCorrection);
 
         break;
@@ -307,7 +328,7 @@ public class AutoShootTimed extends CommandBase {
         driveSpeedCorrection = pidDriveDistance.run(driveDistance, targetDistance);
 
         // Run the drive
-        driveDirection = 1;
+        driveDirection = -1;
         myDrivetrain.autoDrive(driveDirection * driveSpeedCorrection *  kAutoDriveSpeed - angleCorrection, driveDirection * driveSpeedCorrection * kAutoDriveSpeed + angleCorrection);
 
         break;
@@ -326,7 +347,7 @@ public class AutoShootTimed extends CommandBase {
 
 
     // Get current time
-    double time = timer.get();
+    double time = runTimer.get();
 
 
     // Check for max time
