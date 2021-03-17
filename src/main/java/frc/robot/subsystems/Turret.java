@@ -17,6 +17,7 @@ import static frc.robot.Constants.*;
 import static frc.robot.Constants.ShooterConstants.*;
 
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.revrobotics.CANEncoder;
@@ -48,6 +49,7 @@ public class Turret extends SubsystemBase {
     //theta (radians) = arclength / radius
     turret.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, kPIDLoopIdxShoot, kTimeoutMsShoot);
     turret.setSelectedSensorPosition(0);
+    turret.setNeutralMode(NeutralMode.Brake);
     // turretEncoder.setPosition(0);
     //turretEncoder.setPositionConversionFactor(-kTurretSprocketDia * 360 / (kTurretEncoderPPR * kTurretGearReduction * kTurretDiskDia/2));
   }

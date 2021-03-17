@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.Processor2;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Pneumatics;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Turret;
 import frc.robot.extraClasses.NetworkTableQuerier;
@@ -35,6 +36,7 @@ public class AutoShootTimed extends CommandBase {
   private final Shooter myShooter;
   private final Processor2 myProcessor;
   private final Turret myTurret;
+  private final Pneumatics myPneumatics;
   private final NetworkTableQuerier myNTables;
   private Ballistics myBallistics;
 
@@ -66,6 +68,11 @@ public class AutoShootTimed extends CommandBase {
   private double shotTime;
   private double loopCount = 0;
   private boolean shooting = false;
+  private boolean ballEntering;
+  private boolean turretLocked;
+  private boolean timeSet;
+  private double allShotsTime;
+  private double lastShotWaitTime;
 
   private boolean foundTarget;
   private boolean targetLock;
@@ -84,13 +91,14 @@ public class AutoShootTimed extends CommandBase {
 
 
   /** Default constructor */
-  public AutoShootTimed(Drivetrain drive, Shooter shoot, Processor2 process, Turret shootturret, NetworkTableQuerier table, double time) {
+  public AutoShootTimed(Drivetrain drive, Shooter shoot, Pneumatics pneumatics, Processor2 process, Turret shootturret, NetworkTableQuerier table, double time) {
 
     // Set class variables
     myDrivetrain = drive;
     myShooter = shoot;
     myProcessor = process;
     myTurret = shootturret;
+    myPneumatics = pneumatics;
     myNTables = table;
     // driveDistance = distance;
     // angleDeadband = deadband;
@@ -100,7 +108,7 @@ public class AutoShootTimed extends CommandBase {
     addRequirements(myDrivetrain, myShooter, myProcessor, myTurret);
 
     // Create PID controllers
-    pidDriveAngle = new PIDControl(kP_Turn, kI_Turn, kD_Turn);
+    pidDriveAngle = new PIDControl(kP_DriveAngle, kI_DriveAngle, kD_DriveAngle);
     pidDriveDistance = new PIDControl(kP_Straight, kI_Straight, kD_Straight);
     pidShooterSpeed = new PIDControl(kP_Shoot, kI_Shoot, kD_Shoot);
     pidLock = new PIDControl(kP_TurretLock, kI_TurretLock, kD_TurretLock);
@@ -119,7 +127,7 @@ public class AutoShootTimed extends CommandBase {
     // Initialize variables
     driveDirection = -1;
     driveDistance = 0;
-    targetDriveDistance = 60;
+    targetDriveDistance = 90;
     driveSpeedCorrection = 1;
     totalRotationsRight = 0;
     totalRotationsLeft = 0;
@@ -129,7 +137,12 @@ public class AutoShootTimed extends CommandBase {
     shooterSpeedCorrection = 0;
     targetShooterSpeed = 1.0;
     targetDistance = 0;
-    shotWaitTime = 1;
+    shotWaitTime = .5;
+    ballEntering = false;
+    turretLocked = false;
+    
+    timeSet = false;
+    lastShotWaitTime = .25;
 
     // Initialize flags
     runSpeedControl = true;
@@ -150,8 +163,10 @@ public class AutoShootTimed extends CommandBase {
     myDrivetrain.zeroGyro();
 
     // Get starting encoder positions
-    leftEncoderStart = myDrivetrain.getMasterLeftEncoderPosition();
-    rightEncoderStart = myDrivetrain.getMasterRightEncoderPosition();
+    leftEncoderStart = Math.abs(myDrivetrain.getMasterLeftEncoderPosition());
+    rightEncoderStart = Math.abs(myDrivetrain.getMasterRightEncoderPosition());
+
+    myPneumatics.retractIntake();
 
   }
 
@@ -170,10 +185,10 @@ public class AutoShootTimed extends CommandBase {
     // Aim turret and configure hood position
     double turretSpeed = 0;
     double turretAngle = myTurret.getTurretAngle();
-    if (foundTarget) {
+    if (foundTarget && (robotMode == 1 || robotMode == 4)) {
 
       //If the target is not centered in the screen
-      if (!targetLock) {
+      if (!targetLock && turretLocked == false) {
 
         //If the turret is in a safe operating range for the physical constraints of the robot
         turretSpeed = -kTurretSpeedAuto * pidLock.run(targetOffset, -5.0);
@@ -185,6 +200,7 @@ public class AutoShootTimed extends CommandBase {
 
         //If target is locked, stop the motor
         myTurret.stopTurret();
+        turretLocked = true;
 
       }
       
@@ -232,7 +248,7 @@ public class AutoShootTimed extends CommandBase {
         }
 
         targetShooterSpeedCorrected = targetShooterSpeed * kSpeedCorrectionFactor;
-        SmartDashboard.putNumber("Ballistics Speed", targetShooterSpeed);
+        SmartDashboard.putNumber("Ballistics Speed", targetShooterSpeedCorrected);
 
         myShooter.shoot(targetShooterSpeedCorrected);
         //I have battery concerns about this implementation.  If we notice that battery draw during a match is problematic for speed control, we
@@ -259,13 +275,14 @@ public class AutoShootTimed extends CommandBase {
 
         //Run processor normally regardless of position conditions
         myProcessor.lockProcessor();
-        myProcessor.autoRunProcessor(false, false);
+        myProcessor.autoRunProcessor(false, true);
 
         if (targetLock) {
 
           //Ensure wheel is moving fast enough to accurately make shot
           double l_targetSpeed = targetShooterSpeedCorrected * kShooterMaxRPM;
           SmartDashboard.putNumber("l_targetSpeed", l_targetSpeed);
+          SmartDashboard.putNumber("Shooter RPM", myShooter.getShooterRPM());
           SmartDashboard.putNumber("tolerance", kRPMTolerance);
           
           double time = shotTimer.get();
@@ -295,14 +312,19 @@ public class AutoShootTimed extends CommandBase {
         angleCorrection = pidDriveAngle.run(currentGyroAngle, 0);
 
         // Calculate speed correction based on distance to target
-        totalRotationsRight = Math.abs((myDrivetrain.getMasterRightEncoderPosition() - rightEncoderStart));
-        totalRotationsLeft = Math.abs((myDrivetrain.getMasterLeftEncoderPosition() - leftEncoderStart));
+        totalRotationsRight = Math.abs((Math.abs(myDrivetrain.getMasterRightEncoderPosition()) - rightEncoderStart));
+        totalRotationsLeft = Math.abs((Math.abs(myDrivetrain.getMasterLeftEncoderPosition()) - leftEncoderStart));
         driveDistance = (kWheelDiameter * Math.PI * (totalRotationsLeft + totalRotationsRight) / 2.0) / (DrivetrainConstants.kTalonFXPPR * kGearRatio);
-        driveSpeedCorrection = pidDriveDistance.run(driveDistance, targetDistance);
-
+        driveSpeedCorrection = pidDriveDistance.run(driveDistance, targetDriveDistance);
+        SmartDashboard.putNumber("DrSpCorrection", driveSpeedCorrection);
+        if(driveSpeedCorrection > 1){
+          driveSpeedCorrection = 1;
+        } else if (driveSpeedCorrection < -1) {
+          driveSpeedCorrection = -1;
+        }
         // Run the drive
         driveDirection = 1;
-        myDrivetrain.autoDrive(driveDirection * driveSpeedCorrection *  kAutoDriveSpeed + angleCorrection, driveDirection * driveSpeedCorrection * kAutoDriveSpeed - angleCorrection);
+        myDrivetrain.autoDrive(driveDirection * driveSpeedCorrection *  kAutoShootDriveSpeed + angleCorrection, driveDirection * driveSpeedCorrection * kAutoShootDriveSpeed - angleCorrection);
 
         break;
       
@@ -310,7 +332,7 @@ public class AutoShootTimed extends CommandBase {
       case 3:
 
         //Run the processor continually
-        myProcessor.autoRunProcessor(false, false);
+        myProcessor.autoRunProcessor(false, true);
 
         break;
       
@@ -322,14 +344,14 @@ public class AutoShootTimed extends CommandBase {
         angleCorrection = pidDriveAngle.run(currentGyroAngle, 0);
 
         // Calculate speed correction based on distance to target
-        totalRotationsRight = Math.abs((myDrivetrain.getMasterRightEncoderPosition() - rightEncoderStart));
-        totalRotationsLeft = Math.abs((myDrivetrain.getMasterLeftEncoderPosition() - leftEncoderStart));
+        totalRotationsRight = Math.abs((Math.abs(myDrivetrain.getMasterRightEncoderPosition()) - rightEncoderStart));
+        totalRotationsLeft = Math.abs((Math.abs(myDrivetrain.getMasterLeftEncoderPosition()) - leftEncoderStart));
         driveDistance = (kWheelDiameter * Math.PI * (totalRotationsLeft + totalRotationsRight) / 2.0) / (DrivetrainConstants.kTalonFXPPR * kGearRatio);
-        driveSpeedCorrection = pidDriveDistance.run(driveDistance, targetDistance);
+        driveSpeedCorrection = pidDriveDistance.run(driveDistance, targetDriveDistance);
 
         // Run the drive
         driveDirection = -1;
-        myDrivetrain.autoDrive(driveDirection * driveSpeedCorrection *  kAutoDriveSpeed - angleCorrection, driveDirection * driveSpeedCorrection * kAutoDriveSpeed + angleCorrection);
+        myDrivetrain.autoDrive(driveDirection * driveSpeedCorrection *  kAutoShootDriveSpeed + angleCorrection, driveDirection * driveSpeedCorrection * kAutoShootDriveSpeed - angleCorrection);
 
         break;
 
@@ -341,7 +363,7 @@ public class AutoShootTimed extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-
+    SmartDashboard.putNumber("BallCount", ballCount);
     // Initialize finished flag
     boolean thereYet = false;
 
@@ -368,17 +390,22 @@ public class AutoShootTimed extends CommandBase {
 
           // Check number of balls shot
           if (ballCount == 0) {
-            
-            // Set next mode
-            robotMode = 2;
+            if(!timeSet) {
+              allShotsTime = runTimer.get();
+              timeSet = true;
+            }
+            else if (runTimer.get() - allShotsTime >= lastShotWaitTime){
+              // Set next mode
+              robotMode = 2;
 
-            // Reset starting encoder positions
-            leftEncoderStart = myDrivetrain.getMasterLeftEncoderPosition();
-            rightEncoderStart = myDrivetrain.getMasterRightEncoderPosition();
+              // Reset starting encoder positions
+              leftEncoderStart = Math.abs(myDrivetrain.getMasterLeftEncoderPosition());
+              rightEncoderStart = Math.abs(myDrivetrain.getMasterRightEncoderPosition());
 
-            // Turn off shooter speed control
-            runSpeedControl = false;
-
+              // Turn off shooter speed control
+              runSpeedControl = false;
+              turretLocked = false;
+            }
           }
 
           break;
@@ -387,10 +414,10 @@ public class AutoShootTimed extends CommandBase {
         case 2:
 
           // Calculate distance traveled
-          totalRotationsRight = Math.abs((myDrivetrain.getMasterRightEncoderPosition() - rightEncoderStart));
-          totalRotationsLeft = Math.abs((myDrivetrain.getMasterLeftEncoderPosition() - leftEncoderStart));
+          totalRotationsRight = Math.abs((Math.abs(myDrivetrain.getMasterRightEncoderPosition()) - rightEncoderStart));
+          totalRotationsLeft = Math.abs((Math.abs(myDrivetrain.getMasterLeftEncoderPosition()) - leftEncoderStart));
           driveDistance = (kWheelDiameter * Math.PI * (totalRotationsLeft + totalRotationsRight) / 2.0) / (DrivetrainConstants.kTalonFXPPR * kGearRatio);
-
+          SmartDashboard.putNumber("DistanceTraveled", driveDistance);
           // Check distance against target
           if (Math.abs(driveDistance - targetDriveDistance) < kDriveDistanceTolerance) {
             
@@ -405,8 +432,16 @@ public class AutoShootTimed extends CommandBase {
         case 3:
 
           // Check light sensor for ball loading
-          if(myDrivetrain.getProcessorEntry() == false) {
-            ballCount++;
+          if (!ballEntering) {
+            if(myDrivetrain.getProcessorEntry() == false) {
+             ballEntering = true;
+            }       
+          }
+          else {
+            if(myDrivetrain.getProcessorEntry() == true && ballEntering == true){
+              ballCount++;
+              ballEntering = false;
+            }
           }
 
           // Check number of balls loaded
@@ -416,8 +451,8 @@ public class AutoShootTimed extends CommandBase {
             robotMode = 4;
 
             // Reset starting encoder positions
-            leftEncoderStart = myDrivetrain.getMasterLeftEncoderPosition();
-            rightEncoderStart = myDrivetrain.getMasterRightEncoderPosition();
+            leftEncoderStart = Math.abs(myDrivetrain.getMasterLeftEncoderPosition());
+            rightEncoderStart = Math.abs(myDrivetrain.getMasterRightEncoderPosition());
 
             // Turn on shooter speed control
             runSpeedControl = true;
@@ -430,10 +465,10 @@ public class AutoShootTimed extends CommandBase {
         case 4:
 
           // Calculate distance traveled
-          totalRotationsRight = Math.abs((myDrivetrain.getMasterRightEncoderPosition() - rightEncoderStart));
-          totalRotationsLeft = Math.abs((myDrivetrain.getMasterLeftEncoderPosition() - leftEncoderStart));
+          totalRotationsRight = Math.abs((Math.abs(myDrivetrain.getMasterRightEncoderPosition()) - rightEncoderStart));
+          totalRotationsLeft = Math.abs((Math.abs(myDrivetrain.getMasterLeftEncoderPosition()) - leftEncoderStart));
           driveDistance = (kWheelDiameter * Math.PI * (totalRotationsLeft + totalRotationsRight) / 2.0) / (DrivetrainConstants.kTalonFXPPR * kGearRatio);
-
+          SmartDashboard.putNumber("Distance Traveled", driveDistance);
           // Check distance against target
           if (Math.abs(driveDistance - targetDriveDistance) < kDriveDistanceTolerance) {
             

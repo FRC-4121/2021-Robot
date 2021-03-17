@@ -65,20 +65,24 @@ public final class Constants {
         public static final double kLowGearSpeedCap = 0.8;//In case full speed draws excessive power, these are an emergency measure
         public static final double kHighGearSpeedCap = 1.0;
         public static final double kAutoDriveSpeed = 0.5;
+        public static final double kAutoShootDriveSpeed = 0.6;
         public static final double kAutoTurnSpeed = 0.5;
         // public static final double kLowGearRatio = 30.0;
         // public static final double kHighGearRatio = 70.0;
         public static final double kGearRatio = 7; 
         public static final double kTurnAngleTolerance = 0.001;
-        public static final double kDriveDistanceTolerance = 1.0;
+        public static final double kDriveDistanceTolerance = 5.0;
         public static final double AUTO_ENCODER_REVOLUTION_FACTOR = 14750.0;
 
-        public static final double kP_Straight = 0.03;
+        public static final double kP_Straight = 0.08;
         public static final double kI_Straight = 0.0;
-        public static final double kD_Straight = 0.0;
+        public static final double kD_Straight = 0.005;
         public static final double kP_Turn = .003;
         public static final double kI_Turn = 0.0;
         public static final double kD_Turn = 0.0004;
+        public static final double kP_DriveAngle = .003;
+        public static final double kI_DriveAngle = 0.0;
+        public static final double kD_DriveAngle = 0.0004;
 
         //Filtering (for gyro)
         public static final int FILTER_WINDOW_SIZE = 50;
@@ -97,13 +101,13 @@ public final class Constants {
         public static final double kI_Turret = 0.0000;
         public static final double kD_Turret = 0.000;
         public static final double kP_TurretLock = 0.0013;
-        public static final double kI_TurretLock = 0.0006;
+        public static final double kI_TurretLock = 0.0018;
         public static final double kD_TurretLock = 0.00015;
 
         public static final double kTurretAngleTolerance = 2.0;
 
         public static final double kSpeedCorrectionFactor = 1.0;
-        public static final double kRPMTolerance = 100;
+        public static final double kRPMTolerance = 50;
 
         public static final int kPIDLoopIdxShoot = 0;
         public static final int kTimeoutMsShoot = 20;

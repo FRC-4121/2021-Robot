@@ -39,13 +39,13 @@ public class Pneumatics extends SubsystemBase {
 
   public void extendIntake() {
     
-    intakePneu.set(Value.kReverse);//will require testing of solenoid to confirm
+    intakePneu.set(Value.kForward);//will require testing of solenoid to confirm
     INTAKE_STATUS = "Extended";
   }
 
   public void retractIntake() {
 
-    intakePneu.set(Value.kForward);//will require testing of solenoid to confirm
+    intakePneu.set(Value.kReverse);//will require testing of solenoid to confirm
     INTAKE_STATUS = "Retracted";
   }
 

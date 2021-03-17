@@ -113,7 +113,7 @@ public class RobotContainer {
 
     shooter.setDefaultCommand(shoot);//shoot: joystick control, autoShoot: automatic speed control
 
-    turret.setDefaultCommand(aimTurret);
+    // turret.setDefaultCommand(aimTurret);
 
   }
 
@@ -149,7 +149,7 @@ public class RobotContainer {
     hoodUp.whenReleased(new InstantCommand(turret::stopHood, turret));
     hoodDown.whileHeld(lowerHood);
     hoodDown.whenReleased(new InstantCommand(turret::stopHood, turret));
-    // testAutoTurret.whenPressed(aimTurret);
+    testAutoTurret.whenPressed(aimTurret);
   }
 
   /**
@@ -160,7 +160,7 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // return new AutoDriveToBall(drivetrain, pneumatics, ntables, 20);
     // return new AutoGetAllBalls(drivetrain, pneumatics, process2, ntables, ballData, 2, 100);
-    return new AutoShootTimed(drivetrain, shooter, process2, turret, ntables, 20);
+    return new AutoShootTimed(drivetrain, shooter, pneumatics, process2, turret, ntables, 40);
   }
 
 
