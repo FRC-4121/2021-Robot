@@ -280,24 +280,26 @@ public class AutoShootTimed extends CommandBase {
         if (targetLock) {
 
           //Ensure wheel is moving fast enough to accurately make shot
-          double l_targetSpeed = targetShooterSpeedCorrected * kShooterMaxRPM;
+          double l_targetSpeed = targetShooterSpeed * kShooterMaxRPM;
           SmartDashboard.putNumber("l_targetSpeed", l_targetSpeed);
           SmartDashboard.putNumber("Shooter RPM", myShooter.getShooterRPM());
           SmartDashboard.putNumber("tolerance", kRPMTolerance);
           
-          double time = shotTimer.get();
-          if(time - shotTime >= shotWaitTime){
-            if (Math.abs(Math.abs(myShooter.getShooterRPM()) - targetShooterSpeedCorrected * kShooterMaxRPM) < kRPMTolerance || shooting) {
-              myProcessor.unlockProcessor();
-              shooting = true;
-              loopCount++;
-              if (loopCount == 5) {
-                ballCount--;
-                shotTime = time;
-                loopCount = 0;
-                shooting = false;
-              }
-            }  
+          if (ballCount > 0) {
+            double time = shotTimer.get();
+            if(time - shotTime >= shotWaitTime){
+              if (Math.abs(Math.abs(myShooter.getShooterRPM()) - targetShooterSpeed * kShooterMaxRPM) < kRPMTolerance || shooting) {
+                myProcessor.unlockProcessor();
+                shooting = true;
+                loopCount++;
+                if (loopCount == 5) {
+                  ballCount--;
+                  shotTime = time;
+                  loopCount = 0;
+                  shooting = false;
+                }
+              }  
+            }
           } 
 
         }
@@ -390,11 +392,18 @@ public class AutoShootTimed extends CommandBase {
 
           // Check number of balls shot
           if (ballCount == 0) {
-            if(!timeSet) {
+
+            if (!timeSet) {
+
               allShotsTime = runTimer.get();
               timeSet = true;
-            }
-            else if (runTimer.get() - allShotsTime >= lastShotWaitTime){
+
+            } 
+            else if (runTimer.get() - allShotsTime > shotWaitTime) {
+
+              // Reset flag
+              timeSet = false;
+
               // Set next mode
               robotMode = 2;
 
@@ -405,7 +414,9 @@ public class AutoShootTimed extends CommandBase {
               // Turn off shooter speed control
               runSpeedControl = false;
               turretLocked = false;
+
             }
+
           }
 
           break;

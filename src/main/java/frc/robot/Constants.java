@@ -76,11 +76,11 @@ public final class Constants {
 
         public static final double kP_Straight = 0.08;
         public static final double kI_Straight = 0.0;
-        public static final double kD_Straight = 0.005;
+        public static final double kD_Straight = 0.007;
         public static final double kP_Turn = .003;
         public static final double kI_Turn = 0.0;
         public static final double kD_Turn = 0.0004;
-        public static final double kP_DriveAngle = .003;
+        public static final double kP_DriveAngle = .004;
         public static final double kI_DriveAngle = 0.0;
         public static final double kD_DriveAngle = 0.0004;
 
@@ -106,8 +106,8 @@ public final class Constants {
 
         public static final double kTurretAngleTolerance = 2.0;
 
-        public static final double kSpeedCorrectionFactor = 1.0;
-        public static final double kRPMTolerance = 50;
+        public static final double kSpeedCorrectionFactor = 1.08;
+        public static final double kRPMTolerance = 100;
 
         public static final int kPIDLoopIdxShoot = 0;
         public static final int kTimeoutMsShoot = 20;
