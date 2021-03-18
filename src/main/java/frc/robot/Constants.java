@@ -71,10 +71,10 @@ public final class Constants {
         // public static final double kHighGearRatio = 70.0;
         public static final double kGearRatio = 7; 
         public static final double kTurnAngleTolerance = 0.001;
-        public static final double kDriveDistanceTolerance = 5.0;
+        public static final double kDriveDistanceTolerance = 10.0;
         public static final double AUTO_ENCODER_REVOLUTION_FACTOR = 14750.0;
 
-        public static final double kP_Straight = 0.08;
+        public static final double kP_Straight = 0.1;
         public static final double kI_Straight = 0.0;
         public static final double kD_Straight = 0.007;
         public static final double kP_Turn = .003;
@@ -97,12 +97,14 @@ public final class Constants {
         public static final double kI_Shoot = 0;
         public static final double kD_Shoot = 0;
         public static final double kF_Shoot = -1; 
+
         public static final double kP_Turret = 0.01;
         public static final double kI_Turret = 0.0000;
         public static final double kD_Turret = 0.000;
-        public static final double kP_TurretLock = 0.0013;
-        public static final double kI_TurretLock = 0.0018;
-        public static final double kD_TurretLock = 0.00015;
+
+        public static final double kP_TurretLock = 0.00095;
+        public static final double kI_TurretLock = 0.00012;//try .0006
+        public static final double kD_TurretLock = 0.000007;//try 0.000007
 
         public static final double kTurretAngleTolerance = 2.0;
 
@@ -130,8 +132,8 @@ public final class Constants {
 
         //Speeds
         public static final double kShooterSpeed = -1.0;
-        public static final double kTurretSpeedManual = 0.1;//positive is counterclockwise
-        public static final double kTurretSpeedAuto = 0.75;
+        public static final double kTurretSpeedManual = 0.10;//positive is counterclockwise
+        public static final double kTurretSpeedAuto = 1;
         // public static final double kTurretSpeedLock = 0.03;
     }
 

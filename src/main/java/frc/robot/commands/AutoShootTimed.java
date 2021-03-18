@@ -73,6 +73,7 @@ public class AutoShootTimed extends CommandBase {
   private boolean timeSet;
   private double allShotsTime;
   private double lastShotWaitTime;
+  private double targetAngle;
 
   private boolean foundTarget;
   private boolean targetLock;
@@ -140,6 +141,7 @@ public class AutoShootTimed extends CommandBase {
     shotWaitTime = .5;
     ballEntering = false;
     turretLocked = false;
+    targetAngle = 10.4;
     
     timeSet = false;
     lastShotWaitTime = .25;
@@ -185,23 +187,32 @@ public class AutoShootTimed extends CommandBase {
     // Aim turret and configure hood position
     double turretSpeed = 0;
     double turretAngle = myTurret.getTurretAngle();
-    if (foundTarget && (robotMode == 1 || robotMode == 4)) {
+    if (foundTarget) {
 
-      //If the target is not centered in the screen
-      if (!targetLock && turretLocked == false) {
+      if (robotMode == 1){
+      
+        //If the target is not centered in the screen
+        if (!targetLock && turretLocked == false) {
 
-        //If the turret is in a safe operating range for the physical constraints of the robot
-        turretSpeed = -kTurretSpeedAuto * pidLock.run(targetOffset, -5.0);
-        SmartDashboard.putNumber("TurretSpeed", turretSpeed);
+          //If the turret is in a safe operating range for the physical constraints of the robot
+          turretSpeed = -kTurretSpeedAuto * pidLock.run(targetOffset, -5.0);
+          SmartDashboard.putNumber("TurretSpeed", turretSpeed);
 
-        myTurret.rotateTurret(turretSpeed);
+          myTurret.rotateTurret(turretSpeed);
+        
+        } else {
+
+          //If target is locked, stop the motor
+          myTurret.stopTurret();
+          turretLocked = true;
+          targetAngle = myTurret.getTurretAngle();
+
+        }
       
       } else {
-
-        //If target is locked, stop the motor
-        myTurret.stopTurret();
-        turretLocked = true;
-
+        turretSpeed = -kTurretSpeedAuto * pidTurret.run(turretAngle, targetAngle);
+        SmartDashboard.putNumber("TurretSpeed", turretSpeed);
+        myTurret.rotateTurret(turretSpeed);
       }
       
       //This probably shouldn't be implemented here because we don't need it, but 
@@ -275,7 +286,7 @@ public class AutoShootTimed extends CommandBase {
 
         //Run processor normally regardless of position conditions
         myProcessor.lockProcessor();
-        myProcessor.autoRunProcessor(false, true);
+        myProcessor.autoRunProcessor(false, false);
 
         if (targetLock) {
 
@@ -287,12 +298,13 @@ public class AutoShootTimed extends CommandBase {
           
           if (ballCount > 0) {
             double time = shotTimer.get();
+            SmartDashboard.putNumber("Shot Timer", time - shotTime);
             if(time - shotTime >= shotWaitTime){
               if (Math.abs(Math.abs(myShooter.getShooterRPM()) - targetShooterSpeed * kShooterMaxRPM) < kRPMTolerance || shooting) {
                 myProcessor.unlockProcessor();
                 shooting = true;
                 loopCount++;
-                if (loopCount == 5) {
+                if (loopCount == 10) {
                   ballCount--;
                   shotTime = time;
                   loopCount = 0;
@@ -334,7 +346,7 @@ public class AutoShootTimed extends CommandBase {
       case 3:
 
         //Run the processor continually
-        myProcessor.autoRunProcessor(false, true);
+        myProcessor.autoRunProcessor(false, false);
 
         break;
       
@@ -424,12 +436,14 @@ public class AutoShootTimed extends CommandBase {
         // Driving to load area
         case 2:
 
+          myProcessor.stopProcessor();
           // Calculate distance traveled
           totalRotationsRight = Math.abs((Math.abs(myDrivetrain.getMasterRightEncoderPosition()) - rightEncoderStart));
           totalRotationsLeft = Math.abs((Math.abs(myDrivetrain.getMasterLeftEncoderPosition()) - leftEncoderStart));
           driveDistance = (kWheelDiameter * Math.PI * (totalRotationsLeft + totalRotationsRight) / 2.0) / (DrivetrainConstants.kTalonFXPPR * kGearRatio);
           SmartDashboard.putNumber("DistanceTraveled", driveDistance);
           // Check distance against target
+          SmartDashboard.putNumber("Distance error", Math.abs(driveDistance - targetDriveDistance));
           if (Math.abs(driveDistance - targetDriveDistance) < kDriveDistanceTolerance) {
             
             // Set next mode
@@ -454,6 +468,9 @@ public class AutoShootTimed extends CommandBase {
               ballEntering = false;
             }
           }
+          // if (myDrivetrain.getProcessorEntry() == false){
+          //   ballCount++;
+          // }
 
           // Check number of balls loaded
           if (ballCount == 3) {
@@ -474,7 +491,8 @@ public class AutoShootTimed extends CommandBase {
       
         // Driving to shooting location
         case 4:
-
+        
+          myProcessor.stopProcessor();
           // Calculate distance traveled
           totalRotationsRight = Math.abs((Math.abs(myDrivetrain.getMasterRightEncoderPosition()) - rightEncoderStart));
           totalRotationsLeft = Math.abs((Math.abs(myDrivetrain.getMasterLeftEncoderPosition()) - leftEncoderStart));
