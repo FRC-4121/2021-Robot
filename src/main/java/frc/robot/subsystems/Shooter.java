@@ -29,6 +29,7 @@ public class Shooter extends SubsystemBase {
   private double save_i = kI_Shoot;
   private double save_d = kD_Shoot;
   private double save_f = kF_Shoot;
+  private double inputSpeed = 0;
   private double speed = 0;
  
 
@@ -58,7 +59,7 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putNumber("I Shoot", kI_Shoot);
     SmartDashboard.putNumber("D Shoot", kD_Shoot);
     SmartDashboard.putNumber("F Shoot", kF_Shoot);
-    SmartDashboard.putNumber("Speed", speed);
+    SmartDashboard.putNumber("RPM", inputSpeed);
 
   }
 
@@ -78,7 +79,7 @@ public class Shooter extends SubsystemBase {
     double i = SmartDashboard.getNumber("I Shoot", save_i);
     double d = SmartDashboard.getNumber("D Shoot", save_d);
     double f = SmartDashboard.getNumber("F Shoot", save_f);
-    speed = SmartDashboard.getNumber("Speed", kShooterSpeed);
+    inputSpeed = SmartDashboard.getNumber("RPM", .75 * kShooterMaxRPM);
     
     if(p != save_p) {
       shooterMaster.config_kP(kPIDLoopIdxShoot, p, kTimeoutMsShoot);
@@ -102,7 +103,8 @@ public class Shooter extends SubsystemBase {
     }
 
     //Warning - this will run all the time!!!
-    shooterMaster.set(ControlMode.Velocity, speed * 1023);
+    // shootRPM(inputSpeed);
+    // shooterMaster.set(ControlMode.Velocity, speed * 1023);
     // shooterSlave.set(ControlMode.Velocity, -speed * 1023);
 
   }
@@ -126,7 +128,8 @@ public class Shooter extends SubsystemBase {
    */
   public void shootRPM(double rpm){
     //Speed for velocity control is encoder units per 100ms (why, I honestly couldn't tell you)
-    speed = rpm * kTalonFXPPR / (60 * 10);
+    // speed = rpm * kTalonFXPPR / (60 * 10);
+    speed = rpm;
     shooterMaster.set(ControlMode.Velocity, speed);
   }
 

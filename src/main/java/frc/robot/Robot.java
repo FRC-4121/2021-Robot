@@ -108,6 +108,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
+    robotContainer.getShooter().shootRPM(SmartDashboard.getNumber("RPM", 4500));
   }
 
   @Override
