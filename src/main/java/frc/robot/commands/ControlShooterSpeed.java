@@ -53,7 +53,7 @@ public class ControlShooterSpeed extends CommandBase {
     speed = .75;
     speedCorrection = 0;
 
-    targetSpeed = 1.0;
+    targetSpeed = kShooterMaxRPM;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -86,7 +86,7 @@ public class ControlShooterSpeed extends CommandBase {
         targetSpeedCorrected = targetSpeed * kSpeedCorrectionFactor;
         SmartDashboard.putNumber("Ballistics Speed", targetSpeed);
 
-        shooter.shoot(-targetSpeedCorrected);
+        shooter.shootRPM(-targetSpeedCorrected);
         //I have battery concerns about this implementation.  If we notice that battery draw during a match is problematic for speed control, we
         //will need to revert to a pid for RPM in some way.  This would be sufficiently complicated that it is a low priority, however.
       }

@@ -136,7 +136,7 @@ public class AutoShootTimed extends CommandBase {
     turretCorrection = 0;
     shooterSpeed = .75;
     shooterSpeedCorrection = 0;
-    targetShooterSpeed = 1.0;
+    targetShooterSpeed = kShooterMaxRPM;
     targetDistance = 0;
     shotWaitTime = .5;
     ballEntering = false;
@@ -261,7 +261,7 @@ public class AutoShootTimed extends CommandBase {
         targetShooterSpeedCorrected = targetShooterSpeed * kSpeedCorrectionFactor;
         SmartDashboard.putNumber("Ballistics Speed", targetShooterSpeedCorrected);
 
-        myShooter.shoot(targetShooterSpeedCorrected);
+        myShooter.shootRPM(targetShooterSpeedCorrected);
         //I have battery concerns about this implementation.  If we notice that battery draw during a match is problematic for speed control, we
         //will need to revert to a pid for RPM in some way.  This would be sufficiently complicated that it is a low priority, however.
 
@@ -300,7 +300,7 @@ public class AutoShootTimed extends CommandBase {
             double time = shotTimer.get();
             SmartDashboard.putNumber("Shot Timer", time - shotTime);
             if(time - shotTime >= shotWaitTime){
-              if (Math.abs(Math.abs(myShooter.getShooterRPM()) - targetShooterSpeed * kShooterMaxRPM) < kRPMTolerance || shooting) {
+              if (Math.abs(Math.abs(myShooter.getShooterRPM()) - targetShooterSpeed) < kRPMTolerance || shooting) {
                 myProcessor.unlockProcessor();
                 shooting = true;
                 loopCount++;
