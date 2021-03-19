@@ -73,36 +73,36 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putNumber("Shooter RPM", getShooterRPM());
     SmartDashboard.putNumber("Shooter Speed", getShooterSpeed());
     
-    // For testing we grab the PID from the smart dash
-    double p = SmartDashboard.getNumber("P Shoot", save_p);
-    double i = SmartDashboard.getNumber("I Shoot", save_i);
-    double d = SmartDashboard.getNumber("D Shoot", save_d);
-    double f = SmartDashboard.getNumber("F Shoot", save_f);
-    speed = SmartDashboard.getNumber("Speed", kShooterSpeed);
+    // // For testing we grab the PID from the smart dash
+    // double p = SmartDashboard.getNumber("P Shoot", save_p);
+    // double i = SmartDashboard.getNumber("I Shoot", save_i);
+    // double d = SmartDashboard.getNumber("D Shoot", save_d);
+    // double f = SmartDashboard.getNumber("F Shoot", save_f);
+    // speed = SmartDashboard.getNumber("Speed", kShooterSpeed);
     
-    if(p != save_p) {
-      shooterMaster.config_kP(kPIDLoopIdxShoot, p, kTimeoutMsShoot);
-      // shooterSlave.config_kP(kPIDLoopIdxShoot, p, kTimeoutMsShoot);
-      save_p = p;
-    }
-    if(i != save_i) {
-      shooterMaster.config_kI(kPIDLoopIdxShoot, i, kTimeoutMsShoot);
-      // shooterSlave.config_kI(kPIDLoopIdxShoot, i, kTimeoutMsShoot);
-      save_i = i;
-    }
-    if(d != save_d) {
-      shooterMaster.config_kD(kPIDLoopIdxShoot, d, kTimeoutMsShoot);
-      // shooterSlave.config_kD(kPIDLoopIdxShoot, d, kTimeoutMsShoot);
-      save_d = d;
-    }
-    if(f != save_f) {
-      shooterMaster.config_kF(kPIDLoopIdxShoot, f, kTimeoutMsShoot);
-      // shooterSlave.config_kF(kPIDLoopIdxShoot, f, kTimeoutMsShoot);
-      save_f = f;
-    }
+    // if(p != save_p) {
+    //   shooterMaster.config_kP(kPIDLoopIdxShoot, p, kTimeoutMsShoot);
+    //   // shooterSlave.config_kP(kPIDLoopIdxShoot, p, kTimeoutMsShoot);
+    //   save_p = p;
+    // }
+    // if(i != save_i) {
+    //   shooterMaster.config_kI(kPIDLoopIdxShoot, i, kTimeoutMsShoot);
+    //   // shooterSlave.config_kI(kPIDLoopIdxShoot, i, kTimeoutMsShoot);
+    //   save_i = i;
+    // }
+    // if(d != save_d) {
+    //   shooterMaster.config_kD(kPIDLoopIdxShoot, d, kTimeoutMsShoot);
+    //   // shooterSlave.config_kD(kPIDLoopIdxShoot, d, kTimeoutMsShoot);
+    //   save_d = d;
+    // }
+    // if(f != save_f) {
+    //   shooterMaster.config_kF(kPIDLoopIdxShoot, f, kTimeoutMsShoot);
+    //   // shooterSlave.config_kF(kPIDLoopIdxShoot, f, kTimeoutMsShoot);
+    //   save_f = f;
+    // }
 
-    //Warning - this will run all the time!!!
-    shooterMaster.set(ControlMode.Velocity, speed * 1023);
+    // //Warning - this will run all the time!!!
+    // shooterMaster.set(ControlMode.Velocity, speed * 1023);
     // shooterSlave.set(ControlMode.Velocity, -speed * 1023);
 
   }

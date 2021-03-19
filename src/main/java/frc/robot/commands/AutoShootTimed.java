@@ -261,7 +261,7 @@ public class AutoShootTimed extends CommandBase {
         targetShooterSpeedCorrected = targetShooterSpeed * kSpeedCorrectionFactor;
         SmartDashboard.putNumber("Ballistics Speed", targetShooterSpeedCorrected);
 
-        myShooter.shootRPM(targetShooterSpeedCorrected);
+        myShooter.shoot(targetShooterSpeedCorrected);
         //I have battery concerns about this implementation.  If we notice that battery draw during a match is problematic for speed control, we
         //will need to revert to a pid for RPM in some way.  This would be sufficiently complicated that it is a low priority, however.
 
@@ -286,7 +286,7 @@ public class AutoShootTimed extends CommandBase {
 
         //Run processor normally regardless of position conditions
         myProcessor.lockProcessor();
-        myProcessor.autoRunProcessor(false, false);
+        myProcessor.autoRunProcessor(false, true);
 
         if (targetLock) {
 
@@ -300,7 +300,7 @@ public class AutoShootTimed extends CommandBase {
             double time = shotTimer.get();
             SmartDashboard.putNumber("Shot Timer", time - shotTime);
             if(time - shotTime >= shotWaitTime){
-              if (Math.abs(Math.abs(myShooter.getShooterRPM()) - targetShooterSpeed) < kRPMTolerance || shooting) {
+              if (Math.abs(Math.abs(myShooter.getShooterRPM()) - targetShooterSpeed * kShooterMaxRPM) < kRPMTolerance || shooting) {
                 myProcessor.unlockProcessor();
                 shooting = true;
                 loopCount++;
@@ -346,7 +346,7 @@ public class AutoShootTimed extends CommandBase {
       case 3:
 
         //Run the processor continually
-        myProcessor.autoRunProcessor(false, false);
+        myProcessor.autoRunProcessor(false, true);
 
         break;
       
@@ -491,7 +491,7 @@ public class AutoShootTimed extends CommandBase {
       
         // Driving to shooting location
         case 4:
-        
+
           myProcessor.stopProcessor();
           // Calculate distance traveled
           totalRotationsRight = Math.abs((Math.abs(myDrivetrain.getMasterRightEncoderPosition()) - rightEncoderStart));

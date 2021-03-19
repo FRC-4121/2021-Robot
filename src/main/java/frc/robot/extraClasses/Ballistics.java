@@ -194,7 +194,7 @@ public class Ballistics {
 
             tableValues[0] = shotPossible;
             tableValues[1] = angle;
-            tableValues[2] = speed * maxSpeedRPM;//performing calculations with percent but controlling via RPM
+            tableValues[2] = speed;// * maxSpeedRPM;//performing calculations with percent but controlling via RPM
             tableValues[3] = dist;
 
             return tableValues;
