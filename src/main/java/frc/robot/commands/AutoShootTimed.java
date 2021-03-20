@@ -47,6 +47,7 @@ public class AutoShootTimed extends CommandBase {
   private double targetDriveDistance;
   private double driveDirection;
   private double driveSpeedCorrection;
+  private double driveSpeed;
   private double leftEncoderStart;
   private double rightEncoderStart;
   private double totalRotationsRight;
@@ -60,6 +61,7 @@ public class AutoShootTimed extends CommandBase {
   private double turretCorrection;
   private double targetDistance;
   private double targetShooterSpeed;
+  private double targetShooterSpeedRPM;
   private double targetShooterSpeedCorrected;
   private double shooterSpeed;
   private double shooterSpeedCorrection;
@@ -128,6 +130,7 @@ public class AutoShootTimed extends CommandBase {
     // Initialize variables
     driveDirection = -1;
     driveDistance = 0;
+    driveSpeed = kAutoDriveSpeed;
     targetDriveDistance = 90;
     driveSpeedCorrection = 1;
     totalRotationsRight = 0;
@@ -137,6 +140,7 @@ public class AutoShootTimed extends CommandBase {
     shooterSpeed = .75;
     shooterSpeedCorrection = 0;
     targetShooterSpeed = kShooterMaxRPM;
+    targetShooterSpeedRPM = kShooterMaxRPM;
     targetDistance = 0;
     shotWaitTime = .5;
     ballEntering = false;
@@ -195,7 +199,13 @@ public class AutoShootTimed extends CommandBase {
         if (!targetLock && turretLocked == false) {
 
           //If the turret is in a safe operating range for the physical constraints of the robot
-          turretSpeed = -kTurretSpeedAuto * pidLock.run(targetOffset, -5.0);
+          //turretSpeed = -kTurretSpeedAuto * pidLock.run(targetOffset, -5.0);
+          if (targetOffset > 0)
+          {
+            turretSpeed = -kTurretSpeedAuto;
+          } else {
+            turretSpeed = kTurretSpeedAuto;
+          }
           SmartDashboard.putNumber("TurretSpeed", turretSpeed);
 
           myTurret.rotateTurret(turretSpeed);
@@ -331,14 +341,35 @@ public class AutoShootTimed extends CommandBase {
         driveDistance = (kWheelDiameter * Math.PI * (totalRotationsLeft + totalRotationsRight) / 2.0) / (DrivetrainConstants.kTalonFXPPR * kGearRatio);
         driveSpeedCorrection = pidDriveDistance.run(driveDistance, targetDriveDistance);
         SmartDashboard.putNumber("DrSpCorrection", driveSpeedCorrection);
+
+        //Check for overspeed correction
         if(driveSpeedCorrection > 1){
+
           driveSpeedCorrection = 1;
+
         } else if (driveSpeedCorrection < -1) {
+
           driveSpeedCorrection = -1;
+
         }
-        // Run the drive
+
+        // Calculate final drive speed
         driveDirection = 1;
-        myDrivetrain.autoDrive(driveDirection * driveSpeedCorrection *  kAutoShootDriveSpeed + angleCorrection, driveDirection * driveSpeedCorrection * kAutoShootDriveSpeed - angleCorrection);
+        driveSpeed = driveDirection * driveSpeedCorrection * kAutoShootDriveSpeed;
+
+        // Enforce minimum speed
+        if (driveSpeed < kAutoDriveSpeedMin) {
+
+          driveSpeed = kAutoDriveSpeedMin;
+
+        } else if (driveSpeed > -kAutoDriveSpeedMin) {
+
+          driveSpeed = -kAutoDriveSpeedMin;
+
+        }
+
+        // Run the drive
+        myDrivetrain.autoDrive(driveSpeed + angleCorrection, driveSpeed - angleCorrection);
 
         break;
       
@@ -363,9 +394,34 @@ public class AutoShootTimed extends CommandBase {
         driveDistance = (kWheelDiameter * Math.PI * (totalRotationsLeft + totalRotationsRight) / 2.0) / (DrivetrainConstants.kTalonFXPPR * kGearRatio);
         driveSpeedCorrection = pidDriveDistance.run(driveDistance, targetDriveDistance);
 
+        //Check for overspeed correction
+        if(driveSpeedCorrection > 1){
+
+          driveSpeedCorrection = 1;
+        
+        } else if (driveSpeedCorrection < -1) {
+        
+          driveSpeedCorrection = -1;
+        
+        }
+
+        // Calculate final drive speed
+        driveDirection = 1;
+        driveSpeed = driveDirection * driveSpeedCorrection * kAutoShootDriveSpeed;
+
+        // Enforce minimum speed
+        if (driveSpeed < kAutoDriveSpeedMin) {
+
+          driveSpeed = kAutoDriveSpeedMin;
+
+        } else if (driveSpeed > -kAutoDriveSpeedMin) {
+
+          driveSpeed = -kAutoDriveSpeedMin;
+
+        }
+        
         // Run the drive
-        driveDirection = -1;
-        myDrivetrain.autoDrive(driveDirection * driveSpeedCorrection *  kAutoShootDriveSpeed + angleCorrection, driveDirection * driveSpeedCorrection * kAutoShootDriveSpeed - angleCorrection);
+        myDrivetrain.autoDrive(driveSpeed + angleCorrection, driveSpeed - angleCorrection);
 
         break;
 
@@ -442,10 +498,14 @@ public class AutoShootTimed extends CommandBase {
           totalRotationsLeft = Math.abs((Math.abs(myDrivetrain.getMasterLeftEncoderPosition()) - leftEncoderStart));
           driveDistance = (kWheelDiameter * Math.PI * (totalRotationsLeft + totalRotationsRight) / 2.0) / (DrivetrainConstants.kTalonFXPPR * kGearRatio);
           SmartDashboard.putNumber("DistanceTraveled", driveDistance);
+
           // Check distance against target
           SmartDashboard.putNumber("Distance error", Math.abs(driveDistance - targetDriveDistance));
-          if (Math.abs(driveDistance - targetDriveDistance) < kDriveDistanceTolerance) {
+          if (driveDistance >= targetDriveDistance) {
             
+            // Stop the robot
+            myDrivetrain.stopDrive();
+
             // Set next mode
             robotMode = 3;
 
@@ -492,15 +552,21 @@ public class AutoShootTimed extends CommandBase {
         // Driving to shooting location
         case 4:
 
+          // Stop the intake processor
           myProcessor.stopProcessor();
+
           // Calculate distance traveled
           totalRotationsRight = Math.abs((Math.abs(myDrivetrain.getMasterRightEncoderPosition()) - rightEncoderStart));
           totalRotationsLeft = Math.abs((Math.abs(myDrivetrain.getMasterLeftEncoderPosition()) - leftEncoderStart));
           driveDistance = (kWheelDiameter * Math.PI * (totalRotationsLeft + totalRotationsRight) / 2.0) / (DrivetrainConstants.kTalonFXPPR * kGearRatio);
           SmartDashboard.putNumber("Distance Traveled", driveDistance);
+
           // Check distance against target
-          if (Math.abs(driveDistance - targetDriveDistance) < kDriveDistanceTolerance) {
+          if (driveDistance >= targetDriveDistance) {
             
+            // Stop the robot
+            myDrivetrain.stopDrive();
+
             // Set next mode
             robotMode = 1;
 

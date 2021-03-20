@@ -65,6 +65,7 @@ public final class Constants {
         public static final double kLowGearSpeedCap = 0.8;//In case full speed draws excessive power, these are an emergency measure
         public static final double kHighGearSpeedCap = 1.0;
         public static final double kAutoDriveSpeed = 0.5;
+        public static final double kAutoDriveSpeedMin = 0.1;
         public static final double kAutoShootDriveSpeed = 0.6;
         public static final double kAutoTurnSpeed = 0.5;
         // public static final double kLowGearRatio = 30.0;
@@ -133,7 +134,7 @@ public final class Constants {
         //Speeds
         public static final double kShooterSpeed = -1.0;
         public static final double kTurretSpeedManual = 0.10;//positive is counterclockwise
-        public static final double kTurretSpeedAuto = 1;
+        public static final double kTurretSpeedAuto = 0.09; //was 1.0
         // public static final double kTurretSpeedLock = 0.03;
     }
 
