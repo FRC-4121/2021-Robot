@@ -65,8 +65,8 @@ public final class Constants {
         public static final double kLowGearSpeedCap = 0.8;//In case full speed draws excessive power, these are an emergency measure
         public static final double kHighGearSpeedCap = 1.0;
         public static final double kAutoDriveSpeed = 0.5;
-        public static final double kAutoDriveSpeedMin = 0.1;
-        public static final double kAutoShootDriveSpeed = 0.6;
+        public static final double kAutoDriveSpeedMin = 0.25;
+        public static final double kAutoShootDriveSpeed = 0.75;
         public static final double kAutoTurnSpeed = 0.5;
         // public static final double kLowGearRatio = 30.0;
         // public static final double kHighGearRatio = 70.0;
@@ -75,18 +75,18 @@ public final class Constants {
         public static final double kDriveDistanceTolerance = 10.0;
         public static final double AUTO_ENCODER_REVOLUTION_FACTOR = 14750.0;
 
-        public static final double kP_Straight = 0.1;
+        public static final double kP_Straight = 0.012;  //was 0.024
         public static final double kI_Straight = 0.0;
-        public static final double kD_Straight = 0.007;
-        public static final double kP_Turn = .003;
+        public static final double kD_Straight = 0.0;
+        public static final double kP_Turn = .003;//was .003
         public static final double kI_Turn = 0.0;
         public static final double kD_Turn = 0.0004;
-        public static final double kP_DriveAngle = .004;
+        public static final double kP_DriveAngle = .005;//was .0065
         public static final double kI_DriveAngle = 0.0;
-        public static final double kD_DriveAngle = 0.0004;
+        public static final double kD_DriveAngle = 0.0006;
 
         //Filtering (for gyro)
-        public static final int FILTER_WINDOW_SIZE = 50;
+        public static final int FILTER_WINDOW_SIZE = 100;
 
         public static int DIRECTION_MULTIPLIER = 1;//Controls whether forward on joysticks is forward or backward on robot
     }
@@ -94,7 +94,7 @@ public final class Constants {
     public static class ShooterConstants {
 
         //PID constants
-        public static final double kP_Shoot = 0.1;
+        public static final double kP_Shoot = 0.001; //was 0.1
         public static final double kI_Shoot = 0;
         public static final double kD_Shoot = 0;
         public static final double kF_Shoot = -1; 
@@ -114,7 +114,7 @@ public final class Constants {
 
         public static final int kPIDLoopIdxShoot = 0;
         public static final int kTimeoutMsShoot = 20;
-        public static final int kShooterMaxRPM = 6050;
+        public static final int kShooterMaxRPM = 6100;
 
         public static final double kTalonFXPPR = 2048;
         public static final double kTurretEncoderPPR = 10.5;
@@ -134,8 +134,8 @@ public final class Constants {
         //Speeds
         public static final double kShooterSpeed = -1.0;
         public static final double kTurretSpeedManual = 0.10;//positive is counterclockwise
-        public static final double kTurretSpeedAuto = 0.09; //was 1.0
-        // public static final double kTurretSpeedLock = 0.03;
+        public static final double kTurretSpeedAuto = 1.0;
+        public static final double kTurretSpeedLock = 0.07;
     }
 
     public static class PneumaticsConstants {
@@ -155,7 +155,7 @@ public final class Constants {
         public static final double kIntakeSpeed = -.55;
         public static final double kOuttakeSpeed = .75;
         public static final double kProcessorSpeed = -0.3;
-        public static final double kUnlockSpeed = 0.9;
+        public static final double kUnlockSpeed = 1;
         public static final double kLockSpeed = -.20;
     }
 

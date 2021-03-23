@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.LinearFilter;
+import edu.wpi.first.wpilibj.MedianFilter;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -25,7 +26,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class Drivetrain extends SubsystemBase {
 
   private ADXRS450_Gyro gyro;
-  private LinearFilter gyro_filter;
+  //private LinearFilter gyro_filter;
+  private MedianFilter gyro_filter;
 
   private WPI_TalonFX leftMasterFalcon;
   private WPI_TalonFX leftSlaveFalcon;
@@ -60,7 +62,8 @@ public class Drivetrain extends SubsystemBase {
     zeroGyro();
 
     // Initialize moving average filter for gyro
-    gyro_filter = LinearFilter.movingAverage(FILTER_WINDOW_SIZE);
+    //gyro_filter = LinearFilter.movingAverage(FILTER_WINDOW_SIZE);
+    gyro_filter = new MedianFilter(FILTER_WINDOW_SIZE);
 
     // Zero drivetrain encoders
     SmartDashboard.putNumber("Zero Encoders", 0);
@@ -104,6 +107,7 @@ public class Drivetrain extends SubsystemBase {
     if (zeroEncoders == 1)
     {
       SmartDashboard.putNumber("Zero Encoders", 0);
+      gyro.calibrate();
       zeroEncoders();
     }
 
@@ -308,7 +312,7 @@ public class Drivetrain extends SubsystemBase {
    * 
    */
   public void zeroGyro(){
-
+    // gyro.calibrate();
     gyro.reset();
 
   }

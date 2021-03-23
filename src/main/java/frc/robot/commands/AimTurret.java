@@ -28,6 +28,8 @@ public class AimTurret extends CommandBase {
   private boolean targetLock;
   private boolean firstRun;
   private double targetOffset;
+  private int targetLockCount;
+  private boolean realTargetLock;
 
   private double turretCorrection;
 
@@ -59,6 +61,8 @@ public class AimTurret extends CommandBase {
     stopAutoTurret = false;
     overrideAutoTurret = false;
     firstRun = true;
+    targetLockCount = 0;
+    realTargetLock = false;
 
     turretCorrection = 0;
 
@@ -100,11 +104,34 @@ public class AimTurret extends CommandBase {
       //If the camera has a target in sights
       if (foundTarget){
 
+        // Make sure we are really on the target
+        if (targetLock)
+        {
+          targetLockCount++;
+        } else {
+          targetLockCount = 0;
+        }
+
+        if (targetLockCount >= 10)
+        {
+          realTargetLock = true;
+          targetLockCount = 5;
+        }
+
+        SmartDashboard.putNumber("LockCount", targetLockCount);
+
         //If the target is not centered in the screen
-        if (!targetLock){
+        if (!realTargetLock){
 
           //If the turret is in a safe operating range for the physical constraints of the robot
-          speed = -kTurretSpeedAuto * lockPID.run(targetOffset, 0);
+          if (targetOffset > 0)
+          {
+            speed = -kTurretSpeedLock;
+          } else {
+            speed = kTurretSpeedLock;
+          }
+
+          //speed = -kTurretSpeedAuto * lockPID.run(targetOffset, 0);
           SmartDashboard.putNumber("TurretSpeed", speed);
 
           myTurret.rotateTurret(speed);
@@ -141,23 +168,17 @@ public class AimTurret extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    myTurret.stopTurret();
   }
+
 
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
 
-    // if (targetLock)
-    // {
-    //   return true;
-    // }
-    // else {
-
-    //   return stopAutoTurret;
-
-    // }
-    return false;
+    if (realTargetLock) return true;
+    else return false;
     
   }
 }
