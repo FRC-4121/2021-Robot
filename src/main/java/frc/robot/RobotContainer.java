@@ -31,7 +31,6 @@ public class RobotContainer {
   private final Joystick leftJoy = new Joystick(LEFT_JOYSTICK);
   private final Joystick testingJoystick = new Joystick(RIGHT_JOYSTICK);  
 
-
   //Subsystems
   private final Drivetrain drivetrain = new Drivetrain();
   private final Shooter shooter = new Shooter();
@@ -160,8 +159,9 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // return new AutoDriveToBall(drivetrain, pneumatics, ntables, 20);
     // return new AutoGetAllBalls(drivetrain, pneumatics, process2, ntables, ballData, 2, 100);
-    return new AutoShootTimed(drivetrain, shooter, pneumatics, process2, turret, ntables, 60);
+    // return new AutoShootTimed(drivetrain, shooter, pneumatics, process2, turret, ntables, 60);
     // return new AutoDrive(drivetrain, pneumatics, 60, 0, 1, 30);
+    return new AutoDriveRepeat(drivetrain, pneumatics);
   }
 
 
