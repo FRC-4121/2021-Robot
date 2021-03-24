@@ -108,8 +108,8 @@ public class AutoDrive extends CommandBase {
 
     // Calculate final drive speed
     speedCorrection = 1;
-    if (Math.abs(distanceTraveled - targetDriveDistance) <= 24) {
-      speedCorrection = 0.5;
+    if (Math.abs(distanceTraveled - targetDriveDistance) <= 18) {
+      speedCorrection = 0.75;
     }
     driveDirection = 1;
     driveSpeed = driveDirection * speedCorrection * kAutoShootDriveSpeed;

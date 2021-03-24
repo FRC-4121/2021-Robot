@@ -393,8 +393,10 @@ public class AutoShootTimed extends CommandBase {
         // Calculate final drive speed
         // Calculate final drive speed
         driveSpeedCorrection = 1;
-        if (Math.abs(driveDistance - targetDriveDistance) <= 24) {
-          driveSpeedCorrection = 0.5;
+        SmartDashboard.putNumber("DistanceToGo", Math.abs(driveDistance - targetDriveDistance));
+        if (Math.abs(driveDistance - targetDriveDistance) <= 18) {
+          driveSpeedCorrection = 0.75;
+          // angleCorrection = 0;
         }
         driveDirection = -1;
         driveSpeed = driveDirection * driveSpeedCorrection * kAutoShootDriveSpeed;
@@ -421,7 +423,9 @@ public class AutoShootTimed extends CommandBase {
         } else {
           leftSpeed = driveSpeed + angleCorrection;
         }
-    
+        leftSpeed *= kAutoLeftSpeedCorrection;
+
+        angleCorrection = 0;
         if (Math.abs(driveSpeed - angleCorrection) > 1){
           if(driveSpeed - angleCorrection < 0) {
             rightSpeed = -1;
@@ -472,8 +476,9 @@ public class AutoShootTimed extends CommandBase {
 
         // Calculate final drive speed
         driveSpeedCorrection = 1;
-        if (Math.abs(driveDistance - targetDriveDistance) <= 24) {
-          driveSpeedCorrection = 0.5;
+        if (Math.abs(driveDistance - targetDriveDistance) <= 18) {
+          driveSpeedCorrection = 0.75;
+          // angleCorrection = 0;
         }
         driveDirection = 1;
         driveSpeed = driveDirection * driveSpeedCorrection * kAutoShootDriveSpeed;
@@ -487,7 +492,7 @@ public class AutoShootTimed extends CommandBase {
         //     driveSpeed = kAutoDriveSpeedMin;
         //   }
         // }
-        
+        angleCorrection = 0;
         leftSpeed = 0;
         rightSpeed = 0;
         if (Math.abs(driveSpeed + angleCorrection) > 1){
@@ -499,7 +504,9 @@ public class AutoShootTimed extends CommandBase {
         } else {
           leftSpeed = driveSpeed + angleCorrection;
         }
-    
+        leftSpeed *= kAutoLeftSpeedCorrection;
+   
+
         if (Math.abs(driveSpeed - angleCorrection) > 1){
           if(driveSpeed - angleCorrection < 0) {
             rightSpeed = -1;
@@ -570,7 +577,7 @@ public class AutoShootTimed extends CommandBase {
               // Reset starting encoder positions
               leftEncoderStart = Math.abs(myDrivetrain.getMasterLeftEncoderPosition());
               rightEncoderStart = Math.abs(myDrivetrain.getMasterRightEncoderPosition());
-
+              driveDistance = 0;
               // Turn off shooter speed control
               runSpeedControl = false;
               turretLocked = false;
@@ -633,7 +640,7 @@ public class AutoShootTimed extends CommandBase {
             // Reset starting encoder positions
             leftEncoderStart = Math.abs(myDrivetrain.getMasterLeftEncoderPosition());
             rightEncoderStart = Math.abs(myDrivetrain.getMasterRightEncoderPosition());
-
+            driveDistance = 0;
             // Turn on shooter speed control
             runSpeedControl = true;
 

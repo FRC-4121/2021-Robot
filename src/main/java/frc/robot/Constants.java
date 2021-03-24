@@ -66,7 +66,7 @@ public final class Constants {
         public static final double kHighGearSpeedCap = 1.0;
         public static final double kAutoDriveSpeed = 0.5;
         public static final double kAutoDriveSpeedMin = 0.25;
-        public static final double kAutoShootDriveSpeed = 0.75;
+        public static final double kAutoShootDriveSpeed = 0.55;
         public static final double kAutoTurnSpeed = 0.5;
         // public static final double kLowGearRatio = 30.0;
         // public static final double kHighGearRatio = 70.0;
@@ -81,12 +81,14 @@ public final class Constants {
         public static final double kP_Turn = .003;//was .003
         public static final double kI_Turn = 0.0;
         public static final double kD_Turn = 0.0004;
-        public static final double kP_DriveAngle = .005;//was .0065
+        public static final double kP_DriveAngle = .012;//was .005
         public static final double kI_DriveAngle = 0.0;
-        public static final double kD_DriveAngle = 0.0006;
+        public static final double kD_DriveAngle = 0.0001;
+
+        public static final double kAutoLeftSpeedCorrection = 1.03;
 
         //Filtering (for gyro)
-        public static final int FILTER_WINDOW_SIZE = 100;
+        public static final int FILTER_WINDOW_SIZE = 150;
 
         public static int DIRECTION_MULTIPLIER = 1;//Controls whether forward on joysticks is forward or backward on robot
     }
