@@ -86,6 +86,9 @@ public class Drivetrain extends SubsystemBase {
     SmartDashboard.putNumber("Gyro", getGyroAngle());
     SmartDashboard.putNumber("Left Master Encoder", getMasterLeftEncoderPosition());
     SmartDashboard.putNumber("Right Master Encoder", getMasterRightEncoderPosition());
+    SmartDashboard.putNumber("Left Master Velocity", leftMasterFalcon.getSelectedSensorVelocity());
+    SmartDashboard.putNumber("Right Master Velocity", rightMasterFalcon.getSelectedSensorVelocity());
+
     
     //Graphable boolean :)
     if (getProcessorEntry()){
@@ -99,6 +102,7 @@ public class Drivetrain extends SubsystemBase {
     if (zeroGyro == 1)
     {
       SmartDashboard.putNumber("Zero Gyro", 0);
+      gyro.calibrate();
       zeroGyro();
     }
 
@@ -139,7 +143,7 @@ public class Drivetrain extends SubsystemBase {
     leftSlaveFalcon.follow(leftMasterFalcon);
     rightSlaveFalcon.follow(rightMasterFalcon);
 
-    //Set brake mode
+    //Set brake mode (check Phoenix Tuner software to confirm)
     leftMasterFalcon.setNeutralMode(NeutralMode.Brake);
     leftSlaveFalcon.setNeutralMode(NeutralMode.Brake);
     rightMasterFalcon.setNeutralMode(NeutralMode.Brake);
@@ -162,7 +166,9 @@ public class Drivetrain extends SubsystemBase {
     leftSlaveFalcon.setSelectedSensorPosition(0);
     rightMasterFalcon.setSelectedSensorPosition(0);
     rightSlaveFalcon.setSelectedSensorPosition(0);
-    
+
+    SmartDashboard.putNumber("Left Drive Speed", 0);
+    SmartDashboard.putNumber("Right Drive Speed", 0);
   }
 
 
@@ -182,12 +188,14 @@ public class Drivetrain extends SubsystemBase {
     // Drive the motors
     // Direction multiplier indicates drive direction
     if(DIRECTION_MULTIPLIER == 1){
-
+      SmartDashboard.putNumber("Left Drive Speed", speedCap * DIRECTION_MULTIPLIER * leftJoyY);
+      SmartDashboard.putNumber("Right Drive Speed", speedCap * DIRECTION_MULTIPLIER * rightJoyY);
       drivetrain.tankDrive(speedCap * DIRECTION_MULTIPLIER * leftJoyY, speedCap * DIRECTION_MULTIPLIER * rightJoyY);   
     
     }
     else{
-
+      SmartDashboard.putNumber("Left Drive Speed", speedCap * DIRECTION_MULTIPLIER * rightJoyY);
+      SmartDashboard.putNumber("Right Drive Speed", speedCap * DIRECTION_MULTIPLIER * leftJoyY);
       drivetrain.tankDrive(speedCap * DIRECTION_MULTIPLIER * rightJoyY, speedCap * DIRECTION_MULTIPLIER * leftJoyY); 
     
     }
@@ -204,7 +212,8 @@ public class Drivetrain extends SubsystemBase {
    * 
    */
   public void autoDrive(double leftSpeed, double rightSpeed){
-
+    SmartDashboard.putNumber("Left Drive Speed", leftSpeed);
+    SmartDashboard.putNumber("Right Drive Speed", rightSpeed);
     drivetrain.tankDrive(leftSpeed, rightSpeed);
   }
 
