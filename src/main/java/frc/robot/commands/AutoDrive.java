@@ -42,7 +42,7 @@ public class AutoDrive extends CommandBase {
 
   private Timer timer = new Timer();
   private PIDControl pidDriveAngle;
-  // private PIDControl pidDriveDistance; 
+  private PIDControl pidDriveDistance; 
 
 
   public AutoDrive(Drivetrain drive, Pneumatics shift, double dis, double ang, double dir, double time) {
@@ -57,7 +57,7 @@ public class AutoDrive extends CommandBase {
     stopTime = time;
 
     pidDriveAngle = new PIDControl(kP_DriveAngle, kI_DriveAngle, kD_DriveAngle);
-    // pidDriveDistance = new PIDControl(kP_Straight, kI_Straight, kD_Straight);
+    pidDriveDistance = new PIDControl(kP_Straight, kI_Straight, kD_Straight);
     //pidSpeedHigh = new PIDControl(kP_Speed_High, kI_Speed_High, kD_Speed_High);
   }
 
@@ -75,7 +75,7 @@ public class AutoDrive extends CommandBase {
     angleCorrection = 0;
     speedCorrection = 1;
 
-    // shifter.shiftUp();
+    shifter.shiftUp();
 
   }
 
@@ -86,7 +86,8 @@ public class AutoDrive extends CommandBase {
     // Calculate angle correction based on gyro reading
     currentGyroAngle = drivetrain.getGyroAngle();
     angleCorrection = pidDriveAngle.run(currentGyroAngle, 0);
-    
+    // SmartDashboard.putNumber("AngleCor", angleCorrection);
+
     // Calculate speed correction based on distance to target
     totalRotationsRight = Math.abs((Math.abs(drivetrain.getMasterRightEncoderPosition()) - rightEncoderStart));
     totalRotationsLeft = Math.abs((Math.abs(drivetrain.getMasterLeftEncoderPosition()) - leftEncoderStart));
@@ -94,14 +95,36 @@ public class AutoDrive extends CommandBase {
     // speedCorrection = pidDriveDistance.run(distanceTraveled, targetDriveDistance);
     // SmartDashboard.putNumber("DrSpCorrection", speedCorrection);
 
+    //Check for overspeed correction
+    // if(speedCorrection > 1){
+
+    //   speedCorrection = 1;
+
+    // } else if (speedCorrection < -1) {
+
+    //   speedCorrection = -1;
+
+    // }
+
     // Calculate final drive speed
     speedCorrection = 1;
-    if (Math.abs(distanceTraveled - targetDriveDistance) <= 18) {
-      speedCorrection = 0.75;
-    }
+    // if (Math.abs(distanceTraveled - targetDriveDistance) <= 18) {
+    //   // speedCorrection = 0.5;
+    // }
+    // direction = 1;
     driveSpeed = direction * speedCorrection * kAutoShootDriveSpeed;
 
     SmartDashboard.putNumber("DriveSpeed", driveSpeed);
+    // Enforce minimum speed
+    // if (Math.abs(driveSpeed) < kAutoDriveSpeedMin) {
+
+    //   angleCorrection = 0;
+    //   if (driveSpeed < 0){
+    //     driveSpeed = -kAutoDriveSpeedMin;
+    //   } else {
+    //     driveSpeed = kAutoDriveSpeedMin;
+    //   }
+    // }
     SmartDashboard.putNumber("AngleCor", angleCorrection);
 
     double leftSpeed = 0;
@@ -150,19 +173,14 @@ public class AutoDrive extends CommandBase {
     boolean thereYet = false;
 
     double time = timer.get();
+    totalRotationsRight = Math.abs((Math.abs(drivetrain.getMasterRightEncoderPosition()) - rightEncoderStart));
+    totalRotationsLeft = Math.abs((Math.abs(drivetrain.getMasterLeftEncoderPosition()) - leftEncoderStart));
+    distanceTraveled = (kWheelDiameter * Math.PI * (totalRotationsLeft + totalRotationsRight) / 2.0) / (DrivetrainConstants.kTalonFXPPR * kGearRatio);
+    SmartDashboard.putNumber("DistanceTraveled", distanceTraveled);
 
-    if (time - startTime > stopTime) {
-      thereYet = true;
-    } else {
-      totalRotationsRight = Math.abs((Math.abs(drivetrain.getMasterRightEncoderPosition()) - rightEncoderStart));
-      totalRotationsLeft = Math.abs((Math.abs(drivetrain.getMasterLeftEncoderPosition()) - leftEncoderStart));
-      distanceTraveled = (kWheelDiameter * Math.PI * (totalRotationsLeft + totalRotationsRight) / 2.0) / (DrivetrainConstants.kTalonFXPPR * kGearRatio);
-      SmartDashboard.putNumber("DistanceTraveled", distanceTraveled);
-
-      // Check distance against target
-      SmartDashboard.putNumber("Distance error", Math.abs(distanceTraveled - targetDriveDistance));
-      if (distanceTraveled >= targetDriveDistance) thereYet = true;
-    }
+    // Check distance against target
+    SmartDashboard.putNumber("Distance error", Math.abs(distanceTraveled - targetDriveDistance));
+    if (distanceTraveled >= targetDriveDistance) thereYet = true;
 
     return thereYet;
 

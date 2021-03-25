@@ -82,9 +82,9 @@ public final class Constants {
         public static final double kP_Turn = .003;//was .003
         public static final double kI_Turn = 0.0;
         public static final double kD_Turn = 0.0004;
-        public static final double kP_DriveAngle = .012;//was .005
+        public static final double kP_DriveAngle = .003;//was .005
         public static final double kI_DriveAngle = 0.0;
-        public static final double kD_DriveAngle = 0.0001;
+        public static final double kD_DriveAngle = 0.0004;
 
         public static final double kAutoLeftSpeedCorrection = 1.03;
 

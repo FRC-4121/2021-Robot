@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 /**
@@ -160,8 +161,9 @@ public class RobotContainer {
     // return new AutoDriveToBall(drivetrain, pneumatics, ntables, 20);
     // return new AutoGetAllBalls(drivetrain, pneumatics, process2, ntables, ballData, 2, 100);
     // return new AutoShootTimed(drivetrain, shooter, pneumatics, process2, turret, ntables, 60);
-    // return new AutoDrive(drivetrain, pneumatics, 60, 0, 1, 30);
-    return new AutoDriveRepeat(drivetrain, pneumatics);
+    return new SequentialCommandGroup(new AutoDrive(drivetrain, pneumatics, 60, 0, 1, 30),
+                                      new AutoDrive(drivetrain, pneumatics, 60, 0, -1, 30));
+    // return new AutoDriveRepeat(drivetrain, pneumatics);
   }
 
 
