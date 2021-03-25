@@ -105,8 +105,6 @@ public class AutoShootTimed extends CommandBase {
     myTurret = shootturret;
     myPneumatics = pneumatics;
     myNTables = table;
-    // driveDistance = distance;
-    // angleDeadband = deadband;
     stopTime = time;
 
     // Add subsystem requirements
@@ -390,7 +388,6 @@ public class AutoShootTimed extends CommandBase {
 
         // }
 
-        // Calculate final drive speed
         // Calculate final drive speed
         driveSpeedCorrection = 1;
         SmartDashboard.putNumber("DistanceToGo", Math.abs(driveDistance - targetDriveDistance));
