@@ -218,13 +218,13 @@ public class AutoShootTimed extends CommandBase {
         if (!targetLock && turretLocked == false) {
 
           //If the turret is in a safe operating range for the physical constraints of the robot
-          turretSpeed = -kTurretSpeedAuto * pidLock.run(targetOffset, -5.0);
-          // if (targetOffset > 0)
-          // {
-          //   turretSpeed = -kTurretSpeedLock;
-          // } else {
-          //   turretSpeed = kTurretSpeedLock;
-          // }
+          // turretSpeed = -kTurretSpeedAuto * pidLock.run(targetOffset, -5.0);
+          if (targetOffset > 0)
+          {
+            turretSpeed = -kTurretSpeedLock;
+          } else {
+            turretSpeed = kTurretSpeedLock;
+          }
           SmartDashboard.putNumber("TurretSpeed", turretSpeed);
 
           myTurret.rotateTurret(turretSpeed);
@@ -239,7 +239,18 @@ public class AutoShootTimed extends CommandBase {
         }
       
       } else {
-        turretSpeed = -kTurretSpeedAuto * pidTurret.run(turretAngle, targetAngle);
+        // turretSpeed = -kTurretSpeedAuto * pidTurret.run(turretAngle, targetAngle);
+        // SmartDashboard.putNumber("TurretSpeed", turretSpeed);
+        // myTurret.rotateTurret(turretSpeed);
+        if (turretAngle > 2){
+          turretSpeed = -kTurretSpeedLock;
+        }
+        else if (turretAngle < -2) {
+          turretSpeed = kTurretSpeedLock;
+        }
+        else {
+          turretSpeed = 0;
+        }
         SmartDashboard.putNumber("TurretSpeed", turretSpeed);
         myTurret.rotateTurret(turretSpeed);
       }
@@ -634,7 +645,7 @@ public class AutoShootTimed extends CommandBase {
           //}
           if (myDrivetrain.getProcessorEntry() == false){
             ballPresentCount++;
-            if (ballPresentCount == 6){
+            if (ballPresentCount == 5){
               ballCount++;
               ballPresentCount = 0;
             }

@@ -99,29 +99,29 @@ public class AimTurret extends CommandBase {
 
     // Maintain target lock
     //If the driver has not overridden for manual control
-    if (!overrideAutoTurret){
+    // if (!overrideAutoTurret){
 
       //If the camera has a target in sights
       if (foundTarget){
 
-        // Make sure we are really on the target
-        if (targetLock)
-        {
-          targetLockCount++;
-        } else {
-          targetLockCount = 0;
-        }
+        // // Make sure we are really on the target
+        // if (targetLock)
+        // {
+        //   targetLockCount++;
+        // } else {
+        //   targetLockCount = 0;
+        // }
 
-        if (targetLockCount >= 10)
-        {
-          realTargetLock = true;
-          targetLockCount = 5;
-        }
+        // if (targetLockCount >= 10)
+        // {
+        //   realTargetLock = true;
+        //   targetLockCount = 5;
+        // }
 
         SmartDashboard.putNumber("LockCount", targetLockCount);
 
         //If the target is not centered in the screen
-        if (!realTargetLock){
+        if (!targetLock){
 
           //If the turret is in a safe operating range for the physical constraints of the robot
           if (targetOffset > 0)
@@ -131,8 +131,23 @@ public class AimTurret extends CommandBase {
             speed = kTurretSpeedLock;
           }
 
-          //speed = -kTurretSpeedAuto * lockPID.run(targetOffset, 0);
+          // speed = -kTurretSpeedAuto * lockPID.run(targetOffset, 0);
+          // if (Math.abs(speed) > .10){
+          //   if (speed < 0){
+          //     speed = -.10;
+          //   } else {
+          //     speed = .10;
+          //   }
+          // } else if (Math.abs(speed) < 0.06){
+          //   if (speed < 0){
+          //     speed = -0.06;
+          //   }
+          //   else{
+          //     speed = 0.060;
+          //   }
+          // }
           SmartDashboard.putNumber("TurretSpeed", speed);
+          
 
           myTurret.rotateTurret(speed);
         
@@ -149,16 +164,25 @@ public class AimTurret extends CommandBase {
       else
       {
         //If the camera does not see a target, we need to figure out how to write the code for this
-        speed = -kTurretSpeedAuto * turretPID.run(turretAngle, 0.0);
+        // speed = -kTurretSpeedAuto * turretPID.run(turretAngle, 0.0);
+        if (turretAngle > 2){
+          speed = -kTurretSpeedLock;
+        }
+        else if (turretAngle < -2) {
+          speed = kTurretSpeedLock;
+        }
+        else {
+          speed = 0;
+        }
         SmartDashboard.putNumber("TurretSpeed", speed);
         myTurret.rotateTurret(speed);
       }
 
-    }
-    else
-    {
-      //Manual control will pull data from the potentiometer on the oi board.  For now, we will access a joystick as the 'potentiometer'
-    }
+    // }
+    // else
+    // {
+    //   //Manual control will pull data from the potentiometer on the oi board.  For now, we will access a joystick as the 'potentiometer'
+    // }
 
     
     
