@@ -64,7 +64,7 @@ public final class Constants {
         public static final double kWheelDiameter = 6.0;
         public static final double kLowGearSpeedCap = 0.8;//In case full speed draws excessive power, these are an emergency measure
         public static final double kHighGearSpeedCap = 1.0;
-        public static final double kJoystickSpeedCorr = 0.5;
+        public static final double kJoystickSpeedCorr = 0.55;
         public static final double kAutoDriveSpeed = 0.5;
         public static final double kAutoDriveSpeedMin = 0.25;
         public static final double kAutoShootDriveSpeed = 0.55;
@@ -86,7 +86,7 @@ public final class Constants {
         public static final double kI_DriveAngle = 0.0;
         public static final double kD_DriveAngle = 0.0004;
 
-        public static final double kAutoLeftSpeedCorrection = 1.03;
+        public static final double kAutoRightSpeedCorrection = 0.975;
 
         //Filtering (for gyro)
         public static final int FILTER_WINDOW_SIZE = 150;
@@ -106,9 +106,9 @@ public final class Constants {
         public static final double kI_Turret = 0.0000;
         public static final double kD_Turret = 0.000;
 
-        public static final double kP_TurretLock = 0.00095;
-        public static final double kI_TurretLock = 0.00012;//try .0006
-        public static final double kD_TurretLock = 0.000007;//try 0.000007
+        public static final double kP_TurretLock = 0.0016;
+        public static final double kI_TurretLock = 0.0000;//try .0006
+        public static final double kD_TurretLock = 0.000000;//try 0.000007
 
         public static final double kTurretAngleTolerance = 2.0;
 

@@ -75,6 +75,8 @@ public class AutoDrive extends CommandBase {
     angleCorrection = 0;
     speedCorrection = 1;
 
+    pidDriveAngle = new PIDControl(kP_DriveAngle, kI_DriveAngle, kD_DriveAngle);
+
     shifter.shiftUp();
 
   }
@@ -148,6 +150,7 @@ public class AutoDrive extends CommandBase {
     } else {
       rightSpeed = driveSpeed - angleCorrection;
     }
+    rightSpeed *= kAutoRightSpeedCorrection;
     SmartDashboard.putNumber("LeftSpeed", leftSpeed);
     SmartDashboard.putNumber("RightSpeed", rightSpeed);
 
@@ -180,7 +183,12 @@ public class AutoDrive extends CommandBase {
 
     // Check distance against target
     SmartDashboard.putNumber("Distance error", Math.abs(distanceTraveled - targetDriveDistance));
-    if (distanceTraveled >= targetDriveDistance) thereYet = true;
+    if (distanceTraveled >= targetDriveDistance) {
+      drivetrain.stopDrive();
+      if (time - startTime >= stopTime){
+        thereYet = true;
+      }
+    }
 
     return thereYet;
 

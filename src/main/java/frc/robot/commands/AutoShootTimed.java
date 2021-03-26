@@ -77,6 +77,7 @@ public class AutoShootTimed extends CommandBase {
   private double lastShotWaitTime;
   private double targetAngle;
   private int targetLockCount;
+  private int ballPresentCount = 0;
 
   private boolean foundTarget;
   private boolean targetLock;
@@ -142,7 +143,7 @@ public class AutoShootTimed extends CommandBase {
     targetShooterSpeed = kShooterMaxRPM;
     targetShooterSpeedRPM = kShooterMaxRPM;
     targetDistance = 0;
-    shotWaitTime = .5;
+    shotWaitTime = .25;
     ballEntering = false;
     turretLocked = false;
     targetAngle = 10.4;
@@ -217,13 +218,13 @@ public class AutoShootTimed extends CommandBase {
         if (!targetLock && turretLocked == false) {
 
           //If the turret is in a safe operating range for the physical constraints of the robot
-          //turretSpeed = -kTurretSpeedAuto * pidLock.run(targetOffset, -5.0);
-          if (targetOffset > 0)
-          {
-            turretSpeed = -kTurretSpeedLock;
-          } else {
-            turretSpeed = kTurretSpeedLock;
-          }
+          turretSpeed = -kTurretSpeedAuto * pidLock.run(targetOffset, -5.0);
+          // if (targetOffset > 0)
+          // {
+          //   turretSpeed = -kTurretSpeedLock;
+          // } else {
+          //   turretSpeed = kTurretSpeedLock;
+          // }
           SmartDashboard.putNumber("TurretSpeed", turretSpeed);
 
           myTurret.rotateTurret(turretSpeed);
@@ -348,6 +349,7 @@ public class AutoShootTimed extends CommandBase {
                 myProcessor.unlockProcessor();
                 shooting = true;
                 loopCount++;
+                SmartDashboard.putNumber("LoopCount", loopCount);
                 if (loopCount == 10) {
                   ballCount--;
                   shotTime = time;
@@ -420,7 +422,6 @@ public class AutoShootTimed extends CommandBase {
         } else {
           leftSpeed = driveSpeed + angleCorrection;
         }
-        leftSpeed *= kAutoLeftSpeedCorrection;
 
         angleCorrection = 0;
         if (Math.abs(driveSpeed - angleCorrection) > 1){
@@ -432,6 +433,7 @@ public class AutoShootTimed extends CommandBase {
         } else {
           rightSpeed = driveSpeed - angleCorrection;
         }
+        rightSpeed *= kAutoRightSpeedCorrection;
         SmartDashboard.putNumber("LeftSpeed", leftSpeed);
         SmartDashboard.putNumber("RightSpeed", rightSpeed);
     
@@ -501,7 +503,7 @@ public class AutoShootTimed extends CommandBase {
         } else {
           leftSpeed = driveSpeed + angleCorrection;
         }
-        leftSpeed *= kAutoLeftSpeedCorrection;
+        
    
 
         if (Math.abs(driveSpeed - angleCorrection) > 1){
@@ -513,6 +515,7 @@ public class AutoShootTimed extends CommandBase {
         } else {
           rightSpeed = driveSpeed - angleCorrection;
         }
+        rightSpeed *= kAutoRightSpeedCorrection;
         SmartDashboard.putNumber("LeftSpeed", leftSpeed);
         SmartDashboard.putNumber("RightSpeed", rightSpeed);
     
@@ -574,6 +577,7 @@ public class AutoShootTimed extends CommandBase {
               // Reset starting encoder positions
               leftEncoderStart = Math.abs(myDrivetrain.getMasterLeftEncoderPosition());
               rightEncoderStart = Math.abs(myDrivetrain.getMasterRightEncoderPosition());
+              pidDriveAngle = new PIDControl(kP_DriveAngle, kI_DriveAngle, kD_DriveAngle);
               driveDistance = 0;
               // Turn off shooter speed control
               runSpeedControl = false;
@@ -613,20 +617,28 @@ public class AutoShootTimed extends CommandBase {
         case 3:
 
           // Check light sensor for ball loading
-          if (!ballEntering) {
-            if(myDrivetrain.getProcessorEntry() == false) {
-             ballEntering = true;
-            }       
-          }
-          else {
-            if(myDrivetrain.getProcessorEntry() == true && ballEntering == true){
+          // if (!ballEntering) {
+          //   if(myDrivetrain.getProcessorEntry() == false) {
+          //     ballPresentCount++;
+          //     if (ballPresentCount == 5){
+          //       ballPresentCount = 0;
+          //       ballEntering = true;
+          //     }
+          //   }       
+          // }
+          // else {
+          //   if(myDrivetrain.getProcessorEntry() == true){
+          //     ballCount++;
+          //     ballEntering = false;
+          //   }
+          //}
+          if (myDrivetrain.getProcessorEntry() == false){
+            ballPresentCount++;
+            if (ballPresentCount == 6){
               ballCount++;
-              ballEntering = false;
+              ballPresentCount = 0;
             }
           }
-          // if (myDrivetrain.getProcessorEntry() == false){
-          //   ballCount++;
-          // }
 
           // Check number of balls loaded
           if (ballCount == 3) {
@@ -638,6 +650,7 @@ public class AutoShootTimed extends CommandBase {
             leftEncoderStart = Math.abs(myDrivetrain.getMasterLeftEncoderPosition());
             rightEncoderStart = Math.abs(myDrivetrain.getMasterRightEncoderPosition());
             driveDistance = 0;
+            pidDriveAngle = new PIDControl(kP_DriveAngle, kI_DriveAngle, kD_DriveAngle);
             // Turn on shooter speed control
             runSpeedControl = true;
 
