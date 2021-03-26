@@ -45,12 +45,12 @@ public class DriveWithJoysticks extends CommandBase {
     if(useXboxControl){
       //Drive using xbox joystick values
       double speedCorrection = kJoystickSpeedCorr;
-      drivetrain.drive(speedCorrection * xboxJoysticks.getY(Hand.kLeft), speedCorrection * xboxJoysticks.getY(Hand.kRight));
+      drivetrain.drive(speedCorrection * xboxJoysticks.getY(Hand.kLeft), kAutoRightSpeedCorrection * speedCorrection * xboxJoysticks.getY(Hand.kRight));
     }
     else
     {
       //Drive using joystick values (may need to be inverted)
-      drivetrain.drive(lJoy.getY(), rJoy.getY());
+      drivetrain.drive(lJoy.getY(), kAutoRightSpeedCorrection * rJoy.getY());
     }
   }
 
