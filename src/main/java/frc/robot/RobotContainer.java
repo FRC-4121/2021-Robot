@@ -129,7 +129,7 @@ public class RobotContainer {
     invertDirectionButton.whenPressed(invertCommand);
     
     //Pneumatics
-    shiftButton.whenPressed(shift);
+    shiftButton.whenPressed(new InstantCommand(drivetrain::changeSpeed, drivetrain));
     intakeArmButton.whenPressed(operateIntakeArm);
 
     //Processor

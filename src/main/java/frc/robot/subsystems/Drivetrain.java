@@ -224,6 +224,13 @@ public class Drivetrain extends SubsystemBase {
     drivetrain.tankDrive(0, 0);
   }
 
+  public void changeSpeed(){
+    if (kJoystickSpeedCorr == 0.5){
+      kJoystickSpeedCorr = .8;
+    } else if (kJoystickSpeedCorr == 0.8) {
+      kJoystickSpeedCorr = 0.5;
+    }
+  }
 
   /** Zero the encoders */
   public void zeroEncoders(){
