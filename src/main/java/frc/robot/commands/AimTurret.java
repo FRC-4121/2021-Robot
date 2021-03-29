@@ -124,20 +124,21 @@ public class AimTurret extends CommandBase {
         if (!targetLock){
 
           //If the turret is in a safe operating range for the physical constraints of the robot
-          if (targetOffset > 0)
-          {
-            speed = -kTurretSpeedLock;
-          } else {
-            speed = kTurretSpeedLock;
-          }
+          // if (targetOffset > 0)
+          // {
+          //   speed = -kTurretSpeedLock;
+          // } else {
+          //   speed = kTurretSpeedLock;
+          // }
 
-          // speed = -kTurretSpeedAuto * lockPID.run(targetOffset, 0);
-          // if (Math.abs(speed) > .10){
-          //   if (speed < 0){
-          //     speed = -.10;
-          //   } else {
-          //     speed = .10;
-          //   }
+          speed = -kTurretSpeedAuto * lockPID.run(targetOffset, 0);
+          if (Math.abs(speed) > .10){
+            if (speed < 0){
+              speed = -.10;
+            } else {
+              speed = .10;
+            }
+          }
           // } else if (Math.abs(speed) < 0.06){
           //   if (speed < 0){
           //     speed = -0.06;

@@ -86,7 +86,7 @@ public final class Constants {
         public static final double kI_DriveAngle = 0.0;
         public static final double kD_DriveAngle = 0.0004;
 
-        public static final double kAutoRightSpeedCorrection = 0.975;
+        public static final double kAutoRightSpeedCorrection = 0.9775;
 
         //Filtering (for gyro)
         public static final int FILTER_WINDOW_SIZE = 150;
@@ -106,9 +106,9 @@ public final class Constants {
         public static final double kI_Turret = 0.0000;
         public static final double kD_Turret = 0.000;
 
-        public static final double kP_TurretLock = 0.0005;
-        public static final double kI_TurretLock = 0.0000;//try .0006
-        public static final double kD_TurretLock = 0.000000;//try 0.000007
+        public static final double kP_TurretLock = 0.00115;
+        public static final double kI_TurretLock = 0.0005;//try .0006
+        public static final double kD_TurretLock = 0.000055;//try 0.000007
 
         public static final double kTurretAngleTolerance = 2.0;
 

@@ -7,6 +7,7 @@
 
 package frc.robot.extraClasses;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class PIDControl {
 
@@ -35,6 +36,9 @@ public class PIDControl {
         errorSum += targetError * timeStep;
         errorChange = (targetError - previousError) / timeStep;
         correctionFactor = kP * targetError + kI * errorSum + kD * errorChange;
+        SmartDashboard.putNumber("PContribute", kP * targetError);
+        SmartDashboard.putNumber("IContribute", kI * errorSum);
+        SmartDashboard.putNumber("DContribute", kD * errorChange);
 
         //Set previous error
         previousError = targetError;

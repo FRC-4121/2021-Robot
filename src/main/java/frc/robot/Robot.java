@@ -54,6 +54,12 @@ public class Robot extends TimedRobot {
     
     SmartDashboard.putNumber("Zero Gyro", 0);
     SmartDashboard.putNumber("Zero Encoders", 0);
+    
+    boolean targetLock = robotContainer.ntables.getVisionBoolean("TargetLock");
+    double tapeOffset = robotContainer.ntables.getVisionDouble("TapeOffset");
+    
+    SmartDashboard.putBoolean("TargetLock", targetLock);
+    SmartDashboard.putNumber("TapeOffset", tapeOffset);
   }
 
   /**

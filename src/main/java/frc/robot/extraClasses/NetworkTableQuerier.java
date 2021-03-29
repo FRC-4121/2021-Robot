@@ -5,6 +5,7 @@ import java.lang.Thread;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class NetworkTableQuerier implements Runnable {
 
@@ -155,6 +156,9 @@ public class NetworkTableQuerier implements Runnable {
         tapeDistance = visionTable.getEntry("TapeDistance");
         tapeOffset = visionTable.getEntry("TapeOffset");
         saveVideo = visionTable.getEntry("SaveVideo");
+
+        SmartDashboard.putBoolean("TargetLock", targetLock.getBoolean(false));
+        SmartDashboard.putNumber("TapeOffset", tapeOffset.getDouble(0));
     }
 
     /*

@@ -186,16 +186,19 @@ public class AutoShootTimed extends CommandBase {
 
     // Get status of flags/NT data
     foundTarget = myNTables.getFoundTapeFlag();
-    targetLock = myNTables.getTargetLockFlag();
+    // targetLock = myNTables.getTargetLockFlag();
     
     targetOffset = myNTables.getTapeOffset();
-    // targetLock = (targetOffset < 12) && (targetOffset > -12);//adjustment for testing
+    targetLock = (targetOffset < 12) && (targetOffset > -12);//adjustment for testing
+    
+    SmartDashboard.putBoolean("TargetLock", targetLock);
     targetDistance = myNTables.getTapeDistance();
 
 
     // Aim turret and configure hood position
     double turretSpeed = 0;
     double turretAngle = myTurret.getTurretAngle();
+    SmartDashboard.putBoolean("TurretLocked", turretLocked);
     if (foundTarget) {
 
       if (robotMode == 1){
@@ -215,16 +218,24 @@ public class AutoShootTimed extends CommandBase {
         // }
 
         //If the target is not centered in the screen
-        if (!targetLock && turretLocked == false) {
+        if (!targetLock) {
 
           //If the turret is in a safe operating range for the physical constraints of the robot
-          // turretSpeed = -kTurretSpeedAuto * pidLock.run(targetOffset, -5.0);
-          if (targetOffset > 0)
-          {
-            turretSpeed = -kTurretSpeedLock;
-          } else {
-            turretSpeed = kTurretSpeedLock;
+          turretSpeed = -kTurretSpeedAuto * pidLock.run(targetOffset, 0);
+          // speed = -kTurretSpeedAuto * lockPID.run(targetOffset, 0);
+          if (Math.abs(turretSpeed) > .10){
+            if (turretSpeed < 0){
+              turretSpeed = -.10;
+            } else {
+              turretSpeed = .10;
+            }
           }
+          // if (targetOffset > 0)
+          // {
+          //   turretSpeed = -kTurretSpeedLock;
+          // } else {
+          //   turretSpeed = kTurretSpeedLock;
+          // }
           SmartDashboard.putNumber("TurretSpeed", turretSpeed);
 
           myTurret.rotateTurret(turretSpeed);
@@ -233,7 +244,6 @@ public class AutoShootTimed extends CommandBase {
 
           //If target is locked, stop the motor
           myTurret.stopTurret();
-          turretLocked = true;
           targetAngle = myTurret.getTurretAngle();
 
         }
@@ -242,15 +252,16 @@ public class AutoShootTimed extends CommandBase {
         // turretSpeed = -kTurretSpeedAuto * pidTurret.run(turretAngle, targetAngle);
         // SmartDashboard.putNumber("TurretSpeed", turretSpeed);
         // myTurret.rotateTurret(turretSpeed);
-        if (turretAngle > 2){
-          turretSpeed = -kTurretSpeedLock;
-        }
-        else if (turretAngle < -2) {
-          turretSpeed = kTurretSpeedLock;
-        }
-        else {
-          turretSpeed = 0;
-        }
+        turretSpeed = 0;
+        // if (Math.abs(turretAngle - targetAngle) < 2) {
+        //   turretSpeed = 0;
+        // }
+        // else if (turretAngle - targetAngle > 2){
+        //   turretSpeed = -kTurretSpeedLock;
+        // }
+        // else if (turretAngle - targetAngle < -2) {
+        //   turretSpeed = kTurretSpeedLock;
+        // }
         SmartDashboard.putNumber("TurretSpeed", turretSpeed);
         myTurret.rotateTurret(turretSpeed);
       }
@@ -278,7 +289,7 @@ public class AutoShootTimed extends CommandBase {
     // Control shooter speed
     if(runSpeedControl) {
 
-      targetLock = myNTables.getTargetLockFlag();
+      // targetLock = myNTables.getTargetLockFlag();
 
       if(targetLock) {
         
@@ -361,7 +372,7 @@ public class AutoShootTimed extends CommandBase {
                 shooting = true;
                 loopCount++;
                 SmartDashboard.putNumber("LoopCount", loopCount);
-                if (loopCount == 10) {
+                if (loopCount == 8) {
                   ballCount--;
                   shotTime = time;
                   loopCount = 0;
