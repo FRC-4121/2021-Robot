@@ -28,9 +28,9 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 public class Turret extends SubsystemBase {
 
   //Declare turret motor and encoder
-  // private final CANSparkMax turret = new CANSparkMax(TURRET, MotorType.kBrushless);
-  // private final CANEncoder turretEncoder = turret.getEncoder();
-  private final WPI_TalonFX turret = new WPI_TalonFX(TURRET);
+  private final CANSparkMax turret = new CANSparkMax(TURRET, MotorType.kBrushless);
+  private final CANEncoder turretEncoder = turret.getEncoder();
+  // private final WPI_TalonFX turret = new WPI_TalonFX(TURRET);
 
   private final CANSparkMax hood = new CANSparkMax(HOOD, MotorType.kBrushless);
   private final AnalogInput hoodEncoder = new AnalogInput(kHoodEncoder);
@@ -47,11 +47,11 @@ public class Turret extends SubsystemBase {
 
     //Configured to calculate the angle around the turret from the limit switch
     //theta (radians) = arclength / radius
-    turret.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, kPIDLoopIdxShoot, kTimeoutMsShoot);
-    turret.setSelectedSensorPosition(0);
-    turret.setNeutralMode(NeutralMode.Brake);
-    // turretEncoder.setPosition(0);
-    //turretEncoder.setPositionConversionFactor(-kTurretSprocketDia * 360 / (kTurretEncoderPPR * kTurretGearReduction * kTurretDiskDia/2));
+    // turret.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, kPIDLoopIdxShoot, kTimeoutMsShoot);
+    // turret.setSelectedSensorPosition(0);
+    // turret.setNeutralMode(NeutralMode.Brake);
+    turretEncoder.setPosition(0);
+    // turretEncoder.setPositionConversionFactor(-kTurretSprocketDia * 360 / (kTurretEncoderPPR * kTurretGearReduction * kTurretDiskDia/2));
   }
 
 
@@ -61,7 +61,8 @@ public class Turret extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    turretAngle = turret.getSelectedSensorPosition() * 360 * kTurretSprocketRatio / (kTalonFXPPR);
+    // turretAngle = turret.getSelectedSensorPosition() * 360 * kTurretSprocketRatio / (kTalonFXPPR);
+    turretAngle = turretEncoder.getPosition() * 360 * kTurretSprocketRatio / (kTurretEncoderPPR * kTurretGearReduction);
     SmartDashboard.putNumber("Turret Angle", turretAngle);
     SmartDashboard.putNumber("Hood Angle", getHoodAngle());
   }
