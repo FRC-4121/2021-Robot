@@ -63,6 +63,7 @@ public class RobotContainer {
   private final RunShooter shoot = new RunShooter(shooter, testingJoystick);
   private final RaiseHood raiseHood = new RaiseHood(turret);
   private final LowerHood lowerHood = new LowerHood(turret);
+  private final RunHoodToPos setNormalShoot = new RunHoodToPos(turret, 240);
 
   //Auto
   private final AimTurret aimTurret = new AimTurret(turret, ntables);
@@ -88,6 +89,7 @@ public class RobotContainer {
   private final JoystickButton testAutoTurret = new JoystickButton(testingJoystick, 12);
   private final JoystickButton hoodUp = new JoystickButton(testingJoystick, 7);
   private final JoystickButton hoodDown = new JoystickButton(testingJoystick, 8);
+  private final JoystickButton hoodToNormal = new JoystickButton(xbox, 1);
 
   // Extra Classes
   public final BallData ballData = new BallData();
@@ -111,9 +113,9 @@ public class RobotContainer {
     //Drivetrain -> drive with xbox joysticks
     drivetrain.setDefaultCommand(driveCommand);
 
-    shooter.setDefaultCommand(shoot);//shoot: joystick control, autoShoot: automatic speed control
+    shooter.setDefaultCommand(autoShoot);//shoot: joystick control, autoShoot: automatic speed control
 
-    // turret.setDefaultCommand(aimTurret);
+    turret.setDefaultCommand(aimTurret);
 
   }
 
@@ -150,6 +152,7 @@ public class RobotContainer {
     hoodDown.whileHeld(lowerHood);
     hoodDown.whenReleased(new InstantCommand(turret::stopHood, turret));
     testAutoTurret.whenPressed(aimTurret);
+    hoodToNormal.whenPressed(setNormalShoot);
   }
 
   /**
@@ -161,9 +164,7 @@ public class RobotContainer {
     // return new AutoDriveToBall(drivetrain, pneumatics, ntables, 20);
     // return new AutoGetAllBalls(drivetrain, pneumatics, process2, ntables, ballData, 2, 100);
     return new AutoShootTimed(drivetrain, shooter, pneumatics, process2, turret, ntables, 60);
-    // return new SequentialCommandGroup(new AutoDrive(drivetrain, pneumatics, 60, 0, 1, 10),
-    //                                   new AutoDrive(drivetrain, pneumatics, 60, 0, -1, 10));
-    // return new AutoDriveRepeat(drivetrain, pneumatics);
+    // return new RunHoodToPos(turret, 240);
   }
 
 

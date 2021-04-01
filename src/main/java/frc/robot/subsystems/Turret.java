@@ -71,6 +71,7 @@ public class Turret extends SubsystemBase {
    * @param speed
    */
   public void rotateTurret(double speed){
+    SmartDashboard.putNumber("TurretSpeed", speed);
     double turretAngle = getTurretAngle();
     if(speed > 0){
       if(turretAngle <= kTurretMinAngle){

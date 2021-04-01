@@ -166,15 +166,17 @@ public class AimTurret extends CommandBase {
       {
         //If the camera does not see a target, we need to figure out how to write the code for this
         // speed = -kTurretSpeedAuto * turretPID.run(turretAngle, 0.0);
-        if (turretAngle > 2){
-          speed = -kTurretSpeedLock;
-        }
-        else if (turretAngle < -2) {
-          speed = kTurretSpeedLock;
-        }
-        else {
-          speed = 0;
-        }
+        double targetAngle = 0;
+        // if (Math.abs(turretAngle - targetAngle) < 2) {
+        //   speed = 0;
+        // }
+        // else if (turretAngle - targetAngle > 2){
+        //   speed = -kTurretSpeedLock;
+        // }
+        // else if (turretAngle - targetAngle < -2) {
+        //   speed = kTurretSpeedLock;
+        // }
+        speed = 0;
         SmartDashboard.putNumber("TurretSpeed", speed);
         myTurret.rotateTurret(speed);
       }

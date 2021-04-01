@@ -123,7 +123,7 @@ public final class Constants {
         public static final double kTurretEncoderPPR = 10.5;
 
         //Turret dimensions/other config
-        public static final double kTurretGearReduction = 1;
+        public static final double kTurretGearReduction = .5;
         public static final double kTurretSprocketRatio = 16.0/120;
         public static final double kTurretDiskDia = 13.75;
 

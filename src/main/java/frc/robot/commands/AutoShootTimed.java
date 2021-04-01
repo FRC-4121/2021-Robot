@@ -189,7 +189,7 @@ public class AutoShootTimed extends CommandBase {
     // targetLock = myNTables.getTargetLockFlag();
     
     targetOffset = myNTables.getTapeOffset();
-    targetLock = (targetOffset < 12) && (targetOffset > -12);//adjustment for testing
+    targetLock = (targetOffset < 10) && (targetOffset > 0);//adjustment for testing
     
     SmartDashboard.putBoolean("TargetLock", targetLock);
     targetDistance = myNTables.getTapeDistance();
@@ -199,9 +199,9 @@ public class AutoShootTimed extends CommandBase {
     double turretSpeed = 0;
     double turretAngle = myTurret.getTurretAngle();
     SmartDashboard.putBoolean("TurretLocked", turretLocked);
-    if (foundTarget) {
-
-      if (robotMode == 1){
+    if (robotMode == 1){
+      
+      if (foundTarget) {  
       
         // Make sure we are really on the target
         // if (targetLock)
@@ -221,7 +221,7 @@ public class AutoShootTimed extends CommandBase {
         if (!targetLock) {
 
           //If the turret is in a safe operating range for the physical constraints of the robot
-          turretSpeed = -kTurretSpeedAuto * pidLock.run(targetOffset, 0);
+          turretSpeed = -kTurretSpeedAuto * pidLock.run(targetOffset, 5);
           // speed = -kTurretSpeedAuto * lockPID.run(targetOffset, 0);
           if (Math.abs(turretSpeed) > .10){
             if (turretSpeed < 0){
@@ -249,38 +249,31 @@ public class AutoShootTimed extends CommandBase {
         }
       
       } else {
-        // turretSpeed = -kTurretSpeedAuto * pidTurret.run(turretAngle, targetAngle);
+         //If the camera does not see a target, we need to figure out how to write the code for this
+        // turretSpeed = -kTurretSpeedAuto * pidTurret.run(turretAngle, 0.0);
         // SmartDashboard.putNumber("TurretSpeed", turretSpeed);
         // myTurret.rotateTurret(turretSpeed);
-        turretSpeed = 0;
-        // if (Math.abs(turretAngle - targetAngle) < 2) {
-        //   turretSpeed = 0;
-        // }
-        // else if (turretAngle - targetAngle > 2){
-        //   turretSpeed = -kTurretSpeedLock;
-        // }
-        // else if (turretAngle - targetAngle < -2) {
-        //   turretSpeed = kTurretSpeedLock;
-        // }
-        SmartDashboard.putNumber("TurretSpeed", turretSpeed);
-        myTurret.rotateTurret(turretSpeed);
+        myTurret.stopTurret();
       }
       
-      //This probably shouldn't be implemented here because we don't need it, but 
-      //it will be useful for the other version of this challenge
-      if (targetDistance < 85) {
-        //set high angle (55)
-      
-      } else {
-        //set low angle (45)
-      }
-
     } else {
-
-      //If the camera does not see a target, we need to figure out how to write the code for this
-      turretSpeed = -kTurretSpeedAuto * pidTurret.run(turretAngle, 0.0);
+      
+      // turretSpeed = -kTurretSpeedAuto * pidTurret.run(turretAngle, targetAngle);
+      // SmartDashboard.putNumber("TurretSpeed", turretSpeed);
+      // myTurret.rotateTurret(turretSpeed);
+      turretSpeed = 0;
+      // if (Math.abs(turretAngle - targetAngle) < 2) {
+      //   turretSpeed = 0;
+      // }
+      // else if (turretAngle - targetAngle > 2){
+      //   turretSpeed = -kTurretSpeedLock;
+      // }
+      // else if (turretAngle - targetAngle < -2) {
+      //   turretSpeed = kTurretSpeedLock;
+      // }
       SmartDashboard.putNumber("TurretSpeed", turretSpeed);
-      myTurret.rotateTurret(turretSpeed);
+      // myTurret.rotateTurret(turretSpeed);
+      myTurret.stopTurret();
 
     }
 
