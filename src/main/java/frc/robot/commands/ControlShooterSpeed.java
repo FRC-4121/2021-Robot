@@ -22,13 +22,14 @@ public class ControlShooterSpeed extends CommandBase {
   private NetworkTableQuerier ntQuerier;
   private Ballistics ballistics;
 
-  private PIDControl myPID;
+  private PIDControl pidShooterSpeed;
   private double distance;
   private boolean targetLock;
+  private double targetOffset;
   private double targetSpeed;
-  private double targetSpeedCorrected;
+  private double targetShooterSpeedCorrected;
   private double speed;
-  private double speedCorrection;
+  private double shooterSpeedCorrection;
   private double shotPossible;//Ballistics value; 0 is false, 1 is true
 
   private boolean runSpeedControl = true;
@@ -49,9 +50,10 @@ public class ControlShooterSpeed extends CommandBase {
   @Override
   public void initialize() {
 
-    myPID = new PIDControl(kP_Shoot, kI_Shoot, kD_Shoot);
+    pidShooterSpeed = new PIDControl(kP_Shoot, kI_Shoot, kD_Shoot);
+
     speed = .75;
-    speedCorrection = 0;
+    shooterSpeedCorrection = 0;
 
     targetSpeed = kShooterMaxRPM;
   }
@@ -62,7 +64,11 @@ public class ControlShooterSpeed extends CommandBase {
 
     if(runSpeedControl){
 
-      targetLock = ntQuerier.getTargetLockFlag();
+      // targetLock = ntQuerier.getTargetLockFlag();
+      
+      targetOffset = ntQuerier.getTapeOffset();
+      targetLock = (targetOffset < 10) && (targetOffset > 2);
+      SmartDashboard.putBoolean("TargetLock", targetLock);
 
       if(targetLock)
       {
@@ -83,10 +89,27 @@ public class ControlShooterSpeed extends CommandBase {
           targetSpeed = ballisticsData[2];
         }
 
-        targetSpeedCorrected = targetSpeed * kSpeedCorrectionFactor;
-        SmartDashboard.putNumber("Ballistics Speed", targetSpeed);
+        // Calculate speed correction
+        shooterSpeedCorrection = pidShooterSpeed.run(shooter.getShooterRPM(), targetSpeed*kShooterMaxRPM);
+        
+        // Correct shooter speed control input
+        //targetShooterSpeedCorrected = targetShooterSpeed * kSpeedCorrectionFactor;
+        targetShooterSpeedCorrected = targetSpeed - shooterSpeedCorrection;
 
-        shooter.shootRPM(-targetSpeedCorrected);
+        // Ensure corrected speed is within bounds
+        if (targetShooterSpeedCorrected > 1) {
+          targetShooterSpeedCorrected = 1;
+        } else if (targetShooterSpeedCorrected < -1) {
+          targetShooterSpeedCorrected = -1;
+        }
+
+        // Write key values to dashboard
+        SmartDashboard.putNumber("Ballistics Speed", targetShooterSpeedCorrected);
+
+        // targetSpeedCorrected = targetSpeed * kSpeedCorrectionFactor;
+        // SmartDashboard.putNumber("Ballistics Speed", targetSpeed);
+
+        shooter.shootRPM(-targetShooterSpeedCorrected);
         //I have battery concerns about this implementation.  If we notice that battery draw during a match is problematic for speed control, we
         //will need to revert to a pid for RPM in some way.  This would be sufficiently complicated that it is a low priority, however.
       }

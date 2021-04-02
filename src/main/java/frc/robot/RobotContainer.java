@@ -64,6 +64,7 @@ public class RobotContainer {
   private final RaiseHood raiseHood = new RaiseHood(turret);
   private final LowerHood lowerHood = new LowerHood(turret);
   private final RunHoodToPos setNormalShoot = new RunHoodToPos(turret, 240);
+  private final ShootWithSpeedConfirm shootSpeedConfirm = new ShootWithSpeedConfirm(shooter, process2);
 
   //Auto
   private final AimTurret aimTurret = new AimTurret(turret, ntables);
@@ -90,6 +91,7 @@ public class RobotContainer {
   private final JoystickButton hoodUp = new JoystickButton(testingJoystick, 7);
   private final JoystickButton hoodDown = new JoystickButton(testingJoystick, 8);
   private final JoystickButton hoodToNormal = new JoystickButton(xbox, 1);
+  private final JoystickButton accuracyShoot = new JoystickButton(xbox, 2);
 
   // Extra Classes
   public final BallData ballData = new BallData();
@@ -153,6 +155,7 @@ public class RobotContainer {
     hoodDown.whenReleased(new InstantCommand(turret::stopHood, turret));
     testAutoTurret.whenPressed(aimTurret);
     hoodToNormal.whenPressed(setNormalShoot);
+    accuracyShoot.whenPressed(shootSpeedConfirm);
   }
 
   /**
