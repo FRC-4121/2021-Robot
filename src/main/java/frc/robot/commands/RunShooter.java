@@ -37,9 +37,9 @@ public class RunShooter extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double speed = SmartDashboard.getNumber("InputShootSpeed", 0);
-    shooter.shoot(speed);
-    // shooter.shoot(-joystick.getY());
+    // double speed = SmartDashboard.getNumber("InputShootSpeed", 0);
+    // shooter.shoot(speed);
+    shooter.shoot(-joystick.getY());
 
     //if(shooter.getShooterRPM() > (shooter.getShooterSpeed() * kShooterMaxRPM)) processor.unlockProcessor();
   }

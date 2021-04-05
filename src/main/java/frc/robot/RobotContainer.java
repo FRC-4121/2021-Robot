@@ -115,7 +115,7 @@ public class RobotContainer {
     //Drivetrain -> drive with xbox joysticks
     drivetrain.setDefaultCommand(driveCommand);
 
-    // shooter.setDefaultCommand(autoShoot);//shoot: joystick control, autoShoot: automatic speed control
+    shooter.setDefaultCommand(shoot);//shoot: joystick control, autoShoot: automatic speed control
 
     // turret.setDefaultCommand(aimTurret);
 
