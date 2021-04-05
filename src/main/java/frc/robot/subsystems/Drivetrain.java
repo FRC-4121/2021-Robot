@@ -226,8 +226,8 @@ public class Drivetrain extends SubsystemBase {
 
   public void changeSpeed(){
     if (kJoystickSpeedCorr == 0.55){
-      kJoystickSpeedCorr = .8;
-    } else if (kJoystickSpeedCorr == 0.8) {
+      kJoystickSpeedCorr = .7;
+    } else if (kJoystickSpeedCorr == 0.7) {
       kJoystickSpeedCorr = 0.55;
     }
   }
