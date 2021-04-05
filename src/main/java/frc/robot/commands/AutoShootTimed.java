@@ -189,7 +189,7 @@ public class AutoShootTimed extends CommandBase {
     // targetLock = myNTables.getTargetLockFlag();
     
     targetOffset = myNTables.getTapeOffset();
-    targetLock = (targetOffset < 10) && (targetOffset > 0);//adjustment for testing
+    targetLock = (targetOffset < 10) && (targetOffset > 2);//adjustment for testing
     
     SmartDashboard.putBoolean("TargetLock", targetLock);
     targetDistance = myNTables.getTapeDistance();
