@@ -77,6 +77,7 @@ public class AutoShootTimed extends CommandBase {
   private double lastShotWaitTime;
   private double targetAngle;
   private int targetLockCount;
+  private double returnDriveDistance;
   private int ballPresentCount = 0;
 
   private boolean foundTarget;
@@ -132,7 +133,8 @@ public class AutoShootTimed extends CommandBase {
     driveDirection = -1;
     driveDistance = 0;
     driveSpeed = kAutoDriveSpeed;
-    targetDriveDistance = 60;
+    targetDriveDistance = 90;
+    returnDriveDistance = 100;
     driveSpeedCorrection = 1;
     totalRotationsRight = 0;
     totalRotationsLeft = 0;
@@ -172,8 +174,8 @@ public class AutoShootTimed extends CommandBase {
     myDrivetrain.zeroGyro();
 
     // Get starting encoder positions
-    leftEncoderStart = Math.abs(myDrivetrain.getMasterLeftEncoderPosition());
-    rightEncoderStart = Math.abs(myDrivetrain.getMasterRightEncoderPosition());
+    leftEncoderStart = myDrivetrain.getMasterLeftEncoderPosition();
+    rightEncoderStart = myDrivetrain.getMasterRightEncoderPosition();
 
     myPneumatics.retractIntake();
 
@@ -189,7 +191,7 @@ public class AutoShootTimed extends CommandBase {
     // targetLock = myNTables.getTargetLockFlag();
     
     targetOffset = myNTables.getTapeOffset();
-    targetLock = (targetOffset < 10) && (targetOffset > 2);//adjustment for testing
+    targetLock = (targetOffset < -8) && (targetOffset > -18);//adjustment for testing
     
     SmartDashboard.putBoolean("TargetLock", targetLock);
     targetDistance = myNTables.getTapeDistance();
@@ -221,7 +223,7 @@ public class AutoShootTimed extends CommandBase {
         if (!targetLock) {
 
           //If the turret is in a safe operating range for the physical constraints of the robot
-          turretSpeed = -kTurretSpeedAuto * pidLock.run(targetOffset, 5);
+          turretSpeed = -kTurretSpeedAuto * pidLock.run(targetOffset, -10);
           // speed = -kTurretSpeedAuto * lockPID.run(targetOffset, 0);
           if (Math.abs(turretSpeed) > .10){
             if (turretSpeed < 0){
@@ -303,6 +305,8 @@ public class AutoShootTimed extends CommandBase {
         }
 
         // Calculate speed correction
+        
+        SmartDashboard.putNumber("BallisticsRPM", targetShooterSpeed * kShooterMaxRPM);
         shooterSpeedCorrection = pidShooterSpeed.run(myShooter.getShooterRPM(), targetShooterSpeed*kShooterMaxRPM);
         
         // Correct shooter speed control input
@@ -388,8 +392,8 @@ public class AutoShootTimed extends CommandBase {
         SmartDashboard.putNumber("AngleCor", angleCorrection);
 
         // Calculate speed correction based on distance to target
-        totalRotationsRight = Math.abs((Math.abs(myDrivetrain.getMasterRightEncoderPosition()) - rightEncoderStart));
-        totalRotationsLeft = Math.abs((Math.abs(myDrivetrain.getMasterLeftEncoderPosition()) - leftEncoderStart));
+        totalRotationsRight = Math.abs(myDrivetrain.getMasterRightEncoderPosition() - rightEncoderStart);
+        totalRotationsLeft = Math.abs(myDrivetrain.getMasterLeftEncoderPosition() - leftEncoderStart);
         driveDistance = (kWheelDiameter * Math.PI * (totalRotationsLeft + totalRotationsRight) / 2.0) / (DrivetrainConstants.kTalonFXPPR * kGearRatio);
         // driveSpeedCorrection = pidDriveDistance.run(driveDistance, targetDriveDistance);
         // SmartDashboard.putNumber("DrSpCorrection", driveSpeedCorrection);
@@ -408,7 +412,7 @@ public class AutoShootTimed extends CommandBase {
         // Calculate final drive speed
         driveSpeedCorrection = 1;
         SmartDashboard.putNumber("DistanceToGo", Math.abs(driveDistance - targetDriveDistance));
-        if (Math.abs(driveDistance - targetDriveDistance) <= 18) {
+        if (Math.abs(driveDistance - targetDriveDistance) <= 20) {
           driveSpeedCorrection = 0.75;
           // angleCorrection = 0;
         }
@@ -472,8 +476,8 @@ public class AutoShootTimed extends CommandBase {
         angleCorrection = pidDriveAngle.run(currentGyroAngle, 0);
 
         // Calculate speed correction based on distance to target
-        totalRotationsRight = Math.abs((Math.abs(myDrivetrain.getMasterRightEncoderPosition()) - rightEncoderStart));
-        totalRotationsLeft = Math.abs((Math.abs(myDrivetrain.getMasterLeftEncoderPosition()) - leftEncoderStart));
+        totalRotationsRight = Math.abs(myDrivetrain.getMasterRightEncoderPosition() - rightEncoderStart);
+        totalRotationsLeft = Math.abs(myDrivetrain.getMasterLeftEncoderPosition() - leftEncoderStart);
         driveDistance = (kWheelDiameter * Math.PI * (totalRotationsLeft + totalRotationsRight) / 2.0) / (DrivetrainConstants.kTalonFXPPR * kGearRatio);
         // driveSpeedCorrection = pidDriveDistance.run(driveDistance, targetDriveDistance);
 
@@ -490,7 +494,7 @@ public class AutoShootTimed extends CommandBase {
 
         // Calculate final drive speed
         driveSpeedCorrection = 1;
-        if (Math.abs(driveDistance - targetDriveDistance) <= 18) {
+        if (Math.abs(driveDistance - (returnDriveDistance)) <= 20) {
           driveSpeedCorrection = 0.75;
           // angleCorrection = 0;
         }
@@ -590,8 +594,8 @@ public class AutoShootTimed extends CommandBase {
               robotMode = 2;
 
               // Reset starting encoder positions
-              leftEncoderStart = Math.abs(myDrivetrain.getMasterLeftEncoderPosition());
-              rightEncoderStart = Math.abs(myDrivetrain.getMasterRightEncoderPosition());
+              leftEncoderStart = myDrivetrain.getMasterLeftEncoderPosition();
+              rightEncoderStart = myDrivetrain.getMasterRightEncoderPosition();
               pidDriveAngle = new PIDControl(kP_DriveAngle, kI_DriveAngle, kD_DriveAngle);
               driveDistance = 0;
               // Turn off shooter speed control
@@ -609,10 +613,10 @@ public class AutoShootTimed extends CommandBase {
 
           myProcessor.stopProcessor();
           // Calculate distance traveled
-          totalRotationsRight = Math.abs((Math.abs(myDrivetrain.getMasterRightEncoderPosition()) - rightEncoderStart));
-          totalRotationsLeft = Math.abs((Math.abs(myDrivetrain.getMasterLeftEncoderPosition()) - leftEncoderStart));
+          totalRotationsRight = Math.abs(myDrivetrain.getMasterRightEncoderPosition() - rightEncoderStart);
+          totalRotationsLeft = Math.abs(myDrivetrain.getMasterLeftEncoderPosition() - leftEncoderStart);
           driveDistance = (kWheelDiameter * Math.PI * (totalRotationsLeft + totalRotationsRight) / 2.0) / (DrivetrainConstants.kTalonFXPPR * kGearRatio);
-          SmartDashboard.putNumber("DistanceTraveled", driveDistance);
+          SmartDashboard.putNumber("Distance Traveled", driveDistance);
 
           // Check distance against target
           SmartDashboard.putNumber("Distance error", Math.abs(driveDistance - targetDriveDistance));
@@ -662,8 +666,8 @@ public class AutoShootTimed extends CommandBase {
             robotMode = 4;
 
             // Reset starting encoder positions
-            leftEncoderStart = Math.abs(myDrivetrain.getMasterLeftEncoderPosition());
-            rightEncoderStart = Math.abs(myDrivetrain.getMasterRightEncoderPosition());
+            leftEncoderStart = myDrivetrain.getMasterLeftEncoderPosition();
+            rightEncoderStart = myDrivetrain.getMasterRightEncoderPosition();
             driveDistance = 0;
             pidDriveAngle = new PIDControl(kP_DriveAngle, kI_DriveAngle, kD_DriveAngle);
             // Turn on shooter speed control
@@ -680,13 +684,13 @@ public class AutoShootTimed extends CommandBase {
           myProcessor.stopProcessor();
 
           // Calculate distance traveled
-          totalRotationsRight = Math.abs((Math.abs(myDrivetrain.getMasterRightEncoderPosition()) - rightEncoderStart));
-          totalRotationsLeft = Math.abs((Math.abs(myDrivetrain.getMasterLeftEncoderPosition()) - leftEncoderStart));
+          totalRotationsRight = Math.abs(myDrivetrain.getMasterRightEncoderPosition() - rightEncoderStart);
+          totalRotationsLeft = Math.abs(myDrivetrain.getMasterLeftEncoderPosition() - leftEncoderStart);
           driveDistance = (kWheelDiameter * Math.PI * (totalRotationsLeft + totalRotationsRight) / 2.0) / (DrivetrainConstants.kTalonFXPPR * kGearRatio);
           SmartDashboard.putNumber("Distance Traveled", driveDistance);
 
           // Check distance against target
-          if (driveDistance >= targetDriveDistance) {
+          if (driveDistance >= (returnDriveDistance)) {
             
             // Stop the robot
             myDrivetrain.stopDrive();

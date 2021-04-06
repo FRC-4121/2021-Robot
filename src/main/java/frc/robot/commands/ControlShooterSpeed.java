@@ -27,6 +27,8 @@ public class ControlShooterSpeed extends CommandBase {
   private boolean targetLock;
   private double targetOffset;
   private double targetSpeed;
+  private double targetRPM;
+  private double currentRPM;
   private double targetShooterSpeedCorrected;
   private double speed;
   private double shooterSpeedCorrection;
@@ -67,7 +69,7 @@ public class ControlShooterSpeed extends CommandBase {
       // targetLock = ntQuerier.getTargetLockFlag();
       
       targetOffset = ntQuerier.getTapeOffset();
-      targetLock = (targetOffset < 10) && (targetOffset > 2);
+      targetLock = (targetOffset < -5) && (targetOffset > -18);
       SmartDashboard.putBoolean("TargetLock", targetLock);
 
       if(targetLock)
@@ -89,15 +91,26 @@ public class ControlShooterSpeed extends CommandBase {
           targetSpeed = ballisticsData[2];
         }
         SmartDashboard.putNumber("BallisticsTarget", targetSpeed);
+        targetRPM = targetSpeed * kShooterMaxRPM;
         SmartDashboard.putNumber("BallisticsRPM", targetSpeed * kShooterMaxRPM);
+        currentRPM = Math.abs(shooter.getShooterRPM());
+
+        if (Math.abs(currentRPM - targetRPM) > 50){
+          if (currentRPM < targetRPM){
+            shooterSpeedCorrection += 0.0005;
+          }
+          else {
+            shooterSpeedCorrection -= 0.0005;
+          }
+        }
 
         // Calculate speed correction
-        shooterSpeedCorrection = pidShooterSpeed.run(shooter.getShooterRPM(), targetSpeed*kShooterMaxRPM);
+        // shooterSpeedCorrection = pidShooterSpeed.run(shooter.getShooterRPM(), targetSpeed*kShooterMaxRPM);
         SmartDashboard.putNumber("correction", shooterSpeedCorrection);
         
         // Correct shooter speed control input
         //targetShooterSpeedCorrected = targetShooterSpeed * kSpeedCorrectionFactor;
-        targetShooterSpeedCorrected = targetSpeed - shooterSpeedCorrection;
+        targetShooterSpeedCorrected = targetSpeed + shooterSpeedCorrection;
 
         // Ensure corrected speed is within bounds
         if (targetShooterSpeedCorrected > 1) {
@@ -118,8 +131,9 @@ public class ControlShooterSpeed extends CommandBase {
       }
       else 
       {
-
-        shooter.shoot(-speed);
+        shooterSpeedCorrection = 0;
+        speed = 0.75;
+        shooter.shoot(speed);
       }
 
     }

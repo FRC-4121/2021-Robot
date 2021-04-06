@@ -19,6 +19,7 @@ public class ShootWithSpeedConfirm extends CommandBase {
   boolean targetLock;
   double targetShooterRPM;
   int loopCount = 0;
+  int runCount = 0;
 
   public ShootWithSpeedConfirm(Shooter shooter, Processor2 process) {
     myProcess = process;
@@ -33,6 +34,7 @@ public class ShootWithSpeedConfirm extends CommandBase {
     shooting = false;
     targetShooterRPM = 0;
     loopCount = 0;
+    runCount = 0;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -55,12 +57,14 @@ public class ShootWithSpeedConfirm extends CommandBase {
       SmartDashboard.putNumber("Shooter RPM", myShooter.getShooterRPM());
       SmartDashboard.putNumber("tolerance", kRPMTolerance);
       
-      if (Math.abs(Math.abs(myShooter.getShooterRPM()) - l_targetRPM) < kRPMTolerance || shooting) {
+      if (Math.abs(Math.abs(myShooter.getShooterRPM()) - l_targetRPM) < 50 || shooting) {
         myProcess.unlockProcessor();
         shooting = true;
         loopCount++;
       }
     }
+
+    runCount++;
   }
 
   // Called once the command ends or is interrupted.
@@ -72,9 +76,14 @@ public class ShootWithSpeedConfirm extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
+    boolean thereYet = false;
+
     if (shooting && loopCount > 8){
-      return true;
+      thereYet = true;
+    } else if (runCount > 500){
+      thereYet = true;
     }
-    return false;
+    SmartDashboard.putBoolean("SpeedConfirmTY", thereYet);
+    return thereYet;
   }
 }

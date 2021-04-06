@@ -63,7 +63,7 @@ public class RobotContainer {
   private final RunShooter shoot = new RunShooter(shooter, testingJoystick);
   private final RaiseHood raiseHood = new RaiseHood(turret);
   private final LowerHood lowerHood = new LowerHood(turret);
-  private final RunHoodToPos setNormalShoot = new RunHoodToPos(turret, 240);
+  private final RunHoodToPos setNormalShoot = new RunHoodToPos(turret, 255);
   private final ShootWithSpeedConfirm shootSpeedConfirm = new ShootWithSpeedConfirm(shooter, process2);
 
   //Auto
@@ -115,9 +115,9 @@ public class RobotContainer {
     //Drivetrain -> drive with xbox joysticks
     drivetrain.setDefaultCommand(driveCommand);
 
-    shooter.setDefaultCommand(shoot);//shoot: joystick control, autoShoot: automatic speed control
+    // shooter.setDefaultCommand(autoShoot);//shoot: joystick control, autoShoot: automatic speed control
 
-    turret.setDefaultCommand(aimTurret);
+    // turret.setDefaultCommand(aimTurret);
 
   }
 
@@ -165,8 +165,8 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // return new AutoDriveToBall(drivetrain, pneumatics, ntables, 20);
-    // return new AutoGetAllBalls(drivetrain, pneumatics, process2, ntables, ballData, 2, 100);
-    return new AutoShootTimed(drivetrain, shooter, pneumatics, process2, turret, ntables, 60);
+    return new AutoGetAllBalls(drivetrain, pneumatics, process2, ntables, ballData, 2, 100);
+    // return new AutoShootTimed(drivetrain, shooter, pneumatics, process2, turret, ntables, 60);
     // return new RunHoodToPos(turret, 240);
   }
 

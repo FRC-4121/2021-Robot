@@ -92,8 +92,10 @@ public class AimTurret extends CommandBase {
 
     // Get status of flags/NT data
     foundTarget = myNTQuerier.getFoundTapeFlag();
-    targetLock = myNTQuerier.getTargetLockFlag();
+    
     targetOffset = myNTQuerier.getTapeOffset();
+    targetLock = (targetOffset < -5) && (targetOffset > -18);
+    SmartDashboard.putBoolean("TargetLock", targetLock);
 
     //Need to update the override flag here (get value from gamepad switch)
 
@@ -131,7 +133,7 @@ public class AimTurret extends CommandBase {
           //   speed = kTurretSpeedLock;
           // }
 
-          speed = -kTurretSpeedAuto * lockPID.run(targetOffset, 0);
+          speed = -kTurretSpeedAuto * lockPID.run(targetOffset, -10);
           if (Math.abs(speed) > .10){
             if (speed < 0){
               speed = -.10;

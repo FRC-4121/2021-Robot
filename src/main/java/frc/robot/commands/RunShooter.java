@@ -40,6 +40,7 @@ public class RunShooter extends CommandBase {
     // double speed = SmartDashboard.getNumber("InputShootSpeed", 0);
     // shooter.shoot(speed);
     shooter.shoot(-joystick.getY());
+    SmartDashboard.putNumber("SpeedInput", -joystick.getY());
 
     //if(shooter.getShooterRPM() > (shooter.getShooterSpeed() * kShooterMaxRPM)) processor.unlockProcessor();
   }

@@ -180,7 +180,7 @@ public class AutoGetAllBalls extends CommandBase {
       angleCorrection = pidAngle.run(currentGyroAngle, nextBallAngle);
 
       // Determine correct speed correction based on ball angle
-      if (Math.abs(nextBallAngle) > 45){
+      if (Math.abs(nextBallAngle) > 40){
         speedCorrection = 0.7;
       } else {
         speedCorrection = 0.7;
