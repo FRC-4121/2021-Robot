@@ -88,9 +88,12 @@ public class ControlShooterSpeed extends CommandBase {
           SmartDashboard.putBoolean("Shot Possible", true);
           targetSpeed = ballisticsData[2];
         }
+        SmartDashboard.putNumber("BallisticsTarget", targetSpeed);
+        SmartDashboard.putNumber("BallisticsRPM", targetSpeed * kShooterMaxRPM);
 
         // Calculate speed correction
         shooterSpeedCorrection = pidShooterSpeed.run(shooter.getShooterRPM(), targetSpeed*kShooterMaxRPM);
+        SmartDashboard.putNumber("correction", shooterSpeedCorrection);
         
         // Correct shooter speed control input
         //targetShooterSpeedCorrected = targetShooterSpeed * kSpeedCorrectionFactor;
@@ -109,7 +112,7 @@ public class ControlShooterSpeed extends CommandBase {
         // targetSpeedCorrected = targetSpeed * kSpeedCorrectionFactor;
         // SmartDashboard.putNumber("Ballistics Speed", targetSpeed);
 
-        shooter.shootRPM(-targetShooterSpeedCorrected);
+        shooter.shoot(targetShooterSpeedCorrected);
         //I have battery concerns about this implementation.  If we notice that battery draw during a match is problematic for speed control, we
         //will need to revert to a pid for RPM in some way.  This would be sufficiently complicated that it is a low priority, however.
       }

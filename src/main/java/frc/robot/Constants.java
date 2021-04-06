@@ -97,8 +97,8 @@ public final class Constants {
     public static class ShooterConstants {
 
         //PID constants
-        public static final double kP_Shoot = 0.001; //was 0.1
-        public static final double kI_Shoot = 0;
+        public static final double kP_Shoot = 0.00015; //was 0.1
+        public static final double kI_Shoot = 0.0000;
         public static final double kD_Shoot = 0;
         public static final double kF_Shoot = -1; 
 
@@ -158,7 +158,7 @@ public final class Constants {
         public static final double kIntakeSpeed = -.55;
         public static final double kOuttakeSpeed = .75;
         public static final double kProcessorSpeed = -0.3;
-        public static final double kUnlockSpeed = 1;
+        public static final double kUnlockSpeed = .5;
         public static final double kLockSpeed = -.20;
     }
 

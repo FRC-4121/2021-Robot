@@ -117,7 +117,7 @@ public class RobotContainer {
 
     shooter.setDefaultCommand(shoot);//shoot: joystick control, autoShoot: automatic speed control
 
-    // turret.setDefaultCommand(aimTurret);
+    turret.setDefaultCommand(aimTurret);
 
   }
 

@@ -17,7 +17,7 @@ public class ShootWithSpeedConfirm extends CommandBase {
   private Processor2 myProcess;
   boolean shooting = false;
   boolean targetLock;
-  double targetShooterSpeed;
+  double targetShooterRPM;
   int loopCount = 0;
 
   public ShootWithSpeedConfirm(Shooter shooter, Processor2 process) {
@@ -31,7 +31,7 @@ public class ShootWithSpeedConfirm extends CommandBase {
   @Override
   public void initialize() {
     shooting = false;
-    targetShooterSpeed = 0;
+    targetShooterRPM = 0;
     loopCount = 0;
   }
 
@@ -41,21 +41,21 @@ public class ShootWithSpeedConfirm extends CommandBase {
 
     //Run processor normally regardless of position conditions
     myProcess.lockProcessor();
-    myProcess.autoRunProcessor(false, true);
+    myProcess.autoRunProcessor(false, false);
 
     //Check target lock (tossed up to SmartDash in ControlShooterSpeed)
     targetLock = SmartDashboard.getBoolean("TargetLock", false);
-    targetShooterSpeed = SmartDashboard.getNumber("Ballistics Speed", 0);
+    targetShooterRPM = SmartDashboard.getNumber("BallisticsRPM", 0);
 
     if (targetLock) {
 
       //Ensure wheel is moving fast enough to accurately make shot
-      double l_targetSpeed = targetShooterSpeed * kShooterMaxRPM;
-      SmartDashboard.putNumber("l_targetSpeed", l_targetSpeed);
+      double l_targetRPM = targetShooterRPM;
+      SmartDashboard.putNumber("l_targetSpeed", l_targetRPM);
       SmartDashboard.putNumber("Shooter RPM", myShooter.getShooterRPM());
       SmartDashboard.putNumber("tolerance", kRPMTolerance);
       
-      if (Math.abs(Math.abs(myShooter.getShooterRPM()) - targetShooterSpeed * kShooterMaxRPM) < kRPMTolerance || shooting) {
+      if (Math.abs(Math.abs(myShooter.getShooterRPM()) - l_targetRPM) < kRPMTolerance || shooting) {
         myProcess.unlockProcessor();
         shooting = true;
         loopCount++;
