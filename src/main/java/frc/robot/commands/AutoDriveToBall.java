@@ -86,6 +86,7 @@ public class AutoDriveToBall extends CommandBase {
     double ballOffset = ntables.getVisionDouble("BallOffset0");
     double ballDistance = ntables.getVisionDouble("BallDistance0");
     boolean foundBall = ntables.getVisionBoolean("FoundBall");
+    SmartDashboard.putBoolean("FoundBAll", foundBall);
     
 
     // Read current gyro angle
@@ -117,7 +118,11 @@ public class AutoDriveToBall extends CommandBase {
 
     // Run drive train
     direction = -1;
-    drivetrain.autoDrive(speedCorrection * direction * kAutoDriveSpeed + angleCorrection, speedCorrection * direction*kAutoDriveSpeed - angleCorrection);
+    if (foundBall) {
+      drivetrain.autoDrive(speedCorrection * direction * kAutoDriveSpeed + angleCorrection, speedCorrection * direction*kAutoDriveSpeed - angleCorrection);
+    } else {
+      drivetrain.stopDrive();//modified for showcase purposes
+    }
     SmartDashboard.putNumber("Angle Correction", angleCorrection);
     // processor.runProcessor(false);
   }

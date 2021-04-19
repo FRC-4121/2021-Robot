@@ -65,7 +65,7 @@ public final class Constants {
         public static final double kLowGearSpeedCap = 0.8;//In case full speed draws excessive power, these are an emergency measure
         public static final double kHighGearSpeedCap = 1.0;
         public static double kJoystickSpeedCorr = 0.55;
-        public static final double kAutoDriveSpeed = .5;
+        public static final double kAutoDriveSpeed = .4;
         public static final double kAutoDriveSpeedMin = 0.25;
         public static final double kAutoShootDriveSpeed = 0.75;
         public static final double kAutoTurnSpeed = 0.5;
@@ -81,7 +81,7 @@ public final class Constants {
         public static final double kD_Straight = 0.0;
         public static final double kP_Turn = .002;//was .003
         public static final double kI_Turn = 0.0;
-        public static final double kD_Turn = 0.0006;//was 0.0004
+        public static final double kD_Turn = 0.001;//was 0.0004
         public static final double kP_DriveAngle = .003;//was .005
         public static final double kI_DriveAngle = 0.0;
         public static final double kD_DriveAngle = 0.0004;
